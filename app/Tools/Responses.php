@@ -13,11 +13,12 @@ trait Responses
         return response()->json($data, $statusCode);
     }
 
-    public function respond(mixed $data): JsonResponse
+    public function respond(mixed $data, ?string $message = null): JsonResponse
     {
         return $this->jsonResponse([
             'status' => 'success',
             'status_code' => Res::HTTP_OK,
+            'message' => $message,
             'data' => $data,
         ], Res::HTTP_OK);
     }
@@ -42,7 +43,7 @@ trait Responses
         ], Res::HTTP_OK);
     }
 
-    public function respondWithPagination(Paginator $paginate, mixed $data, ?string $message): JsonResponse
+    public function respondWithPagination(Paginator $paginate, mixed $data = null, ?string $message = null): JsonResponse
     {
         return $this->jsonResponse([
             'status' => 'success',
@@ -57,12 +58,12 @@ trait Responses
         ], Res::HTTP_OK);
     }
 
-    public function respondException(string $message, ?int $statusCode = Res::HTTP_INTERNAL_SERVER_ERROR): JsonResponse
+    public function respondException(?string $message = null, ?int $statusCode = Res::HTTP_INTERNAL_SERVER_ERROR): JsonResponse
     {
         return $this->jsonResponse([
             'message' => $message,
             'status' => 'error',
             'status_code' => $statusCode,
-        ], Res::HTTP_OK);
+        ], Res::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
