@@ -10,6 +10,7 @@ use App\Http\Resources\Board\BoardResource;
 use App\Services\BoardService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Exception;
 
 final class BoardController extends Controller
 {
@@ -33,30 +34,24 @@ final class BoardController extends Controller
         );
     }
 
+    /**
+     * @throws Exception
+     */
     public function store(StoreBoardRequest $request): JsonResponse
     {
         $boardDTO = BoardDTO::make($request->validated());
         $board = $this->boardService->store($boardDTO);
-        if(!$board->success){
-            return $this->respondException(
-                message: $board->message,
-                statusCode: $board->statusCode
-            );
-        }
         return $this->respondCreated(
             data: new BoardResource($board->data),
         );
     }
 
+    /**
+     * @throws Exception
+     */
     public function show(int $boardId): JsonResponse
     {
         $board = $this->boardService->findById($boardId);
-        if(!$board->success){
-            return $this->respondException(
-                message: $board->message,
-                statusCode: $board->statusCode
-            );
-        }
         return $this->respond(
             data: new BoardResource($board->data),
         );

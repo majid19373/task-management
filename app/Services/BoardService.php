@@ -7,7 +7,7 @@ use App\DTO\Board\BoardFilterDTO;
 use App\DTO\ServicesResultDTO;
 use App\Http\Resources\Board\BoardResource;
 use App\Repositories\BoardRepository;
-use Illuminate\Http\Response as Res;
+use Exception;
 
 final class BoardService extends BaseService
 {
@@ -28,31 +28,27 @@ final class BoardService extends BaseService
         );
     }
 
+    /**
+     * @throws Exception
+     */
     public function store(BoardDTO $boardDTO): ServicesResultDTO
     {
-        $result = $this->boardRepository->store($boardDTO->toArray(), BoardResource::JSON_STRUCTURE);
-        if (!$result) {
-            return $this->errorResult(
-                message: 'User not Found.',
-                statusCode: Res::HTTP_UNPROCESSABLE_ENTITY,
-            );
-        }
+        $result = $this->boardRepository->store($boardDTO->toArray());
+        $this->throwExceptionIfNotStore($result);
+        $board = $this->boardRepository->findOrFailedById($result->id, BoardResource::JSON_STRUCTURE);
         return $this->successResult(
-            data: $result,
+            data: $board,
         );
     }
 
+    /**
+     * @throws Exception
+     */
     public function findById(int $boardId): ServicesResultDTO
     {
-        $result = $this->boardRepository->findById($boardId, BoardResource::JSON_STRUCTURE);
-        if (is_null($result)) {
-            return $this->errorResult(
-                message: 'User not Found.',
-                statusCode: Res::HTTP_NOT_FOUND,
-            );
-        }
+        $board = $this->boardRepository->findOrFailedById($boardId, BoardResource::JSON_STRUCTURE);
         return $this->successResult(
-            data: $result,
+            data: $board,
         );
     }
 }

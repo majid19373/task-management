@@ -20,10 +20,7 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $e): JsonResponse
     {
-        logger()->error($e->getMessage());
-        if(config('app.debug')){
-            return $this->respondException($e->getMessage());
-        }
-        return $this->respondException('A problem has occurred');
+        logger()->error($e->getCode());
+        return $this->respondException($e->getMessage());
     }
 }

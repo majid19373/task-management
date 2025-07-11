@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Http\Requests\Board;
+namespace App\Http\Requests\Task;
 
+use App\Enums\TaskPriorityEnum;
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-final class StoreBoardRequest extends FormRequest
+final class DeadlineTaskRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,17 +25,12 @@ final class StoreBoardRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => ['required', 'exists:users,id'],
-            'name' => [
+            'id' => ['required', 'integer', 'exists:tasks,id'],
+            'deadline' => [
                 'required',
-                'string',
-                'min:3',
-                'max:50',
-                Rule::unique('boards')->where(function ($query) {
-                    return $query->where('user_id', $this->user_id);
-                }),
+                'date',
+                'after_or_equal:' . Carbon::now(),
             ],
-            'description' => ['nullable', 'string', 'max:200'],
         ];
     }
 }

@@ -6,7 +6,9 @@ use App\Models\Board;
 
 final class BoardRepository extends BaseRepository
 {
-    public function __construct(){
-        $this->model = new Board();
+    public function __construct(
+        Board $board
+    ){
+        $this->model = $board;
     }
 }

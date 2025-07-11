@@ -10,7 +10,6 @@ abstract class BaseRepository
 {
     protected Model $model;
 
-
     public function all(array $select = ['*'], array $relations = []): Collection
     {
         return $this->model->query()->select($select)->with($relations)->get();
@@ -21,15 +20,30 @@ abstract class BaseRepository
         return $this->model->query()->select($select)->with($relations)->paginate($perPage);
     }
 
-    public function store(array $data, array $select = ['*'], array $relations = [])
+    public function store(array $data)
     {
-        $record =  $this->model->query()->create($data);
-        return $this->findById($record->id, $select, $relations);
+        return $this->model->query()->create($data);
     }
 
     public function findById(int $id, array $select = ['*'], array $relations = [])
     {
         return $this->model->query()->select($select)->with($relations)->find($id);
+    }
+
+    public function findOrFailedById(int $id, array $select = ['*'], array $relations = [])
+    {
+        return $this->model->query()->select($select)->with($relations)->findOrFail($id);
+    }
+
+    public function update(int $id, array $data): bool
+    {
+        $record = $this->findOrFailedById($id);
+        return $record->update($data);
+    }
+
+    public function updateWithModel(Model $model, array $data): bool
+    {
+        return $model->update($data);
     }
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\Tools;
 
+use App\Exceptions\ApiException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response as Res;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
@@ -64,6 +65,6 @@ trait Responses
             'message' => $message,
             'status' => 'error',
             'status_code' => $statusCode,
-        ], Res::HTTP_INTERNAL_SERVER_ERROR);
+        ], $statusCode);
     }
 }
