@@ -2,10 +2,12 @@
 
 namespace App\Repositories\Task;
 
+use App\DTO\Task\TaskFilterDTO;
 use App\Entities\Task;
 use App\Models\Task as Model;
 use App\Repositories\PaginatedResult;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Exception;
 
@@ -18,18 +20,20 @@ final class TaskRepository
         $this->model = $model;
     }
 
-    public function all(array $select = ['*'], array $relations = []): Collection
+    public function all(TaskFilterDTO $filters, array $select = ['*'], array $relations = []): Collection
     {
-        $tasks = $this->model->query()->select($select)->with($relations)->get();
+        $query = $this->model->query()->select($select)->with($relations);
+        $tasks = $this->applyFilters($query, $filters)->get();
         return $tasks->map(function (Model $task) {
             return $this->makeEntity($task);
         });
 
     }
 
-    public function getWithPaginate(int $perPage, array $select = ['*'], array $relations = []): PaginatedResult
+    public function getWithPaginate(TaskFilterDTO $filters, array $select = ['*'], array $relations = []): PaginatedResult
     {
-        $tasks = $this->model->query()->select($select)->with($relations)->paginate($perPage);
+        $query = $this->model->query()->select($select)->with($relations);
+        $tasks = $this->applyFilters($query, $filters)->paginate($filters->per_page);
         $all = $tasks->map(function (Model $task) {
             return $this->makeEntity($task);
         });
@@ -94,5 +98,12 @@ final class TaskRepository
             priority: $task->priority,
             deadline: $task->deadline ? Carbon::make($task->deadline) : null,
         );
+    }
+
+    private function applyFilters(Builder $query, TaskFilterDTO $filters): Builder
+    {
+        return $query
+            ->when($filters->status, fn($q) => $q->where('status', $filters->status))
+            ->when($filters->priority, fn($q) => $q->where('priority', $filters->priority));
     }
 }

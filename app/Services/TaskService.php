@@ -11,24 +11,34 @@ use App\Http\Resources\Board\BoardResource;
 use App\Http\Resources\Task\TaskResource;
 use App\Repositories\Board\BoardRepository;
 use App\Repositories\Task\TaskRepository;
+use App\Rules\Task\CheckDeadline;
+use App\Rules\Task\CheckPriority;
+use App\Rules\Task\CheckStatus;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Http\Response as Res;
 
 final class TaskService extends BaseService
 {
     public function __construct(
         private readonly TaskRepository $taskRepository,
         private readonly BoardRepository $boardRepository,
+        private readonly CheckDeadline $checkDeadline,
+        private readonly CheckStatus $checkStatus,
+        private readonly CheckPriority $checkPriority,
     )
     {}
 
+    /**
+     * @throws Exception
+     */
     public function index(TaskFilterDTO $taskFilterDTO): ServicesResultDTO
     {
+        $this->checkStatus->validate($taskFilterDTO->status);
+        $this->checkPriority->validate($taskFilterDTO->priority);
         if($taskFilterDTO->is_paginated){
-            $result = $this->taskRepository->getWithPaginate($taskFilterDTO->per_page, TaskResource::JSON_STRUCTURE);
+            $result = $this->taskRepository->getWithPaginate($taskFilterDTO, TaskResource::JSON_STRUCTURE);
         }else{
-            $result = $this->taskRepository->all(TaskResource::JSON_STRUCTURE);
+            $result = $this->taskRepository->all($taskFilterDTO, TaskResource::JSON_STRUCTURE);
         }
         return $this->successResult(
             data: $result,
@@ -40,7 +50,7 @@ final class TaskService extends BaseService
      */
     public function store(TaskDTO $taskDTO): ServicesResultDTO
     {
-        $this->checkDeadlineValid($taskDTO->deadline);
+        $this->checkDeadline->validate($taskDTO->deadline);
         $this->boardRepository->findOrFailedById($taskDTO->board_id, BoardResource::JSON_STRUCTURE);
         $task = $this->makeEntity($taskDTO);
         $taskId = $this->taskRepository->store($task);
@@ -142,7 +152,7 @@ final class TaskService extends BaseService
      */
     public function deadline(int $taskId, Carbon $deadline): ServicesResultDTO
     {
-        $this->checkDeadlineValid($deadline);
+        $this->checkDeadline->validate($deadline);
         $task = $this->taskRepository->findOrFailedById($taskId, TaskResource::JSON_STRUCTURE);
         if($task->getStatus() === TaskStatusEnum::COMPLETED->value){
             $this->throwException(
@@ -155,18 +165,6 @@ final class TaskService extends BaseService
         return $this->successResult(
             data: $task,
         );
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function checkDeadlineValid(?Carbon $deadline): void
-    {
-        if($deadline && $deadline->diffInMinutes(Carbon::now()) > 1){
-            $this->throwException(
-                message: 'The deadline field must be a valid date',
-            );
-        }
     }
 
     private function makeEntity(TaskDTO $task): Task

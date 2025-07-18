@@ -26,6 +26,8 @@ final class FilterTaskRequest extends FormRequest
             'board_id' => ['required'],
             'is_paginated' => ['nullable'],
             'per_page' => ['nullable', 'integer', 'min:1'],
+            'status' => ['nullable', 'string'],
+            'priority' => ['nullable', 'string'],
         ];
     }
 }

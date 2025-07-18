@@ -62,6 +62,32 @@ class TaskTest extends TestCase
         $response->assertStatus(Res::HTTP_UNPROCESSABLE_ENTITY);
     }
 
+    public function test_index_with_wrong_status(): void
+    {
+        //Arrange
+        Task::factory()->count(10)->create();
+        $route = self::BASE_ROUTE . '?board_id=1&status=test';
+
+        //Act
+        $response = $this->get($route, parent::BASE_HEADERS);
+
+        //Assert
+        $response->assertStatus(Res::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    public function test_index_with_wrong_priority(): void
+    {
+        //Arrange
+        Task::factory()->count(10)->create();
+        $route = self::BASE_ROUTE . '?board_id=1&priority=test';
+
+        //Act
+        $response = $this->get($route, parent::BASE_HEADERS);
+
+        //Assert
+        $response->assertStatus(Res::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
     public function test_store(): void
     {
         //Arrange

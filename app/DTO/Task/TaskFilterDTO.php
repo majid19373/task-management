@@ -10,6 +10,8 @@ final class TaskFilterDTO extends BaseDTO
         public int $board_id,
         public bool $is_paginated = true,
         public int $per_page = 10,
+        public ?string $priority = null,
+        public ?string $status = null,
     )
     {}
 }
