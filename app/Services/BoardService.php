@@ -5,8 +5,9 @@ namespace App\Services;
 use App\DTO\Board\BoardDTO;
 use App\DTO\Board\BoardFilterDTO;
 use App\DTO\ServicesResultDTO;
+use App\Entities\Board;
 use App\Http\Resources\Board\BoardResource;
-use App\Repositories\BoardRepository;
+use App\Repositories\Board\BoardRepository;
 use Exception;
 
 final class BoardService extends BaseService
@@ -33,9 +34,9 @@ final class BoardService extends BaseService
      */
     public function store(BoardDTO $boardDTO): ServicesResultDTO
     {
-        $result = $this->boardRepository->store($boardDTO->toArray());
-        $this->throwExceptionIfNotStore($result);
-        $board = $this->boardRepository->findOrFailedById($result->id, BoardResource::JSON_STRUCTURE);
+        $board = $this->makeEntity($boardDTO);
+        $boardId = $this->boardRepository->store($board);
+        $board = $this->boardRepository->findOrFailedById($boardId, BoardResource::JSON_STRUCTURE);
         return $this->successResult(
             data: $board,
         );
@@ -49,6 +50,16 @@ final class BoardService extends BaseService
         $board = $this->boardRepository->findOrFailedById($boardId, BoardResource::JSON_STRUCTURE);
         return $this->successResult(
             data: $board,
+        );
+    }
+
+    private function makeEntity(BoardDTO $boardDTO): Board
+    {
+        return new Board(
+            id: (int)$boardDTO->id ?? 0,
+            name: $boardDTO->name,
+            userId: (int)$boardDTO->user_id,
+            description: $boardDTO->description
         );
     }
 }

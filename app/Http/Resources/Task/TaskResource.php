@@ -2,10 +2,10 @@
 
 namespace App\Http\Resources\Task;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
+use App\Entities\Task;
+use Illuminate\Support\Collection;
 
-class TaskResource extends JsonResource
+final class TaskResource
 {
     public const JSON_STRUCTURE = [
         'id',
@@ -17,13 +17,23 @@ class TaskResource extends JsonResource
         'deadline',
     ];
 
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(Request $request): array
+    public static function toArray(Task $task): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $task->getId(),
+            'board_id' => $task->getBoardId(),
+            'title' => $task->getTitle(),
+            'description' => $task->getDescription(),
+            'status' => $task->getStatus(),
+            'priority' => $task->getPriority(),
+            'deadline' => $task->getDeadline(),
+        ];
+    }
+
+    public static function toArrayList(Collection $tasks): Collection
+    {
+        return $tasks->map(function ($task) {
+            return TaskResource::toArray($task);
+        });
     }
 }

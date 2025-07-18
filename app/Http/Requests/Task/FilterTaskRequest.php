@@ -23,7 +23,7 @@ final class FilterTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'board_id' => ['required', 'exists:boards,id'],
+            'board_id' => ['required'],
             'is_paginated' => ['nullable'],
             'per_page' => ['nullable', 'integer', 'min:1'],
         ];

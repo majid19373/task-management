@@ -5,16 +5,21 @@ namespace App\Services;
 use App\DTO\ServicesResultDTO;
 use App\DTO\Task\TaskDTO;
 use App\DTO\Task\TaskFilterDTO;
+use App\Entities\Task;
 use App\Enums\TaskStatusEnum;
+use App\Http\Resources\Board\BoardResource;
 use App\Http\Resources\Task\TaskResource;
-use App\Repositories\TaskRepository;
-use Illuminate\Http\Response as Res;
+use App\Repositories\Board\BoardRepository;
+use App\Repositories\Task\TaskRepository;
+use Carbon\Carbon;
 use Exception;
+use Illuminate\Http\Response as Res;
 
 final class TaskService extends BaseService
 {
     public function __construct(
-        private readonly TaskRepository $taskRepository
+        private readonly TaskRepository $taskRepository,
+        private readonly BoardRepository $boardRepository,
     )
     {}
 
@@ -35,9 +40,11 @@ final class TaskService extends BaseService
      */
     public function store(TaskDTO $taskDTO): ServicesResultDTO
     {
-        $result = $this->taskRepository->store($taskDTO->toArray());
-        $this->throwExceptionIfNotStore($result);
-        $task = $this->taskRepository->findOrFailedById($result->id, TaskResource::JSON_STRUCTURE);
+        $this->checkDeadlineValid($taskDTO->deadline);
+        $this->boardRepository->findOrFailedById($taskDTO->board_id, BoardResource::JSON_STRUCTURE);
+        $task = $this->makeEntity($taskDTO);
+        $taskId = $this->taskRepository->store($task);
+        $task = $this->taskRepository->findOrFailedById($taskId, TaskResource::JSON_STRUCTURE);
         return $this->successResult(
             data: $task,
         );
@@ -46,9 +53,9 @@ final class TaskService extends BaseService
     /**
      * @throws Exception
      */
-    public function findById(int $boardId): ServicesResultDTO
+    public function findById(int $taskId): ServicesResultDTO
     {
-        $task = $this->taskRepository->findOrFailedById($boardId, TaskResource::JSON_STRUCTURE);
+        $task = $this->taskRepository->findOrFailedById($taskId, TaskResource::JSON_STRUCTURE);
         return $this->successResult(
             data: $task,
         );
@@ -60,17 +67,13 @@ final class TaskService extends BaseService
     public function start(int $taskId): ServicesResultDTO
     {
         $task = $this->taskRepository->findOrFailedById($taskId, TaskResource::JSON_STRUCTURE);
-        if($task->status !== TaskStatusEnum::NOT_STARTED->value){
+        if($task->getStatus() !== TaskStatusEnum::NOT_STARTED->value){
             $this->throwException(
                 message: 'The task must not have started.',
-                statusCode: Res::HTTP_CONFLICT,
             );
         }
-        $data = [
-            'status' => TaskStatusEnum::IN_PROGRESS->value
-        ];
-        $result = $this->taskRepository->updateWithModel($task, $data);
-        $this->throwExceptionIfNotUpdate($result);
+        $task->setStatus(TaskStatusEnum::IN_PROGRESS->value);
+        $this->taskRepository->update($task);
         $task = $this->taskRepository->findOrFailedById($taskId, TaskResource::JSON_STRUCTURE);
         return $this->successResult(
             data: $task,
@@ -83,17 +86,13 @@ final class TaskService extends BaseService
     public function completed(int $taskId): ServicesResultDTO
     {
         $task = $this->taskRepository->findOrFailedById($taskId, TaskResource::JSON_STRUCTURE);
-        if($task->status !== TaskStatusEnum::IN_PROGRESS->value){
+        if($task->getStatus() !== TaskStatusEnum::IN_PROGRESS->value){
             $this->throwException(
                 message: 'The task must not have completed.',
-                statusCode: Res::HTTP_CONFLICT,
             );
         }
-        $data = [
-            'status' => TaskStatusEnum::COMPLETED->value
-        ];
-        $result = $this->taskRepository->updateWithModel($task, $data);
-        $this->throwExceptionIfNotUpdate($result);
+        $task->setStatus(TaskStatusEnum::COMPLETED->value);
+        $this->taskRepository->update($task);
         $task = $this->taskRepository->findOrFailedById($taskId, TaskResource::JSON_STRUCTURE);
         return $this->successResult(
             data: $task,
@@ -106,17 +105,13 @@ final class TaskService extends BaseService
     public function reopen(int $taskId): ServicesResultDTO
     {
         $task = $this->taskRepository->findOrFailedById($taskId, TaskResource::JSON_STRUCTURE);
-        if($task->status !== TaskStatusEnum::COMPLETED->value){
+        if($task->getStatus() !== TaskStatusEnum::COMPLETED->value){
             $this->throwException(
                 message: 'The task cannot reopened.',
-                statusCode: Res::HTTP_CONFLICT,
             );
         }
-        $data = [
-            'status' => TaskStatusEnum::NOT_STARTED->value
-        ];
-        $result = $this->taskRepository->updateWithModel($task, $data);
-        $this->throwExceptionIfNotUpdate($result);
+        $task->setStatus(TaskStatusEnum::NOT_STARTED->value);
+        $this->taskRepository->update($task);
         $task = $this->taskRepository->findOrFailedById($taskId, TaskResource::JSON_STRUCTURE);
         return $this->successResult(
             data: $task,
@@ -129,17 +124,13 @@ final class TaskService extends BaseService
     public function priority(int $taskId, string $priority): ServicesResultDTO
     {
         $task = $this->taskRepository->findOrFailedById($taskId, TaskResource::JSON_STRUCTURE);
-        if($task->status === TaskStatusEnum::COMPLETED->value){
+        if($task->getStatus() === TaskStatusEnum::COMPLETED->value){
             $this->throwException(
                 message: 'The task cannot change the priority.',
-                statusCode: Res::HTTP_CONFLICT,
             );
         }
-        $data = [
-            'priority' => $priority
-        ];
-        $result = $this->taskRepository->updateWithModel($task, $data);
-        $this->throwExceptionIfNotUpdate($result);
+        $task->setPriority($priority);
+        $this->taskRepository->update($task);
         $task = $this->taskRepository->findOrFailedById($taskId, TaskResource::JSON_STRUCTURE);
         return $this->successResult(
             data: $task,
@@ -149,23 +140,45 @@ final class TaskService extends BaseService
     /**
      * @throws Exception
      */
-    public function deadline(int $taskId, string $deadline): ServicesResultDTO
+    public function deadline(int $taskId, Carbon $deadline): ServicesResultDTO
     {
+        $this->checkDeadlineValid($deadline);
         $task = $this->taskRepository->findOrFailedById($taskId, TaskResource::JSON_STRUCTURE);
-        if($task->status === TaskStatusEnum::COMPLETED->value){
+        if($task->getStatus() === TaskStatusEnum::COMPLETED->value){
             $this->throwException(
                 message: 'The task cannot change the deadline.',
-                statusCode: Res::HTTP_CONFLICT,
             );
         }
-        $data = [
-            'deadline' => $deadline
-        ];
-        $result = $this->taskRepository->updateWithModel($task, $data);
-        $this->throwExceptionIfNotUpdate($result);
+        $task->setDeadline($deadline);
+        $this->taskRepository->update($task);
         $task = $this->taskRepository->findOrFailedById($taskId, TaskResource::JSON_STRUCTURE);
         return $this->successResult(
             data: $task,
+        );
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function checkDeadlineValid(?Carbon $deadline): void
+    {
+        if($deadline && $deadline->diffInMinutes(Carbon::now()) > 1){
+            $this->throwException(
+                message: 'The deadline field must be a valid date',
+            );
+        }
+    }
+
+    private function makeEntity(TaskDTO $task): Task
+    {
+        return new Task(
+            id: (int)$task->id,
+            title: $task->title,
+            boardId: (int)$task->board_id,
+            description: $task->description,
+            status: $task->status,
+            priority: $task->priority,
+            deadline: $task->deadline ? Carbon::make($task->deadline) : null,
         );
     }
 }

@@ -2,12 +2,11 @@
 
 namespace App\Http\Resources\Task;
 
+use App\Entities\Task;
 use App\Enums\TaskPriorityEnum;
 use App\Enums\TaskStatusEnum;
-use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 
-class TaskEditResource extends JsonResource
+final class TaskEditResource
 {
     public const JSON_STRUCTURE = [
         'task' => TaskResource::JSON_STRUCTURE,
@@ -15,15 +14,10 @@ class TaskEditResource extends JsonResource
         'priorities',
     ];
 
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(Request $request): array
+    public static function toArray(Task $task): array
     {
         return [
-            'task' => new TaskResource($this->resource),
+            'task' => TaskResource::toArray($task),
             'statuses' => TaskStatusEnum::toArray(),
             'priorities' => TaskPriorityEnum::toArray(),
         ];

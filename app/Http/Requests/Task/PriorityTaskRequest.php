@@ -24,8 +24,8 @@ final class PriorityTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required', 'integer', 'exists:tasks,id'],
-            'priority' => ['required', Rule::enum(TaskPriorityEnum::class)],
+            'id' => ['required', 'integer'],
+            'priority' => ['required'],
         ];
     }
 }

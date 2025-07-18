@@ -17,7 +17,7 @@ abstract class TestCase extends BaseTestCase
     ];
 
     protected const PAGINATOR_JSON_STRUCTURE = [
-        'total_count',
+        'total',
         'current_page',
         'limit',
     ];

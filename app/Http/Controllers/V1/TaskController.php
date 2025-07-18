@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Resources\Task\TaskEditResource;
-use Illuminate\Http\Request;
 use App\DTO\Task\{TaskDTO, TaskFilterDTO};
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Task\{DeadlineTaskRequest, FilterTaskRequest, StoreTaskRequest, PriorityTaskRequest};
@@ -25,12 +24,12 @@ final class TaskController extends Controller
         $boards = $this->taskService->index($taskFilterDTO);
         if($taskFilterDTO->is_paginated){
             return $this->respondWithPagination(
-                paginate: $boards->data,
-                data: TaskResource::collection($boards->data),
+                paginate: $boards->data->paginator,
+                data: TaskResource::toArrayList($boards->data->list),
             );
         }
         return $this->respond(
-            data: new TaskResource($boards->data),
+            data: TaskResource::toArrayList($boards->data),
         );
     }
 
@@ -42,7 +41,7 @@ final class TaskController extends Controller
         $taskDTO = TaskDTO::make($request->validated());
         $result = $this->taskService->store($taskDTO);
         return $this->respondCreated(
-            data: new TaskResource($result->data),
+            data: TaskResource::toArray($result->data),
         );
     }
 
@@ -53,7 +52,7 @@ final class TaskController extends Controller
     {
         $task = $this->taskService->findById($taskId);
         return $this->respond(
-            data: new TaskResource($task->data),
+            data: TaskResource::toArray($task->data),
         );
     }
 
@@ -64,7 +63,7 @@ final class TaskController extends Controller
     {
         $task = $this->taskService->findById($taskId);
         return $this->respond(
-            data: new TaskEditResource($task->data),
+            data: TaskEditResource::toArray($task->data),
         );
     }
 
@@ -75,7 +74,7 @@ final class TaskController extends Controller
     {
         $task = $this->taskService->start($taskId);
         return $this->respondUpdated(
-            data: new TaskResource($task->data),
+            data: TaskResource::toArray($task->data),
             message: 'The task was started.',
         );
     }
@@ -87,7 +86,7 @@ final class TaskController extends Controller
     {
         $task = $this->taskService->completed($taskId);
         return $this->respondUpdated(
-            data: new TaskResource($task->data),
+            data: TaskResource::toArray($task->data),
             message: 'The task was completed.',
         );
     }
@@ -99,7 +98,7 @@ final class TaskController extends Controller
     {
         $task = $this->taskService->reopen($taskId);
         return $this->respondUpdated(
-            data: new TaskResource($task->data),
+            data: TaskResource::toArray($task->data),
             message: 'The task was reopened.',
         );
     }
@@ -115,7 +114,7 @@ final class TaskController extends Controller
             priority: $validated['priority'],
         );
         return $this->respondUpdated(
-            data: new TaskResource($task->data),
+            data: TaskResource::toArray($task->data),
             message: 'The task was changed priority.',
         );
     }
@@ -131,7 +130,7 @@ final class TaskController extends Controller
             deadline: $validated['deadline'],
         );
         return $this->respondUpdated(
-            data: new TaskResource($task->data),
+            data: TaskResource::toArray($task->data),
             message: 'The task was changed deadline.',
         );
     }

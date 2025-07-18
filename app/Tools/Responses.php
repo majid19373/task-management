@@ -2,10 +2,8 @@
 
 namespace App\Tools;
 
-use App\Exceptions\ApiException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response as Res;
-use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 
 trait Responses
 {
@@ -44,18 +42,14 @@ trait Responses
         ], Res::HTTP_OK);
     }
 
-    public function respondWithPagination(Paginator $paginate, mixed $data = null, ?string $message = null): JsonResponse
+    public function respondWithPagination(array $paginate, mixed $data = null, ?string $message = null): JsonResponse
     {
         return $this->jsonResponse([
             'status' => 'success',
             'status_code' => Res::HTTP_OK,
             'message' => $message,
             'data' => $data,
-            'paginator' => [
-                'total_count' => $paginate->total(),
-                'current_page' => $paginate->currentPage(),
-                'limit' => $paginate->perPage(),
-            ],
+            'paginator' => $paginate,
         ], Res::HTTP_OK);
     }
 

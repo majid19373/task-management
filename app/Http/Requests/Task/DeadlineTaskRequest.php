@@ -25,12 +25,8 @@ final class DeadlineTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required', 'integer', 'exists:tasks,id'],
-            'deadline' => [
-                'required',
-                'date',
-                'after_or_equal:' . Carbon::now(),
-            ],
+            'id' => ['required', 'integer'],
+            'deadline' => ['required', 'date'],
         ];
     }
 }

@@ -25,12 +25,12 @@ final class BoardController extends Controller
         $boards = $this->boardService->index($boardFilterDTO);
         if($boardFilterDTO->is_paginated){
             return $this->respondWithPagination(
-                paginate: $boards->data,
-                data: BoardResource::collection($boards->data),
+                paginate: $boards->data->paginator,
+                data: BoardResource::toArrayList($boards->data->list),
             );
         }
         return $this->respond(
-            data: new BoardResource($boards->data),
+            data: BoardResource::toArrayList($boards->data),
         );
     }
 
@@ -42,7 +42,7 @@ final class BoardController extends Controller
         $boardDTO = BoardDTO::make($request->validated());
         $board = $this->boardService->store($boardDTO);
         return $this->respondCreated(
-            data: new BoardResource($board->data),
+            data: BoardResource::toArray($board->data),
         );
     }
 
@@ -53,7 +53,7 @@ final class BoardController extends Controller
     {
         $board = $this->boardService->findById($boardId);
         return $this->respond(
-            data: new BoardResource($board->data),
+            data: BoardResource::toArray($board->data),
         );
     }
 }

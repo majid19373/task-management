@@ -7,7 +7,6 @@ use ReflectionClass;
 
 abstract class BaseDTO
 {
-    protected const NOT_PERSISTED = '_not_persisted_';
 
     public static function make(array $args): static
     {

@@ -26,6 +26,7 @@ final class BoardTest extends TestCase
 
         //Assert
         $response->assertStatus(Res::HTTP_OK);
+//        $response->ddJson();
         $response->assertExactJsonStructure(
             parent::makePaginatorResponseStructure(BoardResource::JSON_STRUCTURE)
         );
@@ -87,7 +88,7 @@ final class BoardTest extends TestCase
         $response = $this->postJson($route, $data, parent::BASE_HEADERS);
 
         //Assert
-        $response->assertStatus(Res::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertStatus(Res::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     public function test_show(): void

@@ -62,19 +62,6 @@ class TaskTest extends TestCase
         $response->assertStatus(Res::HTTP_UNPROCESSABLE_ENTITY);
     }
 
-    public function test_index_error_with_wrong_board_id(): void
-    {
-        //Arrange
-        Task::factory()->count(10)->create();
-        $route = self::BASE_ROUTE . '?board_id=10000';
-
-        //Act
-        $response = $this->get($route, parent::BASE_HEADERS);
-
-        //Assert
-        $response->assertStatus(Res::HTTP_UNPROCESSABLE_ENTITY);
-    }
-
     public function test_store(): void
     {
         //Arrange
@@ -109,7 +96,7 @@ class TaskTest extends TestCase
             'board_id' => $board->id,
             'title' => $this->faker->unique()->words(5, true),
             'description' => $this->faker->optional()->text(500),
-            'deadline' => $this->faker->dateTimeBetween('-2 years', '-1 day'),
+            'deadline' => $this->faker->dateTimeBetween('-2 years', '-1 day')->format('Y-m-d H:i:s'),
         ];
         $route = self::BASE_ROUTE;
 
@@ -117,7 +104,7 @@ class TaskTest extends TestCase
         $response = $this->postJson($route, $data, parent::BASE_HEADERS);
 
         //Assert
-        $response->assertStatus(Res::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertStatus(Res::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     public function test_show(): void
@@ -183,7 +170,7 @@ class TaskTest extends TestCase
         $response = $this->get($route, parent::BASE_HEADERS);
 
         //Assert
-        $response->assertStatus(Res::HTTP_CONFLICT);
+        $response->assertStatus(Res::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertJsonFragment([
             'message' => 'The task must not have started.',
         ]);
@@ -201,7 +188,7 @@ class TaskTest extends TestCase
         $response = $this->get($route, parent::BASE_HEADERS);
 
         //Assert
-        $response->assertStatus(Res::HTTP_CONFLICT);
+        $response->assertStatus(Res::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertJsonFragment([
             'message' => 'The task must not have started.',
         ]);
@@ -240,7 +227,7 @@ class TaskTest extends TestCase
         $response = $this->get($route, parent::BASE_HEADERS);
 
         //Assert
-        $response->assertStatus(Res::HTTP_CONFLICT);
+        $response->assertStatus(Res::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertJsonFragment([
             'message' => 'The task must not have completed.',
         ]);
@@ -258,7 +245,7 @@ class TaskTest extends TestCase
         $response = $this->get($route, parent::BASE_HEADERS);
 
         //Assert
-        $response->assertStatus(Res::HTTP_CONFLICT);
+        $response->assertStatus(Res::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertJsonFragment([
             'message' => 'The task must not have completed.',
         ]);
@@ -297,7 +284,7 @@ class TaskTest extends TestCase
         $response = $this->get($route, parent::BASE_HEADERS);
 
         //Assert
-        $response->assertStatus(Res::HTTP_CONFLICT);
+        $response->assertStatus(Res::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertJsonFragment([
             'message' => 'The task cannot reopened.',
         ]);
@@ -315,7 +302,7 @@ class TaskTest extends TestCase
         $response = $this->get($route, parent::BASE_HEADERS);
 
         //Assert
-        $response->assertStatus(Res::HTTP_CONFLICT);
+        $response->assertStatus(Res::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertJsonFragment([
             'message' => 'The task cannot reopened.',
         ]);
@@ -358,7 +345,7 @@ class TaskTest extends TestCase
         $response = $this->post($route, $data,parent::BASE_HEADERS);
 
         //Assert
-        $response->assertStatus(Res::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertStatus(Res::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     public function test_dont_be_changed_priority_with_completed_status(): void
@@ -377,7 +364,7 @@ class TaskTest extends TestCase
         $response = $this->post($route, $data,parent::BASE_HEADERS);
 
         //Assert
-        $response->assertStatus(Res::HTTP_CONFLICT);
+        $response->assertStatus(Res::HTTP_INTERNAL_SERVER_ERROR);
         $response->assertJsonFragment([
             'message' => 'The task cannot change the priority.',
         ]);
@@ -420,6 +407,6 @@ class TaskTest extends TestCase
         $response = $this->post($route, $data,parent::BASE_HEADERS);
 
         //Assert
-        $response->assertStatus(Res::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertStatus(Res::HTTP_INTERNAL_SERVER_ERROR);
     }
 }

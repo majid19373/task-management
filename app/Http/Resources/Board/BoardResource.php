@@ -2,10 +2,10 @@
 
 namespace App\Http\Resources\Board;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
+use App\Entities\Board;
+use Illuminate\Support\Collection;
 
-class BoardResource extends JsonResource
+final class BoardResource
 {
     public const JSON_STRUCTURE = [
         'id',
@@ -13,13 +13,19 @@ class BoardResource extends JsonResource
         'description',
     ];
 
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(Request $request): array
+    public static function toArray(Board $board): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $board->getId(),
+            'name' => $board->getName(),
+            'description' => $board->getDescription(),
+        ];
+    }
+
+    public static function toArrayList(Collection $boards): Collection
+    {
+        return $boards->map(function ($board) {
+            return BoardResource::toArray($board);
+        });
     }
 }
