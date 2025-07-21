@@ -6,7 +6,7 @@ use App\Entities\Board;
 use App\Repositories\PaginatedResult;
 use Illuminate\Support\Collection;
 
-interface BoardInterface
+interface BoardRepositoryInterface
 {
     public function all(array $select = ['*'], array $relations = []): Collection;
 
@@ -14,5 +14,5 @@ interface BoardInterface
 
     public function findOrFailedById(int $id, array $select = ['*'], array $relations = []): Board;
 
-    public function store(Board $data): int;
+    public function create(Board $data): void;
 }

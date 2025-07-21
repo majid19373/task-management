@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1;
 
 use App\DTO\Board\BoardDTO;
 use App\DTO\Board\BoardFilterDTO;
+use App\DTO\Board\NewBoardDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Board\StoreBoardRequest;
 use App\Http\Resources\Board\BoardResource;
@@ -39,7 +40,7 @@ final class BoardController extends Controller
      */
     public function store(StoreBoardRequest $request): JsonResponse
     {
-        $boardDTO = BoardDTO::make($request->validated());
+        $boardDTO = NewBoardDTO::make($request->validated());
         $board = $this->boardService->store($boardDTO);
         return $this->respondCreated(
             data: BoardResource::toArray($board->data),

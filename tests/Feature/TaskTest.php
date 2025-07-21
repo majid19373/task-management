@@ -403,7 +403,7 @@ class TaskTest extends TestCase
         $route = self::BASE_ROUTE . "/deadline";
         $data = [
             'id' => $task->id,
-            'deadline' => Carbon::now(),
+            'deadline' => Carbon::tomorrow(),
         ];
 
         //Act

@@ -2,18 +2,18 @@
 
 namespace App\Services;
 
-use App\DTO\Board\BoardDTO;
-use App\DTO\Board\BoardFilterDTO;
+use App\DTO\Board\{BoardFilterDTO, NewBoardDTO};
 use App\DTO\ServicesResultDTO;
 use App\Entities\Board;
 use App\Http\Resources\Board\BoardResource;
-use App\Repositories\Board\BoardRepository;
+use App\Repositories\Board\BoardRepositoryInterface;
+use App\ValueObjects\Board\{BoardName, BoardDescription};
 use Exception;
 
 final class BoardService extends BaseService
 {
     public function __construct(
-        private readonly BoardRepository $boardRepository
+        private readonly BoardRepositoryInterface $boardRepository
     )
     {}
 
@@ -32,11 +32,10 @@ final class BoardService extends BaseService
     /**
      * @throws Exception
      */
-    public function store(BoardDTO $boardDTO): ServicesResultDTO
+    public function store(NewBoardDTO $newBoardDTO): ServicesResultDTO
     {
-        $board = $this->makeEntity($boardDTO);
-        $boardId = $this->boardRepository->store($board);
-        $board = $this->boardRepository->findOrFailedById($boardId, BoardResource::JSON_STRUCTURE);
+        $board = $this->makeEntity($newBoardDTO);
+        $this->boardRepository->create($board);
         return $this->successResult(
             data: $board,
         );
@@ -53,13 +52,12 @@ final class BoardService extends BaseService
         );
     }
 
-    private function makeEntity(BoardDTO $boardDTO): Board
+    private function makeEntity(NewBoardDTO $newBoardDTO): Board
     {
         return new Board(
-            id: (int)$boardDTO->id ?? 0,
-            name: $boardDTO->name,
-            userId: (int)$boardDTO->user_id,
-            description: $boardDTO->description
+            name: new BoardName($newBoardDTO->name),
+            userId: (int)$newBoardDTO->user_id,
+            description: new BoardDescription($newBoardDTO->description)
         );
     }
 }

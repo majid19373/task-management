@@ -5,12 +5,16 @@ namespace App\Repositories\Board;
 use App\Entities\Board;
 use App\Models\Board as Model;
 use App\Repositories\PaginatedResult;
+use App\Repositories\ReflectionEntityWithoutConstructor;
+use App\ValueObjects\Board\{BoardDescription, BoardName};
 use Exception;
 use Illuminate\Support\Collection;
+use ReflectionException;
 
-final class BoardRepository implements BoardInterface
+final class BoardRepository implements BoardRepositoryInterface
 {
     private Model $model;
+
     public function __construct(
         Model $model
     ){
@@ -42,6 +46,9 @@ final class BoardRepository implements BoardInterface
         );
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function findOrFailedById(int $id, array $select = ['*'], array $relations = []): Board
     {
         $board = $this->model->query()->select($select)->with($relations)->findOrFail($id);
@@ -51,7 +58,7 @@ final class BoardRepository implements BoardInterface
     /**
      * @throws Exception
      */
-    public function store(Board $data): int
+    public function create(Board $data): void
     {
         $board = $this->model->query()->create([
             'name' => $data->getName(),
@@ -61,16 +68,26 @@ final class BoardRepository implements BoardInterface
         if(!$board){
             throw new Exception('Board not created');
         }
-        return $board->id;
+        $data->setId($board->id);
     }
 
-    private function makeEntity(Model $board): Board
+    /**
+     * @throws ReflectionException
+     */
+    private function makeEntity(Model $data): Board
     {
-        return new Board(
-            id: (int)$board->id,
-            name: $board->name,
-            userId: (int)$board->user_id,
-            description: $board->description
-        );
+        $reflection = new ReflectionEntityWithoutConstructor(Board::class);
+
+        $reflection->setValueInProperty('id', (int)$data->id);
+
+        $reflectionName = new ReflectionEntityWithoutConstructor(BoardName::class);
+        $reflectionName->setValueInProperty('name', $data->name);
+        $reflection->setValueInProperty('name', $reflectionName->getEntity());
+
+        $reflectionDescription = new ReflectionEntityWithoutConstructor(BoardDescription::class);
+        $reflectionDescription->setValueInProperty('description', $data->description);
+        $reflection->setValueInProperty('description', $reflectionDescription->getEntity());
+
+        return $reflection->getEntity();
     }
 }

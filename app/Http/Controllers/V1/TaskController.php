@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Resources\Task\TaskEditResource;
-use App\DTO\Task\{TaskDTO, TaskFilterDTO};
+use App\DTO\Task\{NewTaskDTO, TaskDTO, TaskFilterDTO};
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Task\{DeadlineTaskRequest, FilterTaskRequest, StoreTaskRequest, PriorityTaskRequest};
 use App\Http\Resources\Task\TaskResource;
@@ -18,6 +18,9 @@ final class TaskController extends Controller
     )
     {}
 
+    /**
+     * @throws Exception
+     */
     public function index(FilterTaskRequest $request): JsonResponse
     {
         $taskFilterDTO = TaskFilterDTO::make($request->validated());
@@ -38,7 +41,7 @@ final class TaskController extends Controller
      */
     public function store(StoreTaskRequest $request): JsonResponse
     {
-        $taskDTO = TaskDTO::make($request->validated());
+        $taskDTO = NewTaskDTO::make($request->validated());
         $result = $this->taskService->store($taskDTO);
         return $this->respondCreated(
             data: TaskResource::toArray($result->data),
