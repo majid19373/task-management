@@ -4,6 +4,7 @@ namespace App\Repositories\Task;
 
 use App\DTO\Task\TaskFilterDTO;
 use App\Entities\Task;
+use App\Enums\TaskStatusEnum;
 use App\Models\Task as Model;
 use App\Repositories\PaginatedResult;
 use App\Repositories\ReflectionEntityWithoutConstructor;
@@ -62,6 +63,14 @@ final class TaskRepository implements TaskRepositoryInterface
         return $this->makeEntity($task);
     }
 
+    public function isExist(int $id): bool
+    {
+        return $this->model->query()
+            ->where('id', '=', $id)
+            ->where('status', '<>', TaskStatusEnum::COMPLETED->value)
+            ->exists();
+    }
+
     /**
      * @throws Exception
      */
@@ -69,6 +78,7 @@ final class TaskRepository implements TaskRepositoryInterface
     {
         $task = $this->model->query()->create([
             'title' => $data->getTitle(),
+            'parent_id' => $data->getParentId(),
             'board_id' => $data->getBoardId(),
             'description' => $data->getDescription(),
             'deadline' => $data->getDeadline(),

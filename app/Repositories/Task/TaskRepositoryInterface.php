@@ -15,6 +15,8 @@ interface TaskRepositoryInterface
 
     public function findOrFailedById(int $id, array $select = ['*'], array $relations = []): Task;
 
+    public function isExist(int $id): bool;
+
     public function create(Task $data): void;
 
     public function update(Task $data): void;

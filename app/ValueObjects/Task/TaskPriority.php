@@ -7,7 +7,7 @@ use InvalidArgumentException;
 
 final class TaskPriority
 {
-    private string $priority;
+    private string $priority = TaskPriorityEnum::MEDIUM->value;
 
     public function __construct(string $priority)
     {

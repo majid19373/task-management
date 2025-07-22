@@ -11,6 +11,7 @@ use App\ValueObjects\Task\TaskTitle;
 final class Task
 {
     private int $id;
+    private ?int $parentId;
     private int $boardId;
     private TaskTitle $title;
     private TaskStatus $status;
@@ -21,12 +22,14 @@ final class Task
     public function __construct(
         int $boardId,
         TaskTitle $title,
+        ?int $parentId = null,
         ?TaskDescription $description = null,
         ?TaskDeadline $deadline = null,
     )
     {
         $this->boardId = $boardId;
         $this->title = $title;
+        $this->parentId = $parentId;
         $this->description = $description;
         $this->deadline = $deadline;
     }
@@ -53,6 +56,7 @@ final class Task
 
 
     public function getId(): int { return $this->id; }
+    public function getParentId(): ?int { return $this->parentId; }
     public function getBoardId(): int { return $this->boardId; }
     public function getTitle(): string { return $this->title->getTitle(); }
     public function getDescription(): ?string { return $this->description->getDescription(); }

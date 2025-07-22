@@ -9,8 +9,8 @@ use App\Entities\Task;
 use App\Enums\TaskStatusEnum;
 use App\Http\Resources\Board\BoardResource;
 use App\Http\Resources\Task\TaskResource;
-use App\Repositories\Board\BoardRepository;
-use App\Repositories\Task\TaskRepository;
+use App\Repositories\Board\BoardRepositoryInterface;
+use App\Repositories\Task\TaskRepositoryInterface;
 use App\Rules\Task\CheckPriority;
 use App\Rules\Task\CheckStatus;
 use App\ValueObjects\Task\TaskDeadline;
@@ -24,8 +24,8 @@ use Exception;
 final class TaskService extends BaseService
 {
     public function __construct(
-        private readonly TaskRepository $taskRepository,
-        private readonly BoardRepository $boardRepository,
+        private readonly TaskRepositoryInterface $taskRepository,
+        private readonly BoardRepositoryInterface $boardRepository,
         private readonly CheckStatus $checkStatus,
         private readonly CheckPriority $checkPriority,
     )
@@ -53,7 +53,16 @@ final class TaskService extends BaseService
      */
     public function store(NewTaskDTO $taskDTO): ServicesResultDTO
     {
-        $this->boardRepository->findOrFailedById($taskDTO->board_id, BoardResource::JSON_STRUCTURE);
+        if(!$this->boardRepository->isExist($taskDTO->board_id)){
+            $this->throwException(
+                message: 'The board does not exist.',
+            );
+        }
+        if($taskDTO->parent_id && !$this->taskRepository->isExist($taskDTO->parent_id)){
+            $this->throwException(
+                message: 'The task does not exist.',
+            );
+        }
         $task = $this->makeEntity($taskDTO);
         $this->taskRepository->create($task);
         $task = $this->taskRepository->findOrFailedById($task->getId(), TaskResource::JSON_STRUCTURE);
@@ -171,6 +180,7 @@ final class TaskService extends BaseService
         return new Task(
             boardId: (int)$newTaskDTO->board_id,
             title: new TaskTitle($newTaskDTO->title),
+            parentId: $newTaskDTO->parent_id,
             description: new TaskDescription($newTaskDTO->description),
             deadline: new TaskDeadline($newTaskDTO->deadline),
         );

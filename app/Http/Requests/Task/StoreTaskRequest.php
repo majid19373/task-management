@@ -19,6 +19,7 @@ final class StoreTaskRequest extends FormRequest
         return [
             'board_id' => ['required'],
             'title' => ['required', 'string'],
+            'parent_id' => ['nullable', 'integer'],
             'description' => ['nullable', 'string'],
             'deadline' => ['nullable', 'date'],
         ];

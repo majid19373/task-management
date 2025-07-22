@@ -55,6 +55,11 @@ final class BoardRepository implements BoardRepositoryInterface
         return $this->makeEntity($board);
     }
 
+    public function isExist(int $id): bool
+    {
+        return $this->model->query()->where('id', '=', $id)->exists();
+    }
+
     /**
      * @throws Exception
      */

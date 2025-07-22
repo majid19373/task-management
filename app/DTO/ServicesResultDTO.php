@@ -2,7 +2,7 @@
 
 namespace App\DTO;
 
-use Illuminate\Http\Response as Res;
+use Symfony\Component\HttpFoundation\Response;
 
 final class ServicesResultDTO
 {
@@ -13,7 +13,7 @@ final class ServicesResultDTO
         public ?int $statusCode,
     ) {}
 
-    public static function success(mixed $data, ?string $message, ?int $statusCode = Res::HTTP_OK): self
+    public static function success(mixed $data, ?string $message, ?int $statusCode = Response::HTTP_OK): self
     {
         return new self(
             success: true,

@@ -3,7 +3,7 @@
 namespace App\Tools;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response as Res;
+use Symfony\Component\HttpFoundation\Response;
 
 trait Responses
 {
@@ -16,44 +16,44 @@ trait Responses
     {
         return $this->jsonResponse([
             'status' => 'success',
-            'status_code' => Res::HTTP_OK,
+            'status_code' => Response::HTTP_OK,
             'message' => $message,
             'data' => $data,
-        ], Res::HTTP_OK);
+        ], Response::HTTP_OK);
     }
 
     public function respondCreated(mixed $data = null, ?string $message = 'Successfully created.'): JsonResponse
     {
         return $this->jsonResponse([
             'status' => 'success',
-            'status_code' => Res::HTTP_CREATED,
+            'status_code' => Response::HTTP_CREATED,
             'message' => $message,
             'data' => $data,
-        ], Res::HTTP_CREATED);
+        ], Response::HTTP_CREATED);
     }
 
     public function respondUpdated(mixed $data = null, ?string $message = 'Successfully updated.'): JsonResponse
     {
         return $this->jsonResponse([
             'status' => 'success',
-            'status_code' => Res::HTTP_OK,
+            'status_code' => Response::HTTP_OK,
             'message' => $message,
             'data' => $data,
-        ], Res::HTTP_OK);
+        ], Response::HTTP_OK);
     }
 
     public function respondWithPagination(array $paginate, mixed $data = null, ?string $message = null): JsonResponse
     {
         return $this->jsonResponse([
             'status' => 'success',
-            'status_code' => Res::HTTP_OK,
+            'status_code' => Response::HTTP_OK,
             'message' => $message,
             'data' => $data,
             'paginator' => $paginate,
-        ], Res::HTTP_OK);
+        ], Response::HTTP_OK);
     }
 
-    public function respondException(?string $message = null, ?int $statusCode = Res::HTTP_INTERNAL_SERVER_ERROR): JsonResponse
+    public function respondException(?string $message = null, ?int $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR): JsonResponse
     {
         return $this->jsonResponse([
             'message' => $message,

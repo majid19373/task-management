@@ -7,7 +7,7 @@ use InvalidArgumentException;
 
 final class TaskStatus
 {
-    private string $status;
+    private string $status = TaskStatusEnum::NOT_STARTED->value;
 
     public function __construct(string $status)
     {

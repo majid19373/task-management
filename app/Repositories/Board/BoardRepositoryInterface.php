@@ -14,5 +14,7 @@ interface BoardRepositoryInterface
 
     public function findOrFailedById(int $id, array $select = ['*'], array $relations = []): Board;
 
+    public function isExist(int $id): bool;
+
     public function create(Board $data): void;
 }

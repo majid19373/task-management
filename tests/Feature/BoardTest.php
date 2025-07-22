@@ -13,7 +13,7 @@ use Illuminate\Http\Response as Res;
 final class BoardTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
-    private const BASE_ROUTE = 'api/v1/board';
+    private const string BASE_ROUTE = 'api/v1/board';
 
     public function test_index(): void
     {
@@ -25,11 +25,10 @@ final class BoardTest extends TestCase
         $response = $this->get($route, parent::BASE_HEADERS);
 
         //Assert
-        $response->assertStatus(Res::HTTP_OK);
-//        $response->ddJson();
-        $response->assertExactJsonStructure(
-            parent::makePaginatorResponseStructure(BoardResource::JSON_STRUCTURE)
-        );
+        $response->assertOk()
+            ->assertExactJsonStructure(
+                parent::makePaginatorResponseStructure(BoardResource::JSON_STRUCTURE)
+            );
     }
 
     public function test_index_without_pagination(): void
@@ -42,10 +41,10 @@ final class BoardTest extends TestCase
         $response = $this->get($route, parent::BASE_HEADERS);
 
         //Assert
-        $response->assertStatus(Res::HTTP_OK);
-        $response->assertExactJsonStructure(
-            parent::makeListMainJsonStructure(BoardResource::JSON_STRUCTURE)
-        );
+        $response->assertOk()
+            ->assertExactJsonStructure(
+                parent::makeListMainJsonStructure(BoardResource::JSON_STRUCTURE)
+            );
     }
 
     public function test_store(): void
@@ -63,13 +62,13 @@ final class BoardTest extends TestCase
         $response = $this->postJson($route, $data, parent::BASE_HEADERS);
 
         //Assert
-        $response->assertStatus(Res::HTTP_CREATED);
-        $response->assertExactJsonStructure(
-            parent::makeMainJsonStructure(BoardResource::JSON_STRUCTURE)
-        );
-        $response->assertJsonFragment([
-            'name' => $data['name'],
-        ]);
+        $response->assertCreated()
+            ->assertExactJsonStructure(
+                parent::makeMainJsonStructure(BoardResource::JSON_STRUCTURE)
+            )
+            ->assertJsonFragment([
+                'name' => $data['name'],
+            ]);
     }
 
     public function test_failed_store_with_same_name_same_user(): void
@@ -88,7 +87,7 @@ final class BoardTest extends TestCase
         $response = $this->postJson($route, $data, parent::BASE_HEADERS);
 
         //Assert
-        $response->assertStatus(Res::HTTP_INTERNAL_SERVER_ERROR);
+        $response->assertServerError();
     }
 
     public function test_show(): void
@@ -101,9 +100,9 @@ final class BoardTest extends TestCase
         $response = $this->get($route, parent::BASE_HEADERS);
 
         //Assert
-        $response->assertStatus(Res::HTTP_OK);
-        $response->assertExactJsonStructure(
-            parent::makeMainJsonStructure(BoardResource::JSON_STRUCTURE)
-        );
+        $response->assertOk()
+            ->assertExactJsonStructure(
+                parent::makeMainJsonStructure(BoardResource::JSON_STRUCTURE)
+            );
     }
 }
