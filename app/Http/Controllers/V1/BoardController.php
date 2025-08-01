@@ -7,6 +7,7 @@ use App\Http\Requests\Board\BoardListFilterRequest;
 use App\Http\Requests\Board\CreateBoardRequest;
 use App\Http\Resources\Board\BoardResource;
 use App\Services\BoardService;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Exception;
 
@@ -17,10 +18,10 @@ final class BoardController extends Controller
     )
     {}
 
-    public function getList(BoardListFilterRequest $request): JsonResponse
+    public function list(BoardListFilterRequest $request): JsonResponse
     {
         $boardFilterDTO = $request->makeDTO();
-        $boards = $this->boardService->getList($boardFilterDTO);
+        $boards = $this->boardService->list($boardFilterDTO);
         if($boardFilterDTO->isPaginated){
             return $this->respondWithPagination(
                 paginate: $boards->paginator,
@@ -49,7 +50,7 @@ final class BoardController extends Controller
     {
         $board = $this->boardService->findById($boardId);
         return $this->respond(
-            data: BoardResource::toArray($board->data),
+            data: BoardResource::toArray($board),
         );
     }
 }

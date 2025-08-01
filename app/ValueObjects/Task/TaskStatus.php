@@ -18,7 +18,7 @@ final class TaskStatus
         $this->status = $status;
     }
 
-    public function getStatus(): string
+    public function value(): string
     {
         return $this->status;
     }

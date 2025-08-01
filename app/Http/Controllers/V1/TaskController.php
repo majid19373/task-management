@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Resources\Task\TaskEditResource;
-use App\DTO\Task\{NewTaskDTO, TaskDTO, TaskFilterDTO};
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Task\{DeadlineTaskRequest, FilterTaskRequest, StoreTaskRequest, PriorityTaskRequest};
+use App\Http\Requests\Task\{DeadlineTaskRequest, FilterTaskRequest, CreateTaskRequest, PriorityTaskRequest};
 use App\Http\Resources\Task\TaskResource;
 use App\Services\TaskService;
 use Illuminate\Http\JsonResponse;
@@ -21,31 +20,29 @@ final class TaskController extends Controller
     /**
      * @throws Exception
      */
-    public function index(FilterTaskRequest $request): JsonResponse
+    public function list(FilterTaskRequest $request): JsonResponse
     {
-        $taskFilterDTO = TaskFilterDTO::make($request->validated());
-        $boards = $this->taskService->index($taskFilterDTO);
-        if($taskFilterDTO->is_paginated){
+        $taskFilterDTO = $request->makeDTO();
+        $tasks = $this->taskService->list($taskFilterDTO);
+        if($taskFilterDTO->isPaginated){
             return $this->respondWithPagination(
-                paginate: $boards->data->paginator,
-                data: TaskResource::toArrayList($boards->data->list),
+                paginate: $tasks->paginator,
+                data: TaskResource::toArrayList($tasks->list),
             );
         }
         return $this->respond(
-            data: TaskResource::toArrayList($boards->data),
+            data: TaskResource::toArrayList($tasks),
         );
     }
 
     /**
      * @throws Exception
      */
-    public function store(StoreTaskRequest $request): JsonResponse
+    public function create(CreateTaskRequest $request): JsonResponse
     {
-        $taskDTO = NewTaskDTO::make($request->validated());
-        $result = $this->taskService->store($taskDTO);
-        return $this->respondCreated(
-            data: TaskResource::toArray($result->data),
-        );
+        $taskDTO = $request->makeDTO();
+        $this->taskService->create($taskDTO);
+        return $this->respondCreated();
     }
 
     /**
@@ -55,18 +52,18 @@ final class TaskController extends Controller
     {
         $task = $this->taskService->findById($taskId);
         return $this->respond(
-            data: TaskResource::toArray($task->data),
+            data: TaskResource::toArray($task),
         );
     }
 
     /**
      * @throws Exception
      */
-    public function edit(int $taskId): JsonResponse
+    public function showWithStatusPriorityFields(int $taskId): JsonResponse
     {
         $task = $this->taskService->findById($taskId);
         return $this->respond(
-            data: TaskEditResource::toArray($task->data),
+            data: TaskEditResource::toArray($task),
         );
     }
 
@@ -75,9 +72,8 @@ final class TaskController extends Controller
      */
     public function start(int $taskId): JsonResponse
     {
-        $task = $this->taskService->start($taskId);
+        $this->taskService->start($taskId);
         return $this->respondUpdated(
-            data: TaskResource::toArray($task->data),
             message: 'The task was started.',
         );
     }
@@ -87,9 +83,8 @@ final class TaskController extends Controller
      */
     public function completed(int $taskId): JsonResponse
     {
-        $task = $this->taskService->completed($taskId);
+        $this->taskService->completed($taskId);
         return $this->respondUpdated(
-            data: TaskResource::toArray($task->data),
             message: 'The task was completed.',
         );
     }
@@ -99,9 +94,8 @@ final class TaskController extends Controller
      */
     public function reopen(int $taskId): JsonResponse
     {
-        $task = $this->taskService->reopen($taskId);
+        $this->taskService->reopen($taskId);
         return $this->respondUpdated(
-            data: TaskResource::toArray($task->data),
             message: 'The task was reopened.',
         );
     }
@@ -109,15 +103,14 @@ final class TaskController extends Controller
     /**
      * @throws Exception
      */
-    public function priority(PriorityTaskRequest $request): JsonResponse
+    public function changePriority(PriorityTaskRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        $task = $this->taskService->priority(
+        $this->taskService->changePriority(
             taskId: $validated['id'],
             priority: $validated['priority'],
         );
         return $this->respondUpdated(
-            data: TaskResource::toArray($task->data),
             message: 'The task was changed priority.',
         );
     }
@@ -125,15 +118,14 @@ final class TaskController extends Controller
     /**
      * @throws Exception
      */
-    public function deadline(DeadlineTaskRequest $request): JsonResponse
+    public function changeDeadline(DeadlineTaskRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        $task = $this->taskService->deadline(
+        $this->taskService->changeDeadline(
             taskId: $validated['id'],
             deadline: $validated['deadline'],
         );
         return $this->respondUpdated(
-            data: TaskResource::toArray($task->data),
             message: 'The task was changed deadline.',
         );
     }

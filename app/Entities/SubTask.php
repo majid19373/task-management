@@ -2,17 +2,16 @@
 
 namespace App\Entities;
 
-use App\Enums\TaskPriorityEnum;
-use App\Enums\TaskStatusEnum;
 use App\ValueObjects\Task\TaskDeadline;
 use App\ValueObjects\Task\TaskDescription;
 use App\ValueObjects\Task\TaskPriority;
 use App\ValueObjects\Task\TaskStatus;
 use App\ValueObjects\Task\TaskTitle;
 
-final class Task
+final class SubTask
 {
     private int $id;
+    private ?int $taskId;
     private int $boardId;
     private TaskTitle $title;
     private TaskStatus $status;
@@ -23,16 +22,16 @@ final class Task
     public function __construct(
         int $boardId,
         TaskTitle $title,
+        int $taskId,
         ?TaskDescription $description = null,
         ?TaskDeadline $deadline = null,
     )
     {
         $this->boardId = $boardId;
         $this->title = $title;
+        $this->taskId = $taskId;
         $this->description = $description;
         $this->deadline = $deadline;
-        $this->status = new TaskStatus(TaskStatusEnum::NOT_STARTED->value);
-        $this->priority = new TaskPriority(TaskPriorityEnum::MEDIUM->value);
     }
 
     public function setId(int $id): void
@@ -57,6 +56,7 @@ final class Task
 
 
     public function getId(): int { return $this->id; }
+    public function getTaskId(): ?int { return $this->taskId; }
     public function getBoardId(): int { return $this->boardId; }
     public function getTitle(): TaskTitle { return $this->title; }
     public function getDescription(): ?TaskDescription { return $this->description; }

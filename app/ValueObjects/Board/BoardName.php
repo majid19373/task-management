@@ -18,7 +18,7 @@ final class BoardName
         $this->name = $name;
     }
 
-    public function getName(): string
+    public function value(): string
     {
         return $this->name;
     }

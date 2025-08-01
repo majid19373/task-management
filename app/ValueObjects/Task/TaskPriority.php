@@ -18,7 +18,7 @@ final class TaskPriority
         $this->priority = $priority;
     }
 
-    public function getPriority(): string
+    public function value(): string
     {
         return $this->priority;
     }

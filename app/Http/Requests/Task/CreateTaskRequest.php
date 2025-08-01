@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests\Task;
 
+use App\DTO\Task\NewTaskDTO;
 use Illuminate\Foundation\Http\FormRequest;
 
-final class StoreTaskRequest extends FormRequest
+final class CreateTaskRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -19,9 +20,18 @@ final class StoreTaskRequest extends FormRequest
         return [
             'board_id' => ['required'],
             'title' => ['required', 'string'],
-            'parent_id' => ['nullable', 'integer'],
             'description' => ['nullable', 'string'],
             'deadline' => ['nullable', 'date'],
         ];
+    }
+
+    public function makeDTO(): NewTaskDTO
+    {
+        return new NewTaskDTO(
+            boardId: $this->board_id,
+            title: $this->title,
+            description: $this->description,
+            deadline: $this->deadline,
+        );
     }
 }

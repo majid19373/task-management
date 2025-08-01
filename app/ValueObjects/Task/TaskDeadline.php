@@ -2,32 +2,22 @@
 
 namespace App\ValueObjects\Task;
 
-use App\Tools\ExceptionsTrait;
 use Carbon\Carbon;
-use Exception;
+use InvalidArgumentException;
 
 final class TaskDeadline
 {
-    use ExceptionsTrait;
-    private ?Carbon $deadline = null;
+    private Carbon $deadline;
 
     /**
-     * @throws Exception
+     * @throws InvalidArgumentException
      */
-    public function __construct(?string $deadline)
+    public function __construct(string $deadline)
     {
-        if ($deadline) {
-            $this->deadline = Carbon::make($deadline);
-
-            if (!$this->deadline->isFuture()) {
-                $this->throwException(
-                    message: 'The deadline field must be a valid date',
-                );
-            }
-        }
+        $this->deadline = Carbon::make($deadline);
     }
 
-    public function getDeadline(): ?Carbon
+    public function value(): ?Carbon
     {
         return $this->deadline;
     }

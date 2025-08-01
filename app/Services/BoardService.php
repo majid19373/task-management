@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\DTO\Board\{BoardFilterDTO, NewBoardDTO};
-use App\DTO\ServicesResultDTO;
 use App\Entities\Board;
 use App\Http\Resources\Board\BoardResource;
 use App\Repositories\Board\BoardRepositoryInterface;
@@ -12,14 +11,14 @@ use Exception;
 use App\Repositories\PaginatedResult;
 use Illuminate\Support\Collection;
 
-final class BoardService extends BaseService
+final readonly class BoardService
 {
     public function __construct(
-        private readonly BoardRepositoryInterface $boardRepository
+        private BoardRepositoryInterface $boardRepository
     )
     {}
 
-    public function getList(BoardFilterDTO $boardFilterDTO): Collection|PaginatedResult
+    public function list(BoardFilterDTO $boardFilterDTO): Collection|PaginatedResult
     {
         if($boardFilterDTO->isPaginated){
             $result = $this->boardRepository->getWithPaginate($boardFilterDTO->perPage, BoardResource::JSON_STRUCTURE);
@@ -41,12 +40,9 @@ final class BoardService extends BaseService
     /**
      * @throws Exception
      */
-    public function findById(int $boardId): ServicesResultDTO
+    public function findById(int $boardId): Board
     {
-        $board = $this->boardRepository->findOrFailedById($boardId, BoardResource::JSON_STRUCTURE);
-        return $this->successResult(
-            data: $board,
-        );
+        return $this->boardRepository->findOrFailedById($boardId, BoardResource::JSON_STRUCTURE);
     }
 
     private function makeEntity(NewBoardDTO $newBoardDTO): Board

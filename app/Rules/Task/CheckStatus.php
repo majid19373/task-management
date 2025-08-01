@@ -3,20 +3,17 @@
 namespace App\Rules\Task;
 
 use App\Enums\TaskStatusEnum;
-use App\Tools\ExceptionsTrait;
-use Exception;
+use InvalidArgumentException;
 
 final class CheckStatus
 {
-    use ExceptionsTrait;
-
     /**
-     * @throws Exception
+     * @throws InvalidArgumentException
      */
     public function validate(?string $status): void
     {
         if ($status && !in_array($status, TaskStatusEnum::toArray())) {
-            $this->throwException(
+            throw new InvalidArgumentException(
                 message: 'Status task is not valid.',
             );
         }

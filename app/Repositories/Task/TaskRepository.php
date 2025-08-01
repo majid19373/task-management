@@ -3,6 +3,7 @@
 namespace App\Repositories\Task;
 
 use App\DTO\Task\TaskFilterDTO;
+use App\Entities\SubTask;
 use App\Entities\Task;
 use App\Enums\TaskStatusEnum;
 use App\Models\Task as Model;
@@ -40,7 +41,7 @@ final class TaskRepository implements TaskRepositoryInterface
     public function getWithPaginate(TaskFilterDTO $filters, array $select = ['*'], array $relations = []): PaginatedResult
     {
         $query = $this->model->query()->select($select)->with($relations);
-        $tasks = $this->applyFilters($query, $filters)->paginate($filters->per_page);
+        $tasks = $this->applyFilters($query, $filters)->paginate($filters->perPage);
         $all = $tasks->map(function (Model $task) {
             return $this->makeEntity($task);
         });
@@ -74,14 +75,35 @@ final class TaskRepository implements TaskRepositoryInterface
     /**
      * @throws Exception
      */
-    public function create(Task $data): void
+    public function storeTask(Task $data): void
     {
         $task = $this->model->query()->create([
-            'title' => $data->getTitle(),
-            'parent_id' => $data->getParentId(),
+            'title' => $data->getTitle()->value(),
             'board_id' => $data->getBoardId(),
-            'description' => $data->getDescription(),
-            'deadline' => $data->getDeadline(),
+            'description' => $data->getDescription()?->value(),
+            'deadline' => $data->getDeadline()?->value(),
+            'status' => $data->getStatus()->value(),
+            'priority' => $data->getPriority()->value(),
+        ]);
+        if(!$task){
+            throw new Exception('Task not created');
+        }
+        $data->setId($task->id);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function storeSubTask(SubTask $data): void
+    {
+        $task = $this->model->query()->create([
+            'title' => $data->getTitle()->value(),
+            'parent_id' => $data->getTaskId(),
+            'board_id' => $data->getBoardId(),
+            'description' => $data->getDescription()->value(),
+            'deadline' => $data->getDeadline()->value(),
+            'status' => $data->getStatus()->value(),
+            'priority' => $data->getPriority()->value(),
         ]);
         if(!$task){
             throw new Exception('Task not created');
@@ -95,13 +117,13 @@ final class TaskRepository implements TaskRepositoryInterface
     public function update(Task $data): void
     {
         $task = $this->model->query()->findOrFail($data->getId())->update([
-            'description' => $data->getDescription(),
-            'deadline' => $data->getDeadline(),
-            'status' => $data->getStatus(),
-            'priority' => $data->getPriority(),
+            'description' => $data->getDescription()?->value(),
+            'deadline' => $data->getDeadline()?->value(),
+            'status' => $data->getStatus()->value(),
+            'priority' => $data->getPriority()->value(),
         ]);
         if(!$task){
-            throw new Exception('Task not created');
+            throw new Exception('Task not updated');
         }
     }
 
@@ -128,9 +150,13 @@ final class TaskRepository implements TaskRepositoryInterface
         $reflectionTitle->setValueInProperty('title', $data->title);
         $reflection->setValueInProperty('title', $reflectionTitle->getEntity());
 
-        $reflectionDescription = new ReflectionEntityWithoutConstructor(TaskDescription::class);
-        $reflectionDescription->setValueInProperty('description', $data->description);
-        $reflection->setValueInProperty('description', $reflectionDescription->getEntity());
+        $description = $data->description;
+        if($description){
+            $reflectionDescription = new ReflectionEntityWithoutConstructor(TaskDescription::class);
+            $reflectionDescription->setValueInProperty('description', $data->description);
+            $description = $reflectionDescription->getEntity();
+        }
+        $reflection->setValueInProperty('description', $description);
 
         $reflectionStatus = new ReflectionEntityWithoutConstructor(TaskStatus::class);
         $reflectionStatus->setValueInProperty('status', $data->status);
@@ -140,7 +166,7 @@ final class TaskRepository implements TaskRepositoryInterface
         $reflectionPriority->setValueInProperty('priority', $data->priority);
         $reflection->setValueInProperty('priority', $reflectionPriority->getEntity());
 
-        $reflection->setValueInProperty('deadline', new TaskDeadline($data->deadline));
+        $reflection->setValueInProperty('deadline', $data->deadline ? new TaskDeadline($data->deadline) : null);
 
         return $reflection->getEntity();
     }

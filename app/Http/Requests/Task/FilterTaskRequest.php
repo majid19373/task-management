@@ -2,24 +2,17 @@
 
 namespace App\Http\Requests\Task;
 
+use App\DTO\Task\TaskFilterDTO;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class FilterTaskRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
@@ -29,5 +22,16 @@ final class FilterTaskRequest extends FormRequest
             'status' => ['nullable', 'string'],
             'priority' => ['nullable', 'string'],
         ];
+    }
+
+    public function makeDTO(): TaskFilterDTO
+    {
+        return new TaskFilterDTO(
+            boardId: $this->board_id,
+            isPaginated:$this->is_paginated == 1 || $this->is_paginated === null,
+            perPage: $this->per_page ?? 10,
+            priority: $this->priority,
+            status: $this->status,
+        );
     }
 }

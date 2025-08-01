@@ -18,7 +18,7 @@ final class TaskTitle
         $this->title = $title;
     }
 
-    public function getTitle(): string
+    public function value(): string
     {
         return $this->title;
     }

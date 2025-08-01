@@ -3,6 +3,7 @@
 namespace App\Repositories\Task;
 
 use App\DTO\Task\TaskFilterDTO;
+use App\Entities\SubTask;
 use App\Entities\Task;
 use App\Repositories\PaginatedResult;
 use Illuminate\Support\Collection;
@@ -17,7 +18,8 @@ interface TaskRepositoryInterface
 
     public function isExist(int $id): bool;
 
-    public function create(Task $data): void;
+    public function storeTask(Task $data): void;
+    public function storeSubTask(SubTask $data): void;
 
     public function update(Task $data): void;
 

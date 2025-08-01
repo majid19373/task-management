@@ -3,20 +3,17 @@
 namespace App\Rules\Task;
 
 use App\Enums\TaskPriorityEnum;
-use App\Tools\ExceptionsTrait;
-use Exception;
+use InvalidArgumentException;
 
 final class CheckPriority
 {
-    use ExceptionsTrait;
-
     /**
-     * @throws Exception
+     * @throws InvalidArgumentException
      */
     public function validate(?string $priority): void
     {
         if ($priority && !in_array($priority, TaskPriorityEnum::toArray())) {
-            $this->throwException(
+            throw new InvalidArgumentException(
                 message: 'Priority task is not valid.',
             );
         }

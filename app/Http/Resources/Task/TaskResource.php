@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 
 final class TaskResource
 {
-    public const JSON_STRUCTURE = [
+    public const array JSON_STRUCTURE = [
         'id',
         'board_id',
         'title',
@@ -22,11 +22,11 @@ final class TaskResource
         return [
             'id' => $task->getId(),
             'board_id' => $task->getBoardId(),
-            'title' => $task->getTitle(),
-            'description' => $task->getDescription(),
-            'status' => $task->getStatus(),
-            'priority' => $task->getPriority(),
-            'deadline' => $task->getDeadline(),
+            'title' => $task->getTitle()->value(),
+            'description' => $task->getDescription()?->value(),
+            'status' => $task->getStatus()->value(),
+            'priority' => $task->getPriority()->value(),
+            'deadline' => $task->getDeadline()?->value(),
         ];
     }
 

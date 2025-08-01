@@ -17,7 +17,7 @@ final class BoardResource
     {
         return [
             'id' => $board->getId(),
-            'name' => $board->getName()->getName(),
+            'name' => $board->getName()->value(),
             'description' => $board->getDescription()?->value(),
         ];
     }
