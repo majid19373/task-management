@@ -9,15 +9,8 @@ use App\Enums\TaskStatusEnum;
 use App\Http\Resources\Task\TaskResource;
 use App\Repositories\Board\BoardRepositoryInterface;
 use App\Repositories\Task\TaskRepositoryInterface;
-use App\Rules\Task\CheckFutureDeadline;
-use App\Rules\Task\CheckPriority;
-use App\Rules\Task\CheckStatus;
-use App\ValueObjects\Task\TaskDeadline;
-use App\ValueObjects\Task\TaskDescription;
-use App\ValueObjects\Task\TaskPriority;
-use App\ValueObjects\Task\TaskStatus;
-use App\ValueObjects\Task\TaskTitle;
-use Carbon\Carbon;
+use App\Rules\Task\{CheckFutureDeadline, CheckPriority, CheckStatus};
+use App\ValueObjects\Task\{TaskDeadline, TaskDescription, TaskPriority, TaskStatus, TaskTitle};
 use Exception;
 use App\Repositories\PaginatedResult;
 use Illuminate\Support\Collection;
@@ -41,16 +34,16 @@ final readonly class TaskService
         $this->checkStatus->validate($taskFilterDTO->status);
         $this->checkPriority->validate($taskFilterDTO->priority);
         if($taskFilterDTO->isPaginated){
-            return $this->taskRepository->getWithPaginate($taskFilterDTO, TaskResource::JSON_STRUCTURE);
+            return $this->taskRepository->taskListWithPaginate($taskFilterDTO, TaskResource::JSON_STRUCTURE);
         }else{
-            return $this->taskRepository->all($taskFilterDTO, TaskResource::JSON_STRUCTURE);
+            return $this->taskRepository->taskList($taskFilterDTO, TaskResource::JSON_STRUCTURE);
         }
     }
 
     /**
      * @throws Exception
      */
-    public function create(NewTaskDTO $taskDTO): void
+    public function add(NewTaskDTO $taskDTO): void
     {
         if(!$this->boardRepository->isExist($taskDTO->boardId)){
             throw new Exception(
@@ -58,9 +51,8 @@ final readonly class TaskService
             );
         }
         $this->checkFutureDeadline->validate($taskDTO->deadline);
-        $task = $this->makeTaskEntity($taskDTO);
+        $task = $this->makeEntityForAdd($taskDTO);
         $this->taskRepository->storeTask($task);
-        $this->taskRepository->findOrFailedById($task->getId(), TaskResource::JSON_STRUCTURE);
     }
 
     /**
@@ -150,7 +142,7 @@ final readonly class TaskService
     /**
      * @throws Exception
      */
-    private function makeTaskEntity(NewTaskDTO $newTaskDTO): Task
+    private function makeEntityForAdd(NewTaskDTO $newTaskDTO): Task
     {
         return new Task(
             boardId: (int)$newTaskDTO->boardId,

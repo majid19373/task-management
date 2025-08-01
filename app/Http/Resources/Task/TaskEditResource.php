@@ -8,7 +8,7 @@ use App\Enums\TaskStatusEnum;
 
 final class TaskEditResource
 {
-    public const JSON_STRUCTURE = [
+    public const array JSON_STRUCTURE = [
         'task' => TaskResource::JSON_STRUCTURE,
         'statuses',
         'priorities',

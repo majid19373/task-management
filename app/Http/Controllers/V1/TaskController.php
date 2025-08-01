@@ -4,7 +4,7 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Resources\Task\TaskEditResource;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Task\{DeadlineTaskRequest, FilterTaskRequest, CreateTaskRequest, PriorityTaskRequest};
+use App\Http\Requests\Task\{DeadlineTaskRequest, FilterTaskRequest, AddTaskRequest, PriorityTaskRequest};
 use App\Http\Resources\Task\TaskResource;
 use App\Services\TaskService;
 use Illuminate\Http\JsonResponse;
@@ -38,10 +38,10 @@ final class TaskController extends Controller
     /**
      * @throws Exception
      */
-    public function create(CreateTaskRequest $request): JsonResponse
+    public function add(AddTaskRequest $request): JsonResponse
     {
         $taskDTO = $request->makeDTO();
-        $this->taskService->create($taskDTO);
+        $this->taskService->add($taskDTO);
         return $this->respondCreated();
     }
 

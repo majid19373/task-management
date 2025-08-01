@@ -1,11 +1,10 @@
 <?php
 
-namespace App\DTO\SubTask;
+namespace App\DTO\Subtask;
 
-final class NewSubTaskDTO
+final class NewSubtaskDTO
 {
     public function __construct(
-        public int $boardId,
         public string $title,
         public int $taskId,
         public ?string $description = null,

@@ -33,7 +33,7 @@ final readonly class BoardService
      */
     public function create(NewBoardDTO $newBoardDTO): void
     {
-        $board = $this->makeEntity($newBoardDTO);
+        $board = $this->makeEntityForCreate($newBoardDTO);
         $this->boardRepository->store($board);
     }
 
@@ -45,7 +45,7 @@ final readonly class BoardService
         return $this->boardRepository->findOrFailedById($boardId, BoardResource::JSON_STRUCTURE);
     }
 
-    private function makeEntity(NewBoardDTO $newBoardDTO): Board
+    private function makeEntityForCreate(NewBoardDTO $newBoardDTO): Board
     {
         return new Board(
             name: new BoardName($newBoardDTO->name),

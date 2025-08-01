@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Http\Requests\SubTask;
+namespace App\Http\Requests\Subtask;
 
+use App\DTO\Subtask\NewSubtaskDTO;
 use Illuminate\Foundation\Http\FormRequest;
 
-final class CreateSubTaskRequest extends FormRequest
+final class AddSubtaskRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
@@ -17,11 +15,20 @@ final class CreateSubTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'board_id' => ['required'],
             'title' => ['required', 'string'],
             'task_id' => ['nullable', 'integer'],
             'description' => ['nullable', 'string'],
             'deadline' => ['nullable', 'date'],
         ];
+    }
+
+    public function makeDTO(): NewSubtaskDTO
+    {
+        return new NewSubtaskDTO(
+            title: $this->title,
+            taskId: $this->task_id,
+            description: $this->description,
+            deadline: $this->deadline,
+        );
     }
 }

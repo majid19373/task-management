@@ -2,8 +2,9 @@
 
 namespace App\Repositories\Task;
 
+use App\DTO\Subtask\SubtaskFilterDTO;
 use App\DTO\Task\TaskFilterDTO;
-use App\Entities\SubTask;
+use App\Entities\Subtask;
 use App\Entities\Task;
 use App\Enums\TaskStatusEnum;
 use App\Models\Task as Model;
@@ -28,22 +29,58 @@ final class TaskRepository implements TaskRepositoryInterface
         $this->model = $model;
     }
 
-    public function all(TaskFilterDTO $filters, array $select = ['*'], array $relations = []): Collection
+    public function taskList(TaskFilterDTO $filters, array $select = ['*'], array $relations = []): Collection
     {
         $query = $this->model->query()->select($select)->with($relations);
-        $tasks = $this->applyFilters($query, $filters)->get();
+        $tasks = $this->applyTaskFilters($query, $filters)->get();
         return $tasks->map(function (Model $task) {
-            return $this->makeEntity($task);
+            return $this->makeEntityForTask($task);
         });
 
     }
 
-    public function getWithPaginate(TaskFilterDTO $filters, array $select = ['*'], array $relations = []): PaginatedResult
+    public function taskListWithPaginate(
+        TaskFilterDTO $filters,
+        array $select = ['*'],
+        array $relations = []
+    ): PaginatedResult
     {
-        $query = $this->model->query()->select($select)->with($relations);
-        $tasks = $this->applyFilters($query, $filters)->paginate($filters->perPage);
+        $query = $this->model->query()->select($select)->with($relations)
+            ->where('board_id', '=', $filters->boardId);
+        $tasks = $this->applyTaskFilters($query, $filters)->paginate($filters->perPage);
         $all = $tasks->map(function (Model $task) {
-            return $this->makeEntity($task);
+            return $this->makeEntityForTask($task);
+        });
+        return PaginatedResult::make(
+            list: $all,
+            paginator: [
+                'total' => $tasks->total(),
+                'limit' => $tasks->perPage(),
+                'current_page' => $tasks->currentPage(),
+            ]
+        );
+    }
+
+    public function subtaskList(SubtaskFilterDTO $filters, array $select = ['*'], array $relations = []): Collection
+    {
+        $tasks = $this->model->query()->select($select)->with($relations)
+            ->where('task_id', '=', $filters->taskId)->get();
+        return $tasks->map(function (Model $task) {
+            return $this->makeEntityForSubtask($task);
+        });
+
+    }
+
+    public function subtaskListWithPaginate(
+        SubtaskFilterDTO $filters,
+        array $select = ['*'],
+        array $relations = []
+    ): PaginatedResult
+    {
+        $tasks = $this->model->query()->select($select)->with($relations)
+            ->where('task_id', '=', $filters->taskId)->paginate($filters->perPage);
+        $all = $tasks->map(function (Model $task) {
+            return $this->makeEntityForSubtask($task);
         });
         return PaginatedResult::make(
             list: $all,
@@ -61,7 +98,7 @@ final class TaskRepository implements TaskRepositoryInterface
     public function findOrFailedById(int $id, array $select = ['*'], array $relations = []): Task
     {
         $task = $this->model->query()->select($select)->with($relations)->findOrFail($id);
-        return $this->makeEntity($task);
+        return $this->makeEntityForTask($task);
     }
 
     public function isExist(int $id): bool
@@ -94,19 +131,19 @@ final class TaskRepository implements TaskRepositoryInterface
     /**
      * @throws Exception
      */
-    public function storeSubTask(SubTask $data): void
+    public function storeSubTask(Subtask $data): void
     {
         $task = $this->model->query()->create([
+            'task_id' => $data->getTaskId(),
+            'board_id' => $this->model->query()->find($data->getTaskId())->pluck('id')->first(),
             'title' => $data->getTitle()->value(),
-            'parent_id' => $data->getTaskId(),
-            'board_id' => $data->getBoardId(),
-            'description' => $data->getDescription()->value(),
-            'deadline' => $data->getDeadline()->value(),
+            'description' => $data->getDescription()?->value(),
+            'deadline' => $data->getDeadline()?->value(),
             'status' => $data->getStatus()->value(),
             'priority' => $data->getPriority()->value(),
         ]);
         if(!$task){
-            throw new Exception('Task not created');
+            throw new Exception('Subtask not created');
         }
         $data->setId($task->id);
     }
@@ -127,7 +164,7 @@ final class TaskRepository implements TaskRepositoryInterface
         }
     }
 
-    private function applyFilters(Builder $query, TaskFilterDTO $filters): Builder
+    private function applyTaskFilters(Builder $query, TaskFilterDTO $filters): Builder
     {
         return $query
             ->when($filters->status, fn($q) => $q->where('status', $filters->status))
@@ -138,13 +175,38 @@ final class TaskRepository implements TaskRepositoryInterface
      * @throws ReflectionException
      * @throws Exception
      */
-    private function makeEntity(Model $data): Task
+    private function makeEntityForTask(Model $data): Task
     {
         $reflection = new ReflectionEntityWithoutConstructor(Task::class);
 
-        $reflection->setValueInProperty('id', (int)$data->id);
-
         $reflection->setValueInProperty('boardId', (int)$data->board_id);
+
+        $this->makeSimilarValueObjects($reflection, $data);
+
+        return $reflection->getEntity();
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Exception
+     */
+    private function makeEntityForSubtask(Model $data): Subtask
+    {
+        $reflection = new ReflectionEntityWithoutConstructor(Subtask::class);
+
+        $reflection->setValueInProperty('taskId', (int)$data->task_id);
+
+        $this->makeSimilarValueObjects($reflection, $data);
+
+        return $reflection->getEntity();
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    private function makeSimilarValueObjects(ReflectionEntityWithoutConstructor $reflection, Model $data): void
+    {
+        $reflection->setValueInProperty('id', (int)$data->id);
 
         $reflectionTitle = new ReflectionEntityWithoutConstructor(TaskTitle::class);
         $reflectionTitle->setValueInProperty('title', $data->title);
@@ -167,7 +229,5 @@ final class TaskRepository implements TaskRepositoryInterface
         $reflection->setValueInProperty('priority', $reflectionPriority->getEntity());
 
         $reflection->setValueInProperty('deadline', $data->deadline ? new TaskDeadline($data->deadline) : null);
-
-        return $reflection->getEntity();
     }
 }

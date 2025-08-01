@@ -21,7 +21,7 @@ class TaskFactory extends Factory
     {
         return [
             'board_id' => Board::factory(),
-            'parent_id' => null,
+            'task_id' => null,
             'title' => $this->faker->unique()->words(5, true),
             'description' => $this->faker->optional()->text(500),
             'status' => TaskStatusEnum::NOT_STARTED,

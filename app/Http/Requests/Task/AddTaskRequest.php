@@ -5,11 +5,8 @@ namespace App\Http\Requests\Task;
 use App\DTO\Task\NewTaskDTO;
 use Illuminate\Foundation\Http\FormRequest;
 
-final class CreateTaskRequest extends FormRequest
+final class AddTaskRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
