@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 
 final class BoardResource
 {
-    public const JSON_STRUCTURE = [
+    public const array JSON_STRUCTURE = [
         'id',
         'name',
         'description',
@@ -17,8 +17,8 @@ final class BoardResource
     {
         return [
             'id' => $board->getId(),
-            'name' => $board->getName(),
-            'description' => $board->getDescription(),
+            'name' => $board->getName()->getName(),
+            'description' => $board->getDescription()?->value(),
         ];
     }
 

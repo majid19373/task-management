@@ -2,12 +2,10 @@
 
 namespace App\DTO\Board;
 
-use App\DTO\BaseDTO;
-
-final class NewBoardDTO extends BaseDTO
+final class NewBoardDTO
 {
     public function __construct(
-        public int $user_id,
+        public int $userId,
         public string $name,
         public ?string $description = null,
     )

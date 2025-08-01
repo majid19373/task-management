@@ -4,9 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\V1\{BoardController, TaskController};
 
 Route::prefix('v1')->group(function () {
-    Route::resource('board', BoardController::class)
-        ->names('board')
-        ->only(['index', 'show', 'store']);
+    Route::prefix('board')->name('board.')->group(function () {
+        Route::get('', [BoardController::class, 'getList'])->name('list');
+        Route::get('{boardId}', [BoardController::class, 'show'])->name('show');
+        Route::post('', [BoardController::class, 'create'])->name('create');
+    });
 
     Route::prefix('task')->name('task.')->group(function () {
         Route::get('{task}/start', [TaskController::class, 'start'])->name('start');

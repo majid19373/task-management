@@ -63,12 +63,12 @@ final class BoardRepository implements BoardRepositoryInterface
     /**
      * @throws Exception
      */
-    public function create(Board $data): void
+    public function store(Board $data): void
     {
         $board = $this->model->query()->create([
-            'name' => $data->getName(),
+            'name' => $data->getName()->getName(),
             'user_id' => $data->getUserId(),
-            'description' => $data->getDescription(),
+            'description' => $data->getDescription()?->value(),
         ]);
         if(!$board){
             throw new Exception('Board not created');
@@ -89,9 +89,13 @@ final class BoardRepository implements BoardRepositoryInterface
         $reflectionName->setValueInProperty('name', $data->name);
         $reflection->setValueInProperty('name', $reflectionName->getEntity());
 
-        $reflectionDescription = new ReflectionEntityWithoutConstructor(BoardDescription::class);
-        $reflectionDescription->setValueInProperty('description', $data->description);
-        $reflection->setValueInProperty('description', $reflectionDescription->getEntity());
+        $description = $data->description;
+        if($data->description){
+            $reflectionDescription = new ReflectionEntityWithoutConstructor(BoardDescription::class);
+            $reflectionDescription->setValueInProperty('description', $data->description);
+            $description = $reflectionDescription->getEntity();
+        }
+        $reflection->setValueInProperty('description', $description);
 
         return $reflection->getEntity();
     }

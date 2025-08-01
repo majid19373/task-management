@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\DTO\Board\BoardDTO;
-use App\DTO\Board\BoardFilterDTO;
-use App\DTO\Board\NewBoardDTO;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Board\StoreBoardRequest;
+use App\Http\Requests\Board\BoardListFilterRequest;
+use App\Http\Requests\Board\CreateBoardRequest;
 use App\Http\Resources\Board\BoardResource;
 use App\Services\BoardService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Exception;
 
 final class BoardController extends Controller
@@ -20,31 +17,29 @@ final class BoardController extends Controller
     )
     {}
 
-    public function index(Request $request): JsonResponse
+    public function getList(BoardListFilterRequest $request): JsonResponse
     {
-        $boardFilterDTO = BoardFilterDTO::make($request->toArray());
-        $boards = $this->boardService->index($boardFilterDTO);
-        if($boardFilterDTO->is_paginated){
+        $boardFilterDTO = $request->makeDTO();
+        $boards = $this->boardService->getList($boardFilterDTO);
+        if($boardFilterDTO->isPaginated){
             return $this->respondWithPagination(
-                paginate: $boards->data->paginator,
-                data: BoardResource::toArrayList($boards->data->list),
+                paginate: $boards->paginator,
+                data: BoardResource::toArrayList($boards->list),
             );
         }
         return $this->respond(
-            data: BoardResource::toArrayList($boards->data),
+            data: BoardResource::toArrayList($boards),
         );
     }
 
     /**
      * @throws Exception
      */
-    public function store(StoreBoardRequest $request): JsonResponse
+    public function create(CreateBoardRequest $request): JsonResponse
     {
-        $boardDTO = NewBoardDTO::make($request->validated());
-        $board = $this->boardService->store($boardDTO);
-        return $this->respondCreated(
-            data: BoardResource::toArray($board->data),
-        );
+        $boardDTO = $request->makeDTO();
+        $this->boardService->create($boardDTO);
+        return $this->respondCreated();
     }
 
     /**

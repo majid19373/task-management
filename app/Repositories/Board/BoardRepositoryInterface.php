@@ -16,5 +16,5 @@ interface BoardRepositoryInterface
 
     public function isExist(int $id): bool;
 
-    public function create(Board $data): void;
+    public function store(Board $data): void;
 }

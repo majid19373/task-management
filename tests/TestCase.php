@@ -6,17 +6,17 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
-    protected const BASE_HEADERS = [
+    protected const array BASE_HEADERS = [
         'Accept' => 'application/json',
     ];
 
-    protected const MAIN_JSON_STRUCTURE = [
+    protected const array MAIN_JSON_STRUCTURE = [
         'message',
         'status',
         'status_code',
     ];
 
-    protected const PAGINATOR_JSON_STRUCTURE = [
+    protected const array PAGINATOR_JSON_STRUCTURE = [
         'total',
         'current_page',
         'limit',
@@ -26,6 +26,14 @@ abstract class TestCase extends BaseTestCase
     {
         return [
             'data' => $data,
+            ...self::MAIN_JSON_STRUCTURE,
+        ];
+    }
+
+    protected function makeMainJsonStructureWithoutData(): array
+    {
+        return [
+            'data',
             ...self::MAIN_JSON_STRUCTURE,
         ];
     }

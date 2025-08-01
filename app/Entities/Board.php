@@ -25,7 +25,7 @@ final class Board
     }
 
     public function getId(): int { return $this->id; }
-    public function getName(): string { return $this->name->getName(); }
+    public function getName(): BoardName { return $this->name; }
     public function getUserId(): int { return $this->userId; }
-    public function getDescription(): ?string { return $this->description->getDescription(); }
+    public function getDescription(): ?BoardDescription { return $this->description; }
 }

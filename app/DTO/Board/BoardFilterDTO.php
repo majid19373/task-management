@@ -2,13 +2,11 @@
 
 namespace App\DTO\Board;
 
-use App\DTO\BaseDTO;
-
-final class BoardFilterDTO extends BaseDTO
+final class BoardFilterDTO
 {
     public function __construct(
-        public bool $is_paginated = true,
-        public int $per_page = 10,
+        public bool $isPaginated = true,
+        public ?int $perPage = 10,
     )
     {}
 }

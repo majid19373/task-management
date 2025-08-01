@@ -15,7 +15,7 @@ final class BoardTest extends TestCase
     use RefreshDatabase, WithFaker;
     private const string BASE_ROUTE = 'api/v1/board';
 
-    public function test_index(): void
+    public function test_list(): void
     {
         //Arrange
         Board::factory()->count(10)->create();
@@ -31,7 +31,7 @@ final class BoardTest extends TestCase
             );
     }
 
-    public function test_index_without_pagination(): void
+    public function test_list_without_pagination(): void
     {
         //Arrange
         Board::factory()->count(10)->create();
@@ -64,11 +64,8 @@ final class BoardTest extends TestCase
         //Assert
         $response->assertCreated()
             ->assertExactJsonStructure(
-                parent::makeMainJsonStructure(BoardResource::JSON_STRUCTURE)
-            )
-            ->assertJsonFragment([
-                'name' => $data['name'],
-            ]);
+                parent::makeMainJsonStructureWithoutData()
+            );
     }
 
     public function test_failed_store_with_same_name_same_user(): void

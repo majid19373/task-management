@@ -9,6 +9,8 @@ use App\Http\Resources\Board\BoardResource;
 use App\Repositories\Board\BoardRepositoryInterface;
 use App\ValueObjects\Board\{BoardName, BoardDescription};
 use Exception;
+use App\Repositories\PaginatedResult;
+use Illuminate\Support\Collection;
 
 final class BoardService extends BaseService
 {
@@ -17,28 +19,23 @@ final class BoardService extends BaseService
     )
     {}
 
-    public function index(BoardFilterDTO $boardFilterDTO): ServicesResultDTO
+    public function getList(BoardFilterDTO $boardFilterDTO): Collection|PaginatedResult
     {
-        if($boardFilterDTO->is_paginated){
-            $result = $this->boardRepository->getWithPaginate($boardFilterDTO->per_page, BoardResource::JSON_STRUCTURE);
+        if($boardFilterDTO->isPaginated){
+            $result = $this->boardRepository->getWithPaginate($boardFilterDTO->perPage, BoardResource::JSON_STRUCTURE);
         }else{
             $result = $this->boardRepository->all(BoardResource::JSON_STRUCTURE);
         }
-        return $this->successResult(
-            data: $result,
-        );
+        return $result;
     }
 
     /**
      * @throws Exception
      */
-    public function store(NewBoardDTO $newBoardDTO): ServicesResultDTO
+    public function create(NewBoardDTO $newBoardDTO): void
     {
         $board = $this->makeEntity($newBoardDTO);
-        $this->boardRepository->create($board);
-        return $this->successResult(
-            data: $board,
-        );
+        $this->boardRepository->store($board);
     }
 
     /**
@@ -56,8 +53,8 @@ final class BoardService extends BaseService
     {
         return new Board(
             name: new BoardName($newBoardDTO->name),
-            userId: (int)$newBoardDTO->user_id,
-            description: new BoardDescription($newBoardDTO->description)
+            userId: (int)$newBoardDTO->userId,
+            description: $newBoardDTO->description ? new BoardDescription($newBoardDTO->description) : null,
         );
     }
 }
