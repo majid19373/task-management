@@ -5,11 +5,9 @@ namespace App\Services;
 use App\DTO\Task\NewTaskDTO;
 use App\DTO\Task\TaskFilterDTO;
 use App\Entities\Task;
-use App\Enums\TaskStatusEnum;
 use App\Http\Resources\Task\TaskResource;
 use App\Repositories\Board\BoardRepositoryInterface;
 use App\Repositories\Task\TaskRepositoryInterface;
-use App\Rules\Task\{CheckFutureDeadline, CheckPriority, CheckStatus};
 use App\ValueObjects\Task\{TaskDeadline, TaskDescription, TaskPriority, TaskStatus, TaskTitle};
 use Exception;
 use App\Repositories\PaginatedResult;
@@ -20,9 +18,6 @@ final readonly class TaskService
     public function __construct(
         private TaskRepositoryInterface  $taskRepository,
         private BoardRepositoryInterface $boardRepository,
-        private CheckStatus              $checkStatus,
-        private CheckPriority            $checkPriority,
-        private CheckFutureDeadline      $checkFutureDeadline,
     )
     {}
 
@@ -31,28 +26,27 @@ final readonly class TaskService
      */
     public function list(TaskFilterDTO $taskFilterDTO): PaginatedResult|Collection
     {
-        $this->checkStatus->validate($taskFilterDTO->status);
-        $this->checkPriority->validate($taskFilterDTO->priority);
+        TaskStatus::validate($taskFilterDTO->status);
+        TaskPriority::validate($taskFilterDTO->priority);
         if($taskFilterDTO->isPaginated){
-            return $this->taskRepository->taskListWithPaginate($taskFilterDTO, TaskResource::JSON_STRUCTURE);
+            return $this->taskRepository->listWithPaginate($taskFilterDTO, TaskResource::JSON_STRUCTURE);
         }else{
-            return $this->taskRepository->taskList($taskFilterDTO, TaskResource::JSON_STRUCTURE);
+            return $this->taskRepository->list($taskFilterDTO, TaskResource::JSON_STRUCTURE);
         }
     }
 
     /**
      * @throws Exception
      */
-    public function add(NewTaskDTO $taskDTO): void
+    public function add(NewTaskDTO $newTaskDTO): void
     {
-        if(!$this->boardRepository->isExist($taskDTO->boardId)){
-            throw new Exception(
-                message: 'The board does not exist.',
-            );
-        }
-        $this->checkFutureDeadline->validate($taskDTO->deadline);
-        $task = $this->makeEntityForAdd($taskDTO);
-        $this->taskRepository->storeTask($task);
+        $board = $this->boardRepository->getById($newTaskDTO->boardId);
+        $task = $board->addTask(
+            title: new TaskTitle($newTaskDTO->title),
+            description: $newTaskDTO->description ? new taskDescription($newTaskDTO->description) : null,
+            deadline: $newTaskDTO->deadline ? new taskDeadline($newTaskDTO->deadline) : null,
+        );
+        $this->taskRepository->store($task);
     }
 
     /**
@@ -60,7 +54,7 @@ final readonly class TaskService
      */
     public function findById(int $taskId): Task
     {
-        return $this->taskRepository->findOrFailedById($taskId, TaskResource::JSON_STRUCTURE);
+        return $this->taskRepository->getById($taskId, TaskResource::JSON_STRUCTURE);
     }
 
     /**
@@ -68,13 +62,8 @@ final readonly class TaskService
      */
     public function start(int $taskId): void
     {
-        $task = $this->taskRepository->findOrFailedById($taskId, TaskResource::JSON_STRUCTURE);
-        if($task->getStatus()->value() !== TaskStatusEnum::NOT_STARTED->value){
-            throw new Exception(
-                message: 'The task must not have started.',
-            );
-        }
-        $task->setStatus(new TaskStatus(TaskStatusEnum::IN_PROGRESS->value));
+        $task = $this->taskRepository->getById($taskId, TaskResource::JSON_STRUCTURE);
+        $task->start();
         $this->taskRepository->update($task);
     }
 
@@ -83,13 +72,8 @@ final readonly class TaskService
      */
     public function completed(int $taskId): void
     {
-        $task = $this->taskRepository->findOrFailedById($taskId, TaskResource::JSON_STRUCTURE);
-        if($task->getStatus()->value() !== TaskStatusEnum::IN_PROGRESS->value){
-            throw new Exception(
-                message: 'The task must not have completed.',
-            );
-        }
-        $task->setStatus(new TaskStatus(TaskStatusEnum::COMPLETED->value));
+        $task = $this->taskRepository->getById($taskId, TaskResource::JSON_STRUCTURE);
+        $task->completed();
         $this->taskRepository->update($task);
     }
 
@@ -98,13 +82,8 @@ final readonly class TaskService
      */
     public function reopen(int $taskId): void
     {
-        $task = $this->taskRepository->findOrFailedById($taskId, TaskResource::JSON_STRUCTURE);
-        if($task->getStatus()->value() !== TaskStatusEnum::COMPLETED->value){
-            throw new Exception(
-                message: 'The task cannot reopened.',
-            );
-        }
-        $task->setStatus(new TaskStatus(TaskStatusEnum::NOT_STARTED->value));
+        $task = $this->taskRepository->getById($taskId, TaskResource::JSON_STRUCTURE);
+        $task->reopen();
         $this->taskRepository->update($task);
     }
 
@@ -113,13 +92,8 @@ final readonly class TaskService
      */
     public function changePriority(int $taskId, string $priority): void
     {
-        $task = $this->taskRepository->findOrFailedById($taskId, TaskResource::JSON_STRUCTURE);
-        if($task->getStatus()->value() === TaskStatusEnum::COMPLETED->value){
-            throw new Exception(
-                message: 'The task cannot change the priority.',
-            );
-        }
-        $task->setPriority(new TaskPriority($priority));
+        $task = $this->taskRepository->getById($taskId, TaskResource::JSON_STRUCTURE);
+        $task->setPriority(TaskPriority::toCase($priority));
         $this->taskRepository->update($task);
     }
 
@@ -128,27 +102,8 @@ final readonly class TaskService
      */
     public function changeDeadline(int $taskId, string $deadline): void
     {
-        $this->checkFutureDeadline->validate($deadline);
-        $task = $this->taskRepository->findOrFailedById($taskId, TaskResource::JSON_STRUCTURE);
-        if($task->getStatus()->value() === TaskStatusEnum::COMPLETED->value){
-            throw new Exception(
-                message: 'The task cannot change the deadline.',
-            );
-        }
+        $task = $this->taskRepository->getById($taskId, TaskResource::JSON_STRUCTURE);
         $task->setDeadline(new TaskDeadline($deadline));
         $this->taskRepository->update($task);
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function makeEntityForAdd(NewTaskDTO $newTaskDTO): Task
-    {
-        return new Task(
-            boardId: (int)$newTaskDTO->boardId,
-            title: new TaskTitle($newTaskDTO->title),
-            description: $newTaskDTO->description ? new TaskDescription($newTaskDTO->description) : null,
-            deadline: $newTaskDTO->deadline ? new TaskDeadline($newTaskDTO->deadline) : null,
-        );
     }
 }

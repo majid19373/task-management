@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Enums\{TaskPriorityEnum, TaskStatusEnum};
+use App\ValueObjects\Task\{TaskStatus, TaskPriority};
 
 return new class extends Migration
 {
@@ -18,8 +18,8 @@ return new class extends Migration
             $table->foreignId('board_id')->constrained('boards')->onDelete('cascade');
             $table->string('title', 100);
             $table->string('description', 500)->nullable();
-            $table->enum('status', TaskStatusEnum::toArray())->default(TaskStatusEnum::NOT_STARTED->value);
-            $table->enum('priority', TaskPriorityEnum::toArray())->default(TaskPriorityEnum::MEDIUM->value);
+            $table->enum('status', TaskStatus::toArray())->default(TaskStatus::NOT_STARTED->value);
+            $table->enum('priority', TaskPriority::toArray())->default(TaskPriority::MEDIUM->value);
             $table->timestamp('deadline')->nullable();
             $table->timestamps();
         });

@@ -24,8 +24,8 @@ final class TaskResource
             'board_id' => $task->getBoardId(),
             'title' => $task->getTitle()->value(),
             'description' => $task->getDescription()?->value(),
-            'status' => $task->getStatus()->value(),
-            'priority' => $task->getPriority()->value(),
+            'status' => $task->getStatus()->value,
+            'priority' => $task->getPriority()->value,
             'deadline' => $task->getDeadline()?->value(),
         ];
     }

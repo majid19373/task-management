@@ -23,7 +23,7 @@ final readonly class BoardService
         if($boardFilterDTO->isPaginated){
             $result = $this->boardRepository->getWithPaginate($boardFilterDTO->perPage, BoardResource::JSON_STRUCTURE);
         }else{
-            $result = $this->boardRepository->all(BoardResource::JSON_STRUCTURE);
+            $result = $this->boardRepository->getAll(BoardResource::JSON_STRUCTURE);
         }
         return $result;
     }
@@ -33,24 +33,21 @@ final readonly class BoardService
      */
     public function create(NewBoardDTO $newBoardDTO): void
     {
-        $board = $this->makeEntityForCreate($newBoardDTO);
+        $existsByUserIdAndName = $this->boardRepository->existsByUserIdAndName($newBoardDTO->userId, $newBoardDTO->name);
+        $board = new Board(
+            existsByUserIdAndName: $existsByUserIdAndName,
+            name: new BoardName($newBoardDTO->name),
+            userId: (int)$newBoardDTO->userId,
+            description: $newBoardDTO->description ? new BoardDescription($newBoardDTO->description) : null,
+        );
         $this->boardRepository->store($board);
     }
 
     /**
      * @throws Exception
      */
-    public function findById(int $boardId): Board
+    public function getById(int $boardId): Board
     {
-        return $this->boardRepository->findOrFailedById($boardId, BoardResource::JSON_STRUCTURE);
-    }
-
-    private function makeEntityForCreate(NewBoardDTO $newBoardDTO): Board
-    {
-        return new Board(
-            name: new BoardName($newBoardDTO->name),
-            userId: (int)$newBoardDTO->userId,
-            description: $newBoardDTO->description ? new BoardDescription($newBoardDTO->description) : null,
-        );
+        return $this->boardRepository->getById($boardId, BoardResource::JSON_STRUCTURE);
     }
 }

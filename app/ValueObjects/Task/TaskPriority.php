@@ -2,24 +2,35 @@
 
 namespace App\ValueObjects\Task;
 
-use App\Enums\TaskPriorityEnum;
 use InvalidArgumentException;
 
-final class TaskPriority
+enum TaskPriority: string
 {
-    private string $priority = TaskPriorityEnum::MEDIUM->value;
+    case LOW = 'low';
+    case MEDIUM = 'medium';
+    case HIGH = 'high';
+    case CRITICAL = 'critical';
 
-    public function __construct(string $priority)
+    public static function toArray(): array
     {
-        if (!in_array($priority, TaskPriorityEnum::toArray())) {
-            throw new InvalidArgumentException("Priority is not a valid Task priority.");
-        }
-
-        $this->priority = $priority;
+        return array_map(fn($case) => $case->value, TaskPriority::cases());
     }
 
-    public function value(): string
+    public static function toCase(string $input): TaskPriority
     {
-        return $this->priority;
+        return match ($input) {
+            'low' => TaskPriority::LOW,
+            'medium' => TaskPriority::MEDIUM,
+            'high' => TaskPriority::HIGH,
+            'critical' => TaskPriority::CRITICAL,
+            default => throw new InvalidArgumentException("Invalid task priority: {$input}"),
+        };
+    }
+
+    public static function validate(?string $input): void
+    {
+        if ($input && !in_array($input, TaskPriority::toArray())) {
+            throw new InvalidArgumentException('Status task is not valid.');
+        }
     }
 }

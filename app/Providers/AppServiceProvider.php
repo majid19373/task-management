@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Repositories\Subtask\SubtaskRepository;
+use App\Repositories\Subtask\SubtaskRepositoryInterface;
 use App\Repositories\Task\{TaskRepository, TaskRepositoryInterface};
 use App\Repositories\Board\{BoardRepository, BoardRepositoryInterface};
 use Illuminate\Support\ServiceProvider;
@@ -34,6 +36,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             TaskRepositoryInterface::class,
             TaskRepository::class
+        );
+
+        $this->app->bind(
+            SubtaskRepositoryInterface::class,
+            SubtaskRepository::class
         );
     }
 }

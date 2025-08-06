@@ -21,7 +21,7 @@ final class BoardRepository implements BoardRepositoryInterface
         $this->model = $model;
     }
 
-    public function all(array $select = ['*'], array $relations = []): Collection
+    public function getAll(array $select = ['*'], array $relations = []): Collection
     {
         $boards = $this->model->query()->select($select)->with($relations)->get();
         return $boards->map(function (Model $board) {
@@ -49,15 +49,10 @@ final class BoardRepository implements BoardRepositoryInterface
     /**
      * @throws ReflectionException
      */
-    public function findOrFailedById(int $id, array $select = ['*'], array $relations = []): Board
+    public function getById(int $id, array $select = ['*'], array $relations = []): Board
     {
         $board = $this->model->query()->select($select)->with($relations)->findOrFail($id);
         return $this->makeEntity($board);
-    }
-
-    public function isExist(int $id): bool
-    {
-        return $this->model->query()->where('id', '=', $id)->exists();
     }
 
     /**
@@ -74,6 +69,14 @@ final class BoardRepository implements BoardRepositoryInterface
             throw new Exception('Board not created');
         }
         $data->setId($board->id);
+    }
+
+    public function existsByUserIdAndName(int $userId, string $name): bool
+    {
+        return $this->model->query()
+            ->where('user_id', '=', $userId)
+            ->where('name', '=', $name)
+            ->exists();
     }
 
     /**

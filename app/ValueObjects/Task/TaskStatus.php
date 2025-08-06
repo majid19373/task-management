@@ -2,24 +2,35 @@
 
 namespace App\ValueObjects\Task;
 
-use App\Enums\TaskStatusEnum;
 use InvalidArgumentException;
 
-final class TaskStatus
+enum TaskStatus: string
 {
-    private string $status = TaskStatusEnum::NOT_STARTED->value;
+    case NOT_STARTED = 'not_started';
+    case IN_PROGRESS = 'in_progress';
+    case COMPLETED = 'completed';
+    case BLOCKED = 'blocked';
 
-    public function __construct(string $status)
+    public static function toArray(): array
     {
-        if (!in_array($status, TaskStatusEnum::toArray())) {
-            throw new InvalidArgumentException("Staus is not a valid Task status.");
-        }
-
-        $this->status = $status;
+        return array_map(fn($case) => $case->value, TaskStatus::cases());
     }
 
-    public function value(): string
+    public static function toCase(string $input): TaskStatus
     {
-        return $this->status;
+        return match ($input) {
+            'not_started' => TaskStatus::NOT_STARTED,
+            'in_progress' => TaskStatus::IN_PROGRESS,
+            'completed' => TaskStatus::COMPLETED,
+            'blocked' => TaskStatus::BLOCKED,
+            default => throw new InvalidArgumentException("Invalid task status: {$input}"),
+        };
+    }
+
+    public static function validate(?string $input): void
+    {
+        if ($input && !in_array($input, TaskStatus::toArray())) {
+            throw new InvalidArgumentException('Status task is not valid.');
+        }
     }
 }

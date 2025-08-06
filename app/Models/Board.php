@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\BoardFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\{
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\{
 
 class Board extends Model
 {
-    /** @use HasFactory<\Database\Factories\BoardFactory> */
+    /** @use HasFactory<BoardFactory> */
     use HasFactory;
 
     protected $fillable = [

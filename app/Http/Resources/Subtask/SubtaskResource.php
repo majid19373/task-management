@@ -24,8 +24,8 @@ final class SubtaskResource
             'task_id' => $subtask->getTaskId(),
             'title' => $subtask->getTitle()->value(),
             'description' => $subtask->getDescription()?->value(),
-            'status' => $subtask->getStatus()->value(),
-            'priority' => $subtask->getPriority()->value(),
+            'status' => $subtask->getStatus()->value,
+            'priority' => $subtask->getPriority()->value,
             'deadline' => $subtask->getDeadline()?->value(),
         ];
     }

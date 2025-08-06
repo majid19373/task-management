@@ -1,11 +1,11 @@
 <?php
 
-namespace App\ValueObjects\Task;
+namespace App\ValueObjects\Subtask;
 
 use Carbon\Carbon;
 use InvalidArgumentException;
 
-final class TaskDeadline
+final class SubtaskDeadline
 {
     private Carbon $deadline;
 

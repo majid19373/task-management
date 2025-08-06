@@ -2,9 +2,7 @@
 
 namespace Feature\Task;
 
-use App\Enums\{TaskPriorityEnum, TaskStatusEnum};
-use App\Http\Resources\Task\TaskResource;
-use App\Models\{Board, Task};
+use App\Models\{Task};
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;

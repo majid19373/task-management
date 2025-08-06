@@ -2,13 +2,9 @@
 
 namespace App\Entities;
 
-use App\Enums\TaskPriorityEnum;
-use App\Enums\TaskStatusEnum;
-use App\ValueObjects\Task\TaskDeadline;
-use App\ValueObjects\Task\TaskDescription;
-use App\ValueObjects\Task\TaskPriority;
-use App\ValueObjects\Task\TaskStatus;
-use App\ValueObjects\Task\TaskTitle;
+use App\ValueObjects\Subtask\{SubtaskDeadline, SubtaskDescription, SubtaskTitle};
+use App\ValueObjects\Task\{TaskDeadline, TaskDescription, TaskPriority, TaskStatus, TaskTitle};
+use InvalidArgumentException;
 
 final class Task
 {
@@ -21,18 +17,18 @@ final class Task
     private ?TaskDescription $description;
 
     public function __construct(
-        int $boardId,
-        TaskTitle $title,
+        int              $boardId,
+        TaskTitle        $title,
         ?TaskDescription $description = null,
-        ?TaskDeadline $deadline = null,
+        ?TaskDeadline    $deadline = null,
     )
     {
         $this->boardId = $boardId;
         $this->title = $title;
+        $this->status = TaskStatus::NOT_STARTED;
+        $this->priority = TaskPriority::MEDIUM;
         $this->description = $description;
-        $this->deadline = $deadline;
-        $this->status = new TaskStatus(TaskStatusEnum::NOT_STARTED->value);
-        $this->priority = new TaskPriority(TaskPriorityEnum::MEDIUM->value);
+        $this->setDeadline($deadline);
     }
 
     public function setId(int $id): void
@@ -40,18 +36,46 @@ final class Task
         $this->id = $id;
     }
 
-    public function setStatus(TaskStatus $status): void
+    public function start(): void
     {
-        $this->status = $status;
+        if($this->status !== TaskStatus::NOT_STARTED){
+            throw new InvalidArgumentException('The task must not have started.');
+        }
+        $this->status = TaskStatus::IN_PROGRESS;
+    }
+
+    public function completed(): void
+    {
+        if($this->status !== TaskStatus::IN_PROGRESS){
+            throw new InvalidArgumentException('The task must not have completed.');
+        }
+        $this->status = TaskStatus::COMPLETED;
+    }
+
+    public function reopen(): void
+    {
+        if($this->status !== TaskStatus::COMPLETED){
+            throw new InvalidArgumentException('The task cannot reopened.');
+        }
+        $this->status = TaskStatus::NOT_STARTED;
     }
 
     public function setPriority(TaskPriority $priority): void
     {
+        if($this->status === TaskStatus::COMPLETED){
+            throw new InvalidArgumentException('The task cannot change the priority.');
+        }
         $this->priority = $priority;
     }
 
-    public function setDeadline(TaskDeadline $deadline): void
+    public function setDeadline(?TaskDeadline $deadline): void
     {
+        if($this->status === TaskStatus::COMPLETED){
+            throw new InvalidArgumentException('The task cannot change the deadline.');
+        }
+        if ($deadline && !$deadline->isFuture()) {
+            throw new InvalidArgumentException('The deadline field must be a valid date');
+        }
         $this->deadline = $deadline;
     }
 
@@ -63,4 +87,14 @@ final class Task
     public function getStatus(): TaskStatus { return $this->status; }
     public function getPriority(): TaskPriority { return $this->priority; }
     public function getDeadline(): ?TaskDeadline { return $this->deadline; }
+
+    public function addSubtask(SubtaskTitle $title, ?SubtaskDescription $description, ?SubtaskDeadline $deadline): Subtask
+    {
+        return new Subtask(
+            taskId: $this->id,
+            title: $title,
+            description: $description,
+            deadline: $deadline,
+        );
+    }
 }

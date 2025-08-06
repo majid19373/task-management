@@ -2,10 +2,9 @@
 
 namespace Feature\Task;
 
-use App\Enums\{TaskPriorityEnum, TaskStatusEnum};
-use App\Http\Resources\Task\TaskResource;
-use App\Models\{Board, Task};
-use Carbon\Carbon;
+use App\ValueObjects\Task\TaskPriority;
+use App\ValueObjects\Task\TaskStatus;
+use App\Models\{Task};
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -22,7 +21,7 @@ class PriorityTaskTest extends TestCase
         $route = self::BASE_ROUTE . "/priority";
         $data = [
             'id' => $task->id,
-            'priority' => TaskPriorityEnum::LOW->value,
+            'priority' => TaskPriority::LOW->value,
         ];
 
         //Act
@@ -56,12 +55,12 @@ class PriorityTaskTest extends TestCase
     {
         //Arrange
         $task = Task::factory()->create([
-            'status' => TaskStatusEnum::COMPLETED->value,
+            'status' => TaskStatus::COMPLETED->value,
         ]);
         $route = self::BASE_ROUTE . "/priority";
         $data = [
             'id' => $task->id,
-            'priority' => TaskPriorityEnum::LOW->value,
+            'priority' => TaskPriority::LOW->value,
         ];
 
         //Act

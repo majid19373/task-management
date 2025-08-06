@@ -3,8 +3,8 @@
 namespace App\Http\Resources\Task;
 
 use App\Entities\Task;
-use App\Enums\TaskPriorityEnum;
-use App\Enums\TaskStatusEnum;
+use App\ValueObjects\Task\TaskPriority;
+use App\ValueObjects\Task\TaskStatus;
 
 final class TaskEditResource
 {
@@ -18,8 +18,8 @@ final class TaskEditResource
     {
         return [
             'task' => TaskResource::toArray($task),
-            'statuses' => TaskStatusEnum::toArray(),
-            'priorities' => TaskPriorityEnum::toArray(),
+            'statuses' => TaskStatus::toArray(),
+            'priorities' => TaskPriority::toArray(),
         ];
     }
 }

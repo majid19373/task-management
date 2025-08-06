@@ -7,7 +7,6 @@ use App\Http\Requests\Board\BoardListFilterRequest;
 use App\Http\Requests\Board\CreateBoardRequest;
 use App\Http\Resources\Board\BoardResource;
 use App\Services\BoardService;
-use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Exception;
 
@@ -48,7 +47,7 @@ final class BoardController extends Controller
      */
     public function show(int $boardId): JsonResponse
     {
-        $board = $this->boardService->findById($boardId);
+        $board = $this->boardService->getById($boardId);
         return $this->respond(
             data: BoardResource::toArray($board),
         );
