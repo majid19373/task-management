@@ -8,6 +8,7 @@ use App\Http\Resources\Subtask\SubtaskResource;
 use App\Repositories\PaginatedResult;
 use App\Repositories\Subtask\SubtaskRepositoryInterface;
 use App\Repositories\Task\TaskRepositoryInterface;
+use App\ValueObjects\Task\TaskStatus;
 use Illuminate\Support\Collection;
 use App\ValueObjects\Subtask\{SubtaskDeadline, SubtaskDescription, SubtaskTitle};
 use Exception;
@@ -38,8 +39,10 @@ final readonly class SubtaskService
     public function add(NewSubtaskDTO $newSubTaskDTO): void
     {
         $task = $this->taskRepository->getById($newSubTaskDTO->taskId);
+        $isCompletedTask = $task->getStatus() === TaskStatus::COMPLETED;
         $subTask = $task->addSubtask(
             title: new SubtaskTitle($newSubTaskDTO->title),
+            isCompletedTask: $isCompletedTask,
             description: $newSubTaskDTO->description ? new SubtaskDescription($newSubTaskDTO->description) : null,
             deadline: $newSubTaskDTO->deadline ? new SubtaskDeadline($newSubTaskDTO->deadline) : null,
         );

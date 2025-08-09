@@ -88,11 +88,17 @@ final class Task
     public function getPriority(): TaskPriority { return $this->priority; }
     public function getDeadline(): ?TaskDeadline { return $this->deadline; }
 
-    public function addSubtask(SubtaskTitle $title, ?SubtaskDescription $description, ?SubtaskDeadline $deadline): Subtask
+    public function addSubtask(
+        SubtaskTitle $title,
+        bool $isCompletedTask,
+        ?SubtaskDescription $description,
+        ?SubtaskDeadline $deadline
+    ): Subtask
     {
         return new Subtask(
             taskId: $this->id,
             title: $title,
+            isCompletedTask: $isCompletedTask,
             description: $description,
             deadline: $deadline,
         );

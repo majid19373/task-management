@@ -22,10 +22,14 @@ final class Subtask
     public function __construct(
         int                 $taskId,
         SubtaskTitle        $title,
+        bool                $isCompletedTask,
         ?SubtaskDescription $description = null,
         ?SubtaskDeadline    $deadline = null,
     )
     {
+        if($isCompletedTask){
+            throw new InvalidArgumentException("Can not add a subtask to a completed task.");
+        }
         $this->taskId = $taskId;
         $this->title = $title;
         $this->status = SubtaskStatus::NOT_STARTED;

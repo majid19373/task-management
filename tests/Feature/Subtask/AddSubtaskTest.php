@@ -4,6 +4,7 @@ namespace Feature\Subtask;
 
 use App\Models\Board;
 use App\Models\Task;
+use App\ValueObjects\Task\TaskStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -16,10 +17,8 @@ class AddSubtaskTest extends TestCase
     public function test_add_subtask(): void
     {
         //Arrange
-        $board = Board::factory()->create();
         $task = Task::factory()->create();
         $data = [
-            'board_id' => $board->id,
             'task_id' => $task->id,
             'title' => 'Subtask Title',
             'description' => $this->faker->optional()->text(500),
@@ -34,5 +33,25 @@ class AddSubtaskTest extends TestCase
         $this->assertDatabaseHas('tasks', [
             'task_id' => $task->id,
         ]);
+    }
+
+    public function test_can_not_add_subtask_if_task_is_completed(): void
+    {
+        //Arrange
+        $task = Task::factory()->create([
+            'status' => TaskStatus::COMPLETED->value,
+        ]);
+        $data = [
+            'task_id' => $task->id,
+            'title' => 'Subtask Title',
+            'description' => $this->faker->optional()->text(500),
+        ];
+        $route = self::BASE_ROUTE;
+
+        //Act
+        $response = $this->postJson($route, $data, parent::BASE_HEADERS);
+
+        //Assert
+        $response->assertServerError();
     }
 }
