@@ -44,4 +44,26 @@ final class SubtaskController extends Controller
         return $this->respondCreated();
     }
 
+    /**
+     * @throws Exception
+     */
+    public function start(int $subtaskId): JsonResponse
+    {
+        $this->subtaskService->start($subtaskId);
+        return $this->respondUpdated(
+            message: 'The task was started.',
+        );
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function completed(int $taskId): JsonResponse
+    {
+        $this->subtaskService->completed($taskId);
+        return $this->respondUpdated(
+            message: 'The task was completed.',
+        );
+    }
+
 }

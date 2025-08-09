@@ -7,6 +7,7 @@ use App\Entities\Task;
 use App\Models\Task as Model;
 use App\Repositories\PaginatedResult;
 use App\Repositories\ReflectionEntityWithoutConstructor;
+use App\ValueObjects\Subtask\SubtaskStatus;
 use App\ValueObjects\Task\{TaskDeadline, TaskDescription, TaskStatus, TaskPriority, TaskTitle};
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -60,6 +61,25 @@ final class TaskRepository implements TaskRepositoryInterface
     public function getById(int $id, array $select = ['*'], array $relations = []): Task
     {
         $task = $this->model->query()->select($select)->with($relations)->findOrFail($id);
+        return $this->makeEntityForTask($task);
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Exception
+     */
+    public function getByIdIfSubtasksAreCompleted(int $id, array $select = ['*']): Task
+    {
+        $task = $this->model->query()
+            ->select($select)
+            ->with(['subtasks' => function ($query) {
+                $query->where('status', '<>', SubtaskStatus::COMPLETED);
+            }])
+            ->where('id', '=', $id)
+            ->first();
+        if (!$task) {
+            throw new Exception('Task cannot be completed.');
+        }
         return $this->makeEntityForTask($task);
     }
 

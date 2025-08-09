@@ -72,7 +72,7 @@ final readonly class TaskService
      */
     public function completed(int $taskId): void
     {
-        $task = $this->taskRepository->getById($taskId, TaskResource::JSON_STRUCTURE);
+        $task = $this->taskRepository->getByIdIfSubtasksAreCompleted($taskId);
         $task->completed();
         $this->taskRepository->update($task);
     }

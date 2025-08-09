@@ -19,6 +19,8 @@ interface TaskRepositoryInterface
 
     public function getById(int $id, array $select = ['*'], array $relations = []): Task;
 
+    public function getByIdIfSubtasksAreCompleted(int $id, array $select = ['*']): Task;
+
     public function store(Task $data): void;
 
     public function update(Task $data): void;

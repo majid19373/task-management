@@ -7,6 +7,7 @@ use App\ValueObjects\Subtask\SubtaskDescription;
 use App\ValueObjects\Subtask\SubtaskPriority;
 use App\ValueObjects\Subtask\SubtaskStatus;
 use App\ValueObjects\Subtask\SubtaskTitle;
+use App\ValueObjects\Task\TaskStatus;
 use InvalidArgumentException;
 
 final class Subtask
@@ -46,7 +47,7 @@ final class Subtask
     public function setDeadline(?SubtaskDeadline $deadline): void
     {
         if($this->status === SubtaskStatus::COMPLETED){
-            throw new InvalidArgumentException('The task cannot change the deadline.');
+            throw new InvalidArgumentException('The subtask cannot change the deadline.');
         }
         if ($deadline && !$deadline->isFuture()) {
             throw new InvalidArgumentException('The deadline field must be a valid date');
@@ -54,6 +55,26 @@ final class Subtask
         $this->deadline = $deadline;
     }
 
+
+
+    public function start(TaskStatus $taskStatus): void
+    {
+        if($taskStatus === TaskStatus::COMPLETED){
+            throw new InvalidArgumentException('The subtask does not start if the task was completed.');
+        }
+        if($taskStatus !== TaskStatus::IN_PROGRESS && $this->status !== SubtaskStatus::NOT_STARTED){
+            throw new InvalidArgumentException('The subtask must not have started.');
+        }
+        $this->status = SubtaskStatus::IN_PROGRESS;
+    }
+
+    public function completed(): void
+    {
+        if($this->status !== SubtaskStatus::IN_PROGRESS){
+            throw new InvalidArgumentException('The task must not have completed.');
+        }
+        $this->status = SubtaskStatus::COMPLETED;
+    }
 
     public function getId(): int { return $this->id; }
     public function getTaskId(): ?int { return $this->taskId; }

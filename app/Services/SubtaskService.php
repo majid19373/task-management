@@ -48,4 +48,29 @@ final readonly class SubtaskService
         );
         $this->subtaskRepository->store($subTask);
     }
+
+    /**
+     * @throws Exception
+     */
+    public function start(int $subtaskId): void
+    {
+        $subtask = $this->subtaskRepository->getById($subtaskId);
+        $task = $this->taskRepository->getById($subtask->getTaskId());
+
+        $subtask->start($task->getStatus());
+        $this->subtaskRepository->update($subtask);
+
+        $task->start();
+        $this->taskRepository->update($task);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function completed(int $taskId): void
+    {
+        $subtask = $this->subtaskRepository->getById($taskId);
+        $subtask->completed();
+        $this->subtaskRepository->update($subtask);
+    }
 }
