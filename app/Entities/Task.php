@@ -2,8 +2,8 @@
 
 namespace App\Entities;
 
-use App\ValueObjects\Subtask\{SubtaskDeadline, SubtaskDescription, SubtaskTitle};
 use App\ValueObjects\Task\{TaskDeadline, TaskDescription, TaskPriority, TaskStatus, TaskTitle};
+use App\ValueObjects\Subtask\{SubtaskDescription, SubtaskTitle};
 use DomainException;
 
 final class Task
@@ -130,15 +130,13 @@ final class Task
         SubtaskTitle $title,
         bool $isCompletedTask,
         ?SubtaskDescription $description,
-        ?SubtaskDeadline $deadline
     ): Subtask
     {
-        return new Subtask(
+        return Subtask::createNew(
             taskId: $this->id,
             title: $title,
             isCompletedTask: $isCompletedTask,
             description: $description,
-            deadline: $deadline,
         );
     }
 }

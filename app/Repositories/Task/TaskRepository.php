@@ -6,9 +6,8 @@ use App\DTO\Task\TaskFilter;
 use App\Entities\Task;
 use App\Models\Task as Model;
 use App\Repositories\PaginatedResult;
-use App\Repositories\ReflectionEntityWithoutConstructor;
 use App\ValueObjects\Subtask\SubtaskStatus;
-use App\ValueObjects\Task\{TaskDeadline, TaskDescription, TaskStatus, TaskPriority, TaskTitle};
+use App\ValueObjects\Task\{TaskDescription, TaskStatus, TaskPriority, TaskTitle};
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -56,7 +55,7 @@ final class TaskRepository implements TaskRepositoryInterface
     }
 
     /**
-     * @throws ReflectionException
+     * @throws Exception
      */
     public function getById(int $id, array $select = ['*'], array $relations = []): Task
     {

@@ -6,11 +6,9 @@ use App\DTO\Subtask\SubtaskFilter;
 use App\Entities\Subtask;
 use App\Models\Task as Model;
 use App\Repositories\PaginatedResult;
-use App\Repositories\ReflectionEntityWithoutConstructor;
-use App\ValueObjects\Subtask\{SubtaskDeadline, SubtaskDescription, SubtaskPriority, SubtaskStatus, SubtaskTitle};
+use App\ValueObjects\Subtask\{SubtaskDescription, SubtaskStatus, SubtaskTitle};
 use Exception;
 use Illuminate\Support\Collection;
-use ReflectionException;
 
 final class SubtaskRepository implements SubtaskRepositoryInterface
 {
@@ -53,7 +51,7 @@ final class SubtaskRepository implements SubtaskRepositoryInterface
     }
 
     /**
-     * @throws ReflectionException
+     * @throws Exception
      */
     public function getById(int $id, array $select = ['*'], array $relations = []): Subtask
     {
@@ -71,9 +69,7 @@ final class SubtaskRepository implements SubtaskRepositoryInterface
             'board_id' => $this->model->query()->find($data->getTaskId())->pluck('id')->first(),
             'title' => $data->getTitle()->value(),
             'description' => $data->getDescription()?->value(),
-            'deadline' => $data->getDeadline()?->value(),
             'status' => $data->getStatus()->value,
-            'priority' => $data->getPriority()->value,
         ]);
         if(!$task){
             throw new Exception('Subtask not created');
@@ -88,9 +84,7 @@ final class SubtaskRepository implements SubtaskRepositoryInterface
     {
         $task = $this->model->query()->findOrFail($data->getId())->update([
             'description' => $data->getDescription()?->value(),
-            'deadline' => $data->getDeadline()?->value(),
             'status' => $data->getStatus()->value,
-            'priority' => $data->getPriority()->value,
         ]);
         if(!$task){
             throw new Exception('Task not updated');
@@ -98,35 +92,16 @@ final class SubtaskRepository implements SubtaskRepositoryInterface
     }
 
     /**
-     * @throws ReflectionException
      * @throws Exception
      */
     private function makeEntity(Model $data): Subtask
     {
-        $reflection = new ReflectionEntityWithoutConstructor(Subtask::class);
-
-        $reflection->setValueInProperty('taskId', (int)$data->task_id);
-
-        $reflection->setValueInProperty('id', (int)$data->id);
-
-        $reflectionTitle = new ReflectionEntityWithoutConstructor(SubtaskTitle::class);
-        $reflectionTitle->setValueInProperty('title', $data->title);
-        $reflection->setValueInProperty('title', $reflectionTitle->getEntity());
-
-        $description = $data->description;
-        if($description){
-            $reflectionDescription = new ReflectionEntityWithoutConstructor(SubtaskDescription::class);
-            $reflectionDescription->setValueInProperty('description', $data->description);
-            $description = $reflectionDescription->getEntity();
-        }
-        $reflection->setValueInProperty('description', $description);
-
-        $reflection->setValueInProperty('status', SubtaskStatus::toCase($data->status));
-
-        $reflection->setValueInProperty('priority', SubtaskPriority::toCase($data->priority));
-
-        $reflection->setValueInProperty('deadline', $data->deadline ? new SubtaskDeadline($data->deadline) : null);
-
-        return $reflection->getEntity();
+        return Subtask::reconstitute(
+            id: (int)$data->id,
+            taskId: (int)$data->board_id,
+            title: SubtaskTitle::reconstitute($data->title ?? ''),
+            status: SubtaskStatus::from($data->status),
+            description: $data->description ? SubtaskDescription::reconstitute($data->description) : null
+        );
     }
 }

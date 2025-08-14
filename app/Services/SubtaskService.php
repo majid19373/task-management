@@ -4,13 +4,12 @@ namespace App\Services;
 
 use App\DTO\Subtask\NewSubtask;
 use App\DTO\Subtask\SubtaskFilter;
-use App\Http\Resources\Subtask\SubtaskResource;
 use App\Repositories\PaginatedResult;
 use App\Repositories\Subtask\SubtaskRepositoryInterface;
 use App\Repositories\Task\TaskRepositoryInterface;
 use App\ValueObjects\Task\TaskStatus;
 use Illuminate\Support\Collection;
-use App\ValueObjects\Subtask\{SubtaskDeadline, SubtaskDescription, SubtaskTitle};
+use App\ValueObjects\Subtask\{SubtaskDescription, SubtaskTitle};
 use Exception;
 
 final readonly class SubtaskService
@@ -27,9 +26,9 @@ final readonly class SubtaskService
     public function list(SubtaskFilter $subtaskFilter): PaginatedResult|Collection
     {
         if($subtaskFilter->isPaginated){
-            return $this->subtaskRepository->listWithPaginate($subtaskFilter, SubtaskResource::JSON_STRUCTURE);
+            return $this->subtaskRepository->listWithPaginate($subtaskFilter);
         }else{
-            return $this->subtaskRepository->list($subtaskFilter, SubtaskResource::JSON_STRUCTURE);
+            return $this->subtaskRepository->list($subtaskFilter);
         }
     }
 
@@ -41,10 +40,9 @@ final readonly class SubtaskService
         $task = $this->taskRepository->getById($newSubTask->taskId);
         $isCompletedTask = $task->getStatus() === TaskStatus::COMPLETED;
         $subTask = $task->addSubtask(
-            title: new SubtaskTitle($newSubTask->title),
+            title: SubtaskTitle::createNew($newSubTask->title),
             isCompletedTask: $isCompletedTask,
-            description: $newSubTask->description ? new SubtaskDescription($newSubTask->description) : null,
-            deadline: $newSubTask->deadline ? new SubtaskDeadline($newSubTask->deadline) : null,
+            description: $newSubTask->description ? SubtaskDescription::reconstitute($newSubTask->description) : null,
         );
         $this->subtaskRepository->store($subTask);
     }

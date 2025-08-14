@@ -19,7 +19,7 @@ class CompletedTaskTest extends TestCase
         $task = Task::factory()->create([
             'status' => TaskStatus::IN_PROGRESS->value,
         ]);
-        $route = self::BASE_ROUTE . "/{$task->id}/completed";
+        $route = self::BASE_ROUTE . "/{$task->id}/complete";
 
         //Act
         $response = $this->get($route, parent::BASE_HEADERS);
@@ -37,7 +37,7 @@ class CompletedTaskTest extends TestCase
         $task = Task::factory()->create([
             'status' => TaskStatus::NOT_STARTED->value,
         ]);
-        $route = self::BASE_ROUTE . "/{$task->id}/completed";
+        $route = self::BASE_ROUTE . "/{$task->id}/complete";
 
         //Act
         $response = $this->get($route, parent::BASE_HEADERS);
@@ -55,7 +55,7 @@ class CompletedTaskTest extends TestCase
         $task = Task::factory()->create([
             'status' => TaskStatus::COMPLETED->value,
         ]);
-        $route = self::BASE_ROUTE . "/{$task->id}/completed";
+        $route = self::BASE_ROUTE . "/{$task->id}/complete";
 
         //Act
         $response = $this->get($route, parent::BASE_HEADERS);

@@ -18,7 +18,7 @@ class PriorityTaskTest extends TestCase
     {
         //Arrange
         $task = Task::factory()->create();
-        $route = self::BASE_ROUTE . "/priority";
+        $route = self::BASE_ROUTE . "/prioritize";
         $data = [
             'id' => $task->id,
             'priority' => TaskPriority::LOW->value,
@@ -38,7 +38,7 @@ class PriorityTaskTest extends TestCase
     {
         //Arrange
         $task = Task::factory()->create();
-        $route = self::BASE_ROUTE . "/priority";
+        $route = self::BASE_ROUTE . "/prioritize";
         $data = [
             'id' => $task->id,
             'priority' => 'test_priority',
@@ -57,7 +57,7 @@ class PriorityTaskTest extends TestCase
         $task = Task::factory()->create([
             'status' => TaskStatus::COMPLETED->value,
         ]);
-        $route = self::BASE_ROUTE . "/priority";
+        $route = self::BASE_ROUTE . "/prioritize";
         $data = [
             'id' => $task->id,
             'priority' => TaskPriority::LOW->value,

@@ -13,8 +13,6 @@ final class SubtaskResource
         'title',
         'description',
         'status',
-        'priority',
-        'deadline',
     ];
 
     public static function toArray(Subtask $subtask): array
@@ -25,8 +23,6 @@ final class SubtaskResource
             'title' => $subtask->getTitle()->value(),
             'description' => $subtask->getDescription()?->value(),
             'status' => $subtask->getStatus()->value,
-            'priority' => $subtask->getPriority()->value,
-            'deadline' => $subtask->getDeadline()?->value(),
         ];
     }
 

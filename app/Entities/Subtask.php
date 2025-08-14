@@ -2,13 +2,11 @@
 
 namespace App\Entities;
 
-use App\ValueObjects\Subtask\SubtaskDeadline;
 use App\ValueObjects\Subtask\SubtaskDescription;
-use App\ValueObjects\Subtask\SubtaskPriority;
 use App\ValueObjects\Subtask\SubtaskStatus;
 use App\ValueObjects\Subtask\SubtaskTitle;
 use App\ValueObjects\Task\TaskStatus;
-use InvalidArgumentException;
+use DomainException;
 
 final class Subtask
 {
@@ -16,27 +14,55 @@ final class Subtask
     private int $taskId;
     private SubtaskTitle $title;
     private SubtaskStatus $status;
-    private SubtaskPriority $priority;
-    private ?SubtaskDeadline $deadline;
     private ?SubtaskDescription $description;
 
-    public function __construct(
+    private function __construct(
+        int                 $taskId,
+        SubtaskTitle        $title,
+        SubtaskStatus        $status,
+        ?SubtaskDescription $description = null,
+    )
+    {
+        $this->taskId = $taskId;
+        $this->title = $title;
+        $this->status = $status;
+        $this->description = $description;
+    }
+
+    public static function createNew(
         int                 $taskId,
         SubtaskTitle        $title,
         bool                $isCompletedTask,
         ?SubtaskDescription $description = null,
-        ?SubtaskDeadline    $deadline = null,
-    )
+    ): Subtask
     {
         if($isCompletedTask){
-            throw new InvalidArgumentException("Can not add a subtask to a completed task.");
+            throw new DomainException("Can not add a subtask to a completed task.");
         }
-        $this->taskId = $taskId;
-        $this->title = $title;
-        $this->status = SubtaskStatus::NOT_STARTED;
-        $this->priority = SubtaskPriority::MEDIUM;
-        $this->description = $description;
-        $this->setDeadline($deadline);
+        return new self(
+            $taskId,
+            $title,
+            SubtaskStatus::NOT_STARTED,
+            $description,
+        );
+    }
+
+    public static function reconstitute(
+        int                 $id,
+        int                 $taskId,
+        SubtaskTitle        $title,
+        SubtaskStatus       $status,
+        ?SubtaskDescription $description = null,
+    ): Subtask
+    {
+        $task = new self(
+            $taskId,
+            $title,
+            $status,
+            $description,
+        );
+        $task->setId($id);
+        return $task;
     }
 
     public function setId(int $id): void
@@ -44,26 +70,13 @@ final class Subtask
         $this->id = $id;
     }
 
-    public function setDeadline(?SubtaskDeadline $deadline): void
-    {
-        if($this->status === SubtaskStatus::COMPLETED){
-            throw new InvalidArgumentException('The subtask cannot change the deadline.');
-        }
-        if ($deadline && !$deadline->isFuture()) {
-            throw new InvalidArgumentException('The deadline field must be a valid date');
-        }
-        $this->deadline = $deadline;
-    }
-
-
-
     public function start(TaskStatus $taskStatus): void
     {
         if($taskStatus === TaskStatus::COMPLETED){
-            throw new InvalidArgumentException('The subtask does not start if the task was completed.');
+            throw new DomainException('The subtask does not start if the task was completed.');
         }
         if($taskStatus !== TaskStatus::IN_PROGRESS && $this->status !== SubtaskStatus::NOT_STARTED){
-            throw new InvalidArgumentException('The subtask must not have started.');
+            throw new DomainException('The subtask must not have started.');
         }
         $this->status = SubtaskStatus::IN_PROGRESS;
     }
@@ -71,7 +84,7 @@ final class Subtask
     public function completed(): void
     {
         if($this->status !== SubtaskStatus::IN_PROGRESS){
-            throw new InvalidArgumentException('The task must not have completed.');
+            throw new DomainException('The task must not have completed.');
         }
         $this->status = SubtaskStatus::COMPLETED;
     }
@@ -81,6 +94,4 @@ final class Subtask
     public function getTitle(): SubtaskTitle { return $this->title; }
     public function getDescription(): ?SubtaskDescription { return $this->description; }
     public function getStatus(): SubtaskStatus { return $this->status; }
-    public function getPriority(): SubtaskPriority { return $this->priority; }
-    public function getDeadline(): ?SubtaskDeadline { return $this->deadline; }
 }
