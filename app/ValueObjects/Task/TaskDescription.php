@@ -2,19 +2,28 @@
 
 namespace App\ValueObjects\Task;
 
-use InvalidArgumentException;
+use DomainException;
 
 final class TaskDescription
 {
     private string $description;
 
-    public function __construct(?string $description)
+    private function __construct(string $description)
+    {
+        $this->description = $description;
+    }
+
+    public static function createNew(string $description): TaskDescription
     {
         if (strlen($description) > 500) {
-            throw new InvalidArgumentException("Task description must be less than 500 characters.");
+            throw new DomainException("Task description must be less than 500 characters.");
         }
+        return new self($description);
+    }
 
-        $this->description = $description;
+    public static function reconstitute(string $description): TaskDescription
+    {
+        return new self($description);
     }
 
     public function value(): ?string

@@ -68,7 +68,7 @@ final class Board
 
     public function addTask(TaskTitle $title, ?TaskDescription $description, ?TaskDeadline $deadline): Task
     {
-        return new Task(
+        return Task::createNew(
             boardId: $this->id,
             title: $title,
             description: $description,

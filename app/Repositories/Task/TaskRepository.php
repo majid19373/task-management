@@ -126,35 +126,17 @@ final class TaskRepository implements TaskRepositoryInterface
     }
 
     /**
-     * @throws ReflectionException
      * @throws Exception
      */
     private function makeEntityForTask(Model $data): Task
     {
-        $reflection = new ReflectionEntityWithoutConstructor(Task::class);
-
-        $reflection->setValueInProperty('boardId', (int)$data->board_id);
-
-        $reflection->setValueInProperty('id', (int)$data->id);
-
-        $reflectionTitle = new ReflectionEntityWithoutConstructor(TaskTitle::class);
-        $reflectionTitle->setValueInProperty('title', $data->title);
-        $reflection->setValueInProperty('title', $reflectionTitle->getEntity());
-
-        $description = $data->description;
-        if($description){
-            $reflectionDescription = new ReflectionEntityWithoutConstructor(TaskDescription::class);
-            $reflectionDescription->setValueInProperty('description', $data->description);
-            $description = $reflectionDescription->getEntity();
-        }
-        $reflection->setValueInProperty('description', $description);
-
-        $reflection->setValueInProperty('status', TaskStatus::toCase($data->status));
-
-        $reflection->setValueInProperty('priority', TaskPriority::toCase($data->priority));
-
-        $reflection->setValueInProperty('deadline', $data->deadline ? new TaskDeadline($data->deadline) : null);
-
-        return $reflection->getEntity();
+        return Task::reconstitute(
+            id: (int)$data->id,
+            boardId: (int)$data->board_id,
+            title: TaskTitle::reconstitute($data->title ?? ''),
+            status: TaskStatus::from($data->status),
+            priority: TaskPriority::from($data->priority),
+            description: $data->description ? TaskDescription::reconstitute($data->description) : null
+        );
     }
 }

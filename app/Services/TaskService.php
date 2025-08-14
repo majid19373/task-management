@@ -5,7 +5,6 @@ namespace App\Services;
 use App\DTO\Task\NewTask;
 use App\DTO\Task\TaskFilter;
 use App\Entities\Task;
-use App\Http\Resources\Task\TaskResource;
 use App\Repositories\Board\BoardRepositoryInterface;
 use App\Repositories\Task\TaskRepositoryInterface;
 use App\ValueObjects\Task\{TaskDeadline, TaskDescription, TaskPriority, TaskStatus, TaskTitle};
@@ -26,12 +25,16 @@ final readonly class TaskService
      */
     public function list(TaskFilter $taskFilter): PaginatedResult|Collection
     {
-        TaskStatus::validate($taskFilter->status);
-        TaskPriority::validate($taskFilter->priority);
+        if($taskFilter->status){
+            TaskStatus::validate($taskFilter->status);
+        }
+        if($taskFilter->priority){
+            TaskPriority::validate($taskFilter->priority);
+        }
         if($taskFilter->isPaginated){
-            return $this->taskRepository->listWithPaginate($taskFilter, TaskResource::JSON_STRUCTURE);
+            return $this->taskRepository->listWithPaginate($taskFilter);
         }else{
-            return $this->taskRepository->list($taskFilter, TaskResource::JSON_STRUCTURE);
+            return $this->taskRepository->list($taskFilter);
         }
     }
 
@@ -42,9 +45,9 @@ final readonly class TaskService
     {
         $board = $this->boardRepository->getById($newTask->boardId);
         $task = $board->addTask(
-            title: new TaskTitle($newTask->title),
-            description: $newTask->description ? new taskDescription($newTask->description) : null,
-            deadline: $newTask->deadline ? new taskDeadline($newTask->deadline) : null,
+            title: TaskTitle::createNew($newTask->title),
+            description: $newTask->description ? TaskDescription::createNew($newTask->description) : null,
+            deadline: $newTask->deadline ? TaskDeadline::createNew($newTask->deadline, now()) : null,
         );
         $this->taskRepository->store($task);
     }
@@ -54,7 +57,7 @@ final readonly class TaskService
      */
     public function findById(int $taskId): Task
     {
-        return $this->taskRepository->getById($taskId, TaskResource::JSON_STRUCTURE);
+        return $this->taskRepository->getById($taskId);
     }
 
     /**
@@ -62,7 +65,7 @@ final readonly class TaskService
      */
     public function start(int $taskId): void
     {
-        $task = $this->taskRepository->getById($taskId, TaskResource::JSON_STRUCTURE);
+        $task = $this->taskRepository->getById($taskId);
         $task->start();
         $this->taskRepository->update($task);
     }
@@ -70,10 +73,10 @@ final readonly class TaskService
     /**
      * @throws Exception
      */
-    public function completed(int $taskId): void
+    public function complete(int $taskId): void
     {
         $task = $this->taskRepository->getByIdIfSubtasksAreCompleted($taskId);
-        $task->completed();
+        $task->complete();
         $this->taskRepository->update($task);
     }
 
@@ -82,7 +85,7 @@ final readonly class TaskService
      */
     public function reopen(int $taskId): void
     {
-        $task = $this->taskRepository->getById($taskId, TaskResource::JSON_STRUCTURE);
+        $task = $this->taskRepository->getById($taskId);
         $task->reopen();
         $this->taskRepository->update($task);
     }
@@ -90,10 +93,10 @@ final readonly class TaskService
     /**
      * @throws Exception
      */
-    public function changePriority(int $taskId, string $priority): void
+    public function prioritize(int $taskId, string $priority): void
     {
-        $task = $this->taskRepository->getById($taskId, TaskResource::JSON_STRUCTURE);
-        $task->setPriority(TaskPriority::toCase($priority));
+        $task = $this->taskRepository->getById($taskId);
+        $task->prioritize(TaskPriority::validate($priority));
         $this->taskRepository->update($task);
     }
 
@@ -102,8 +105,8 @@ final readonly class TaskService
      */
     public function changeDeadline(int $taskId, string $deadline): void
     {
-        $task = $this->taskRepository->getById($taskId, TaskResource::JSON_STRUCTURE);
-        $task->setDeadline(new TaskDeadline($deadline));
+        $task = $this->taskRepository->getById($taskId);
+        $task->setDeadline(TaskDeadline::createNew($deadline, now()));
         $this->taskRepository->update($task);
     }
 }

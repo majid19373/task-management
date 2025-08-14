@@ -2,7 +2,7 @@
 
 namespace App\ValueObjects\Task;
 
-use InvalidArgumentException;
+use DomainException;
 
 enum TaskPriority: string
 {
@@ -16,21 +16,12 @@ enum TaskPriority: string
         return array_map(fn($case) => $case->value, TaskPriority::cases());
     }
 
-    public static function toCase(string $input): TaskPriority
+    public static function validate(string $input): TaskPriority
     {
-        return match ($input) {
-            'low' => TaskPriority::LOW,
-            'medium' => TaskPriority::MEDIUM,
-            'high' => TaskPriority::HIGH,
-            'critical' => TaskPriority::CRITICAL,
-            default => throw new InvalidArgumentException("Invalid task priority: {$input}"),
-        };
-    }
-
-    public static function validate(?string $input): void
-    {
-        if ($input && !in_array($input, TaskPriority::toArray())) {
-            throw new InvalidArgumentException('Status task is not valid.');
+        $priority = TaskPriority::tryFrom($input);
+        if (!$priority) {
+            throw new DomainException('Status task is not valid.');
         }
+        return $priority;
     }
 }

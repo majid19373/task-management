@@ -81,9 +81,9 @@ final class TaskController extends Controller
     /**
      * @throws Exception
      */
-    public function completed(int $taskId): JsonResponse
+    public function complete(int $taskId): JsonResponse
     {
-        $this->taskService->completed($taskId);
+        $this->taskService->complete($taskId);
         return $this->respondUpdated(
             message: 'The task was completed.',
         );
@@ -103,10 +103,10 @@ final class TaskController extends Controller
     /**
      * @throws Exception
      */
-    public function changePriority(PriorityTaskRequest $request): JsonResponse
+    public function prioritize(PriorityTaskRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        $this->taskService->changePriority(
+        $this->taskService->prioritize(
             taskId: $validated['id'],
             priority: $validated['priority'],
         );

@@ -2,28 +2,29 @@
 
 namespace App\ValueObjects\Task;
 
-use Carbon\Carbon;
-use InvalidArgumentException;
+use Carbon\CarbonImmutable;
 use DateTimeInterface;
+use DomainException;
 
 final class TaskDeadline
 {
-    private Carbon $deadline;
+    private CarbonImmutable $deadline;
 
-    /**
-     * @throws InvalidArgumentException
-     */
-    public function __construct(string $deadline)
+    private function __construct(CarbonImmutable $deadline)
     {
-        $this->deadline = Carbon::make($deadline);
+        $this->deadline = $deadline;
     }
 
-    public function isFuture(DateTimeInterface $date): bool
+    public static function createNew(string $date, DateTimeInterface $currentDate): TaskDeadline
     {
-        return $this->deadline->greaterThan($date);
+        $deadline = CarbonImmutable::make($date);
+        if(!$deadline->greaterThan($currentDate)){
+           throw new DomainException('The deadline field must be a valid date');
+        }
+        return new self($deadline);
     }
 
-    public function value(): ?Carbon
+    public function value(): ?CarbonImmutable
     {
         return $this->deadline;
     }

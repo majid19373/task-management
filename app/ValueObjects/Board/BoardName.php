@@ -2,7 +2,7 @@
 
 namespace App\ValueObjects\Board;
 
-use InvalidArgumentException;
+use DomainException;
 
 final class BoardName
 {
@@ -17,7 +17,7 @@ final class BoardName
     {
         $length = strlen($name);
         if ($length < 3 || $length > 50) {
-            throw new InvalidArgumentException("Board name must be between 3 and 50 characters.");
+            throw new DomainException("Board name must be between 3 and 50 characters.");
         }
         return new self($name);
     }

@@ -5,7 +5,6 @@ namespace App\Entities;
 use App\ValueObjects\Subtask\{SubtaskDeadline, SubtaskDescription, SubtaskTitle};
 use App\ValueObjects\Task\{TaskDeadline, TaskDescription, TaskPriority, TaskStatus, TaskTitle};
 use DomainException;
-use DateTimeInterface;
 
 final class Task
 {
@@ -17,19 +16,60 @@ final class Task
     private ?TaskDeadline $deadline;
     private ?TaskDescription $description;
 
-    public function __construct(
+    private function __construct(
         int              $boardId,
         TaskTitle        $title,
+        TaskStatus       $status,
+        TaskPriority     $priority,
         ?TaskDescription $description = null,
         ?TaskDeadline    $deadline = null,
     )
     {
         $this->boardId = $boardId;
         $this->title = $title;
-        $this->status = TaskStatus::NOT_STARTED;
-        $this->priority = TaskPriority::MEDIUM;
+        $this->status = $status;
+        $this->priority = $priority;
         $this->description = $description;
-        $this->setDeadline($deadline, now());
+        $this->deadline = $deadline;
+    }
+
+    public static function createNew(
+        int              $boardId,
+        TaskTitle        $title,
+        ?TaskDescription $description = null,
+        ?TaskDeadline    $deadline = null,
+    ): Task
+    {
+        return new self(
+            $boardId,
+            $title,
+            TaskStatus::NOT_STARTED,
+            TaskPriority::MEDIUM,
+            $description,
+            $deadline
+        );
+    }
+
+    public static function reconstitute(
+        int              $id,
+        int              $boardId,
+        TaskTitle        $title,
+        TaskStatus       $status,
+        TaskPriority     $priority,
+        ?TaskDescription $description = null,
+        ?TaskDeadline    $deadline = null,
+    ): Task
+    {
+        $task = new self(
+            $boardId,
+            $title,
+            $status,
+            $priority,
+            $description,
+            $deadline
+        );
+        $task->setId($id);
+        return $task;
     }
 
     public function setId(int $id): void
@@ -45,7 +85,7 @@ final class Task
         $this->status = TaskStatus::IN_PROGRESS;
     }
 
-    public function completed(): void
+    public function complete(): void
     {
         if($this->status !== TaskStatus::IN_PROGRESS){
             throw new DomainException('The task must not have completed.');
@@ -61,7 +101,7 @@ final class Task
         $this->status = TaskStatus::NOT_STARTED;
     }
 
-    public function setPriority(TaskPriority $priority): void
+    public function prioritize(TaskPriority $priority): void
     {
         if($this->status === TaskStatus::COMPLETED){
             throw new DomainException('The task cannot change the priority.');
@@ -69,13 +109,10 @@ final class Task
         $this->priority = $priority;
     }
 
-    public function setDeadline(?TaskDeadline $deadline, DateTimeInterface $date): void
+    public function setDeadline(?TaskDeadline $deadline): void
     {
         if($this->status === TaskStatus::COMPLETED){
             throw new DomainException('The task cannot change the deadline.');
-        }
-        if ($deadline && !$deadline->isFuture($date)) {
-            throw new DomainException('The deadline field must be a valid date');
         }
         $this->deadline = $deadline;
     }

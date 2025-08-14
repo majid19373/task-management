@@ -2,7 +2,7 @@
 
 namespace App\ValueObjects\Task;
 
-use InvalidArgumentException;
+use DomainException;
 
 enum TaskStatus: string
 {
@@ -16,21 +16,10 @@ enum TaskStatus: string
         return array_map(fn($case) => $case->value, TaskStatus::cases());
     }
 
-    public static function toCase(string $input): TaskStatus
-    {
-        return match ($input) {
-            'not_started' => TaskStatus::NOT_STARTED,
-            'in_progress' => TaskStatus::IN_PROGRESS,
-            'completed' => TaskStatus::COMPLETED,
-            'blocked' => TaskStatus::BLOCKED,
-            default => throw new InvalidArgumentException("Invalid task status: {$input}"),
-        };
-    }
-
     public static function validate(?string $input): void
     {
-        if ($input && !in_array($input, TaskStatus::toArray())) {
-            throw new InvalidArgumentException('Status task is not valid.');
+        if (!TaskStatus::tryFrom($input)) {
+            throw new DomainException('Status task is not valid.');
         }
     }
 }
