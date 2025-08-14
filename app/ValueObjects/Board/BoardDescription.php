@@ -2,19 +2,28 @@
 
 namespace App\ValueObjects\Board;
 
-use InvalidArgumentException;
+use DomainException;
 
 final class BoardDescription
 {
     private string $description;
 
-    public function __construct(string $description)
+    private function __construct(string $description)
+    {
+        $this->description = $description;
+    }
+
+    public static function createNew(string $description): BoardDescription
     {
         if (strlen($description) > 200) {
-            throw new InvalidArgumentException("Board description must be less than 200 characters.");
+            throw new DomainException("Board description must be less than 200 characters.");
         }
+        return new self($description);
+    }
 
-        $this->description = $description;
+    public static function reconstitute(string $description): BoardDescription
+    {
+        return new self($description);
     }
 
     public function value(): ?string

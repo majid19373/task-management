@@ -5,7 +5,7 @@ namespace App\Entities;
 
 use App\ValueObjects\Task\{TaskDeadline, TaskDescription, TaskTitle};
 use App\ValueObjects\Board\{BoardName, BoardDescription};
-use Exception;
+use DomainException;
 
 final class Board
 {
@@ -15,34 +15,50 @@ final class Board
     private ?BoardDescription $description;
 
     /**
-     * @throws Exception
+     * @throws DomainException
      */
-    public function __construct(
-        bool $existsByUserIdAndName,
+    private function __construct(
         BoardName $name,
         int $userId,
         ?BoardDescription $description = null
     )
     {
-        $this->setName($existsByUserIdAndName, $name);
+        $this->name = $name;
         $this->userId = $userId;
         $this->description = $description;
+    }
+
+    /**
+     * @throws DomainException
+     */
+    public static function createNew(
+        bool $existsByUserIdAndName,
+        BoardName $name,
+        int $userId,
+        ?BoardDescription $description = null
+    ): Board
+    {
+        if($existsByUserIdAndName){
+            throw new DomainException('Board name already exists for this user.');
+        }
+        return new self($name, $userId, $description);
+    }
+
+    public static function reconstitute(
+        int $id,
+        BoardName $name,
+        int $userId,
+        ?BoardDescription $description = null
+    ): Board
+    {
+        $board = new self($name, $userId, $description);
+        $board->setId($id);
+        return $board;
     }
 
     public function setId(int $id): void
     {
         $this->id = $id;
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function setName(bool $existsByUserIdAndName, BoardName $name): void
-    {
-        if($existsByUserIdAndName){
-            throw new Exception('Board name already exists for this user.');
-        }
-        $this->name = $name;
     }
 
     public function getId(): int { return $this->id; }

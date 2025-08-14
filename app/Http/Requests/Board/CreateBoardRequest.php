@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Board;
 
-use App\DTO\Board\NewBoardDTO;
+use App\DTO\Board\NewBoard;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class CreateBoardRequest extends FormRequest
@@ -21,9 +21,9 @@ final class CreateBoardRequest extends FormRequest
         ];
     }
 
-    public function makeDTO(): NewBoardDTO
+    public function makeDTO(): NewBoard
     {
-        return new NewBoardDTO(
+        return new NewBoard(
             userId: $this->user_id,
             name: $this->name,
             description: $this->description,

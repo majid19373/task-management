@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Subtask;
 
-use App\DTO\Subtask\SubtaskFilterDTO;
+use App\DTO\Subtask\SubtaskFilter;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class FilterSubtaskRequest extends FormRequest
@@ -21,9 +21,9 @@ final class FilterSubtaskRequest extends FormRequest
         ];
     }
 
-    public function makeDTO(): SubtaskFilterDTO
+    public function makeDTO(): SubtaskFilter
     {
-        return new SubtaskFilterDTO(
+        return new SubtaskFilter(
             taskId: $this->task_id,
             isPaginated:$this->is_paginated == 1 || $this->is_paginated === null,
             perPage: $this->per_page ?? 10,

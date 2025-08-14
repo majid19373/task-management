@@ -2,9 +2,8 @@
 
 namespace App\Services;
 
-use App\DTO\Board\{BoardFilterDTO, NewBoardDTO};
+use App\DTO\Board\{BoardFilter, NewBoard};
 use App\Entities\Board;
-use App\Http\Resources\Board\BoardResource;
 use App\Repositories\Board\BoardRepositoryInterface;
 use App\ValueObjects\Board\{BoardName, BoardDescription};
 use Exception;
@@ -18,12 +17,12 @@ final readonly class BoardService
     )
     {}
 
-    public function list(BoardFilterDTO $boardFilterDTO): Collection|PaginatedResult
+    public function list(BoardFilter $boardFilter): Collection|PaginatedResult
     {
-        if($boardFilterDTO->isPaginated){
-            $result = $this->boardRepository->getWithPaginate($boardFilterDTO->perPage, BoardResource::JSON_STRUCTURE);
+        if($boardFilter->isPaginated){
+            $result = $this->boardRepository->getWithPaginate($boardFilter->perPage);
         }else{
-            $result = $this->boardRepository->getAll(BoardResource::JSON_STRUCTURE);
+            $result = $this->boardRepository->getAll();
         }
         return $result;
     }
@@ -31,14 +30,15 @@ final readonly class BoardService
     /**
      * @throws Exception
      */
-    public function create(NewBoardDTO $newBoardDTO): void
+    public function create(NewBoard $newBoard): void
     {
-        $existsByUserIdAndName = $this->boardRepository->existsByUserIdAndName($newBoardDTO->userId, $newBoardDTO->name);
-        $board = new Board(
+        $name = BoardName::createNew($newBoard->name);
+        $existsByUserIdAndName = $this->boardRepository->existsByUserIdAndName($newBoard->userId, $name);
+        $board = Board::createNew(
             existsByUserIdAndName: $existsByUserIdAndName,
-            name: new BoardName($newBoardDTO->name),
-            userId: (int)$newBoardDTO->userId,
-            description: $newBoardDTO->description ? new BoardDescription($newBoardDTO->description) : null,
+            name: $name,
+            userId: (int)$newBoard->userId,
+            description: $newBoard->description ? BoardDescription::createNew($newBoard->description) : null,
         );
         $this->boardRepository->store($board);
     }
@@ -48,6 +48,6 @@ final readonly class BoardService
      */
     public function getById(int $boardId): Board
     {
-        return $this->boardRepository->getById($boardId, BoardResource::JSON_STRUCTURE);
+        return $this->boardRepository->getById($boardId);
     }
 }

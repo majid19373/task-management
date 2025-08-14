@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Task;
 
-use App\DTO\Task\TaskFilterDTO;
+use App\DTO\Task\TaskFilter;
 use App\Entities\Task;
 use App\Models\Task as Model;
 use App\Repositories\PaginatedResult;
@@ -23,7 +23,7 @@ final class TaskRepository implements TaskRepositoryInterface
         $this->model = $model;
     }
 
-    public function list(TaskFilterDTO $filters, array $select = ['*'], array $relations = []): Collection
+    public function list(TaskFilter $filters, array $select = ['*'], array $relations = []): Collection
     {
         $query = $this->model->query()->select($select)->with($relations);
         $tasks = $this->applyTaskFilters($query, $filters)->get();
@@ -34,9 +34,9 @@ final class TaskRepository implements TaskRepositoryInterface
     }
 
     public function listWithPaginate(
-        TaskFilterDTO $filters,
-        array $select = ['*'],
-        array $relations = []
+        TaskFilter $filters,
+        array      $select = ['*'],
+        array      $relations = []
     ): PaginatedResult
     {
         $query = $this->model->query()->select($select)->with($relations)
@@ -118,7 +118,7 @@ final class TaskRepository implements TaskRepositoryInterface
         }
     }
 
-    private function applyTaskFilters(Builder $query, TaskFilterDTO $filters): Builder
+    private function applyTaskFilters(Builder $query, TaskFilter $filters): Builder
     {
         return $query
             ->when($filters->status, fn($q) => $q->where('status', $filters->status))

@@ -2,7 +2,7 @@
 
 namespace App\DTO\Board;
 
-final class NewBoardDTO
+final class NewBoard
 {
     public function __construct(
         public int $userId,

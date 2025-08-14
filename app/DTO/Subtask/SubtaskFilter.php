@@ -2,7 +2,7 @@
 
 namespace App\DTO\Subtask;
 
-final class SubtaskFilterDTO
+final class SubtaskFilter
 {
     public function __construct(
         public int $taskId,

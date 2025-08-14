@@ -4,6 +4,7 @@ namespace App\ValueObjects\Task;
 
 use Carbon\Carbon;
 use InvalidArgumentException;
+use DateTimeInterface;
 
 final class TaskDeadline
 {
@@ -17,9 +18,9 @@ final class TaskDeadline
         $this->deadline = Carbon::make($deadline);
     }
 
-    public function isFuture(): bool
+    public function isFuture(DateTimeInterface $date): bool
     {
-        return $this->deadline->isFuture();
+        return $this->deadline->greaterThan($date);
     }
 
     public function value(): ?Carbon

@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Task;
 
-use App\DTO\Task\NewTaskDTO;
+use App\DTO\Task\NewTask;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class AddTaskRequest extends FormRequest
@@ -22,9 +22,9 @@ final class AddTaskRequest extends FormRequest
         ];
     }
 
-    public function makeDTO(): NewTaskDTO
+    public function makeDTO(): NewTask
     {
-        return new NewTaskDTO(
+        return new NewTask(
             boardId: $this->board_id,
             title: $this->title,
             description: $this->description,

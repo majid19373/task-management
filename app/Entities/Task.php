@@ -4,7 +4,8 @@ namespace App\Entities;
 
 use App\ValueObjects\Subtask\{SubtaskDeadline, SubtaskDescription, SubtaskTitle};
 use App\ValueObjects\Task\{TaskDeadline, TaskDescription, TaskPriority, TaskStatus, TaskTitle};
-use InvalidArgumentException;
+use DomainException;
+use DateTimeInterface;
 
 final class Task
 {
@@ -28,7 +29,7 @@ final class Task
         $this->status = TaskStatus::NOT_STARTED;
         $this->priority = TaskPriority::MEDIUM;
         $this->description = $description;
-        $this->setDeadline($deadline);
+        $this->setDeadline($deadline, now());
     }
 
     public function setId(int $id): void
@@ -39,7 +40,7 @@ final class Task
     public function start(): void
     {
         if($this->status !== TaskStatus::NOT_STARTED){
-            throw new InvalidArgumentException('The task must not have started.');
+            throw new DomainException('The task must not have started.');
         }
         $this->status = TaskStatus::IN_PROGRESS;
     }
@@ -47,7 +48,7 @@ final class Task
     public function completed(): void
     {
         if($this->status !== TaskStatus::IN_PROGRESS){
-            throw new InvalidArgumentException('The task must not have completed.');
+            throw new DomainException('The task must not have completed.');
         }
         $this->status = TaskStatus::COMPLETED;
     }
@@ -55,7 +56,7 @@ final class Task
     public function reopen(): void
     {
         if($this->status !== TaskStatus::COMPLETED){
-            throw new InvalidArgumentException('The task cannot reopened.');
+            throw new DomainException('The task cannot reopened.');
         }
         $this->status = TaskStatus::NOT_STARTED;
     }
@@ -63,18 +64,18 @@ final class Task
     public function setPriority(TaskPriority $priority): void
     {
         if($this->status === TaskStatus::COMPLETED){
-            throw new InvalidArgumentException('The task cannot change the priority.');
+            throw new DomainException('The task cannot change the priority.');
         }
         $this->priority = $priority;
     }
 
-    public function setDeadline(?TaskDeadline $deadline): void
+    public function setDeadline(?TaskDeadline $deadline, DateTimeInterface $date): void
     {
         if($this->status === TaskStatus::COMPLETED){
-            throw new InvalidArgumentException('The task cannot change the deadline.');
+            throw new DomainException('The task cannot change the deadline.');
         }
-        if ($deadline && !$deadline->isFuture()) {
-            throw new InvalidArgumentException('The deadline field must be a valid date');
+        if ($deadline && !$deadline->isFuture($date)) {
+            throw new DomainException('The deadline field must be a valid date');
         }
         $this->deadline = $deadline;
     }

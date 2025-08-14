@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Subtask;
 
-use App\DTO\Subtask\SubtaskFilterDTO;
+use App\DTO\Subtask\SubtaskFilter;
 use App\Entities\Subtask;
 use App\Models\Task as Model;
 use App\Repositories\PaginatedResult;
@@ -21,7 +21,7 @@ final class SubtaskRepository implements SubtaskRepositoryInterface
         $this->model = $model;
     }
 
-    public function list(SubtaskFilterDTO $filters, array $select = ['*'], array $relations = []): Collection
+    public function list(SubtaskFilter $filters, array $select = ['*'], array $relations = []): Collection
     {
         $subtasks = $this->model->query()->select($select)->with($relations)
             ->where('task_id', '=', $filters->taskId)->get();
@@ -32,9 +32,9 @@ final class SubtaskRepository implements SubtaskRepositoryInterface
     }
 
     public function listWithPaginate(
-        SubtaskFilterDTO $filters,
-        array $select = ['*'],
-        array $relations = []
+        SubtaskFilter $filters,
+        array         $select = ['*'],
+        array         $relations = []
     ): PaginatedResult
     {
         $subtasks = $this->model->query()->select($select)->with($relations)

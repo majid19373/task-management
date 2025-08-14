@@ -2,7 +2,7 @@
 
 namespace App\DTO\Subtask;
 
-final class NewSubtaskDTO
+final class NewSubtask
 {
     public function __construct(
         public string $title,

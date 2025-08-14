@@ -46,9 +46,6 @@ final class BoardRepository implements BoardRepositoryInterface
         );
     }
 
-    /**
-     * @throws ReflectionException
-     */
     public function getById(int $id, array $select = ['*'], array $relations = []): Board
     {
         $board = $this->model->query()->select($select)->with($relations)->findOrFail($id);
@@ -71,35 +68,21 @@ final class BoardRepository implements BoardRepositoryInterface
         $data->setId($board->id);
     }
 
-    public function existsByUserIdAndName(int $userId, string $name): bool
+    public function existsByUserIdAndName(int $userId, BoardName $name): bool
     {
         return $this->model->query()
             ->where('user_id', '=', $userId)
-            ->where('name', '=', $name)
+            ->where('name', '=', $name->value())
             ->exists();
     }
 
-    /**
-     * @throws ReflectionException
-     */
     private function makeEntity(Model $data): Board
     {
-        $reflection = new ReflectionEntityWithoutConstructor(Board::class);
-
-        $reflection->setValueInProperty('id', (int)$data->id);
-
-        $reflectionName = new ReflectionEntityWithoutConstructor(BoardName::class);
-        $reflectionName->setValueInProperty('name', $data->name);
-        $reflection->setValueInProperty('name', $reflectionName->getEntity());
-
-        $description = $data->description;
-        if($description){
-            $reflectionDescription = new ReflectionEntityWithoutConstructor(BoardDescription::class);
-            $reflectionDescription->setValueInProperty('description', $data->description);
-            $description = $reflectionDescription->getEntity();
-        }
-        $reflection->setValueInProperty('description', $description);
-
-        return $reflection->getEntity();
+        return Board::reconstitute(
+            id: $data->id,
+            name: BoardName::reconstitute($data->name),
+            userId: $data->user_id,
+            description: $data->description ? BoardDescription::reconstitute($data->description): null,
+        );
     }
 }

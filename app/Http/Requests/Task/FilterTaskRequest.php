@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Task;
 
-use App\DTO\Task\TaskFilterDTO;
+use App\DTO\Task\TaskFilter;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class FilterTaskRequest extends FormRequest
@@ -23,9 +23,9 @@ final class FilterTaskRequest extends FormRequest
         ];
     }
 
-    public function makeDTO(): TaskFilterDTO
+    public function makeDTO(): TaskFilter
     {
-        return new TaskFilterDTO(
+        return new TaskFilter(
             boardId: $this->board_id,
             isPaginated:$this->is_paginated == 1 || $this->is_paginated === null,
             perPage: $this->per_page ?? 10,

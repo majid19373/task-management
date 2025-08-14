@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\DTO\Subtask\NewSubtaskDTO;
-use App\DTO\Subtask\SubtaskFilterDTO;
+use App\DTO\Subtask\NewSubtask;
+use App\DTO\Subtask\SubtaskFilter;
 use App\Http\Resources\Subtask\SubtaskResource;
 use App\Repositories\PaginatedResult;
 use App\Repositories\Subtask\SubtaskRepositoryInterface;
@@ -24,27 +24,27 @@ final readonly class SubtaskService
     /**
      * @throws Exception
      */
-    public function list(SubtaskFilterDTO $subtaskFilterDTO): PaginatedResult|Collection
+    public function list(SubtaskFilter $subtaskFilter): PaginatedResult|Collection
     {
-        if($subtaskFilterDTO->isPaginated){
-            return $this->subtaskRepository->listWithPaginate($subtaskFilterDTO, SubtaskResource::JSON_STRUCTURE);
+        if($subtaskFilter->isPaginated){
+            return $this->subtaskRepository->listWithPaginate($subtaskFilter, SubtaskResource::JSON_STRUCTURE);
         }else{
-            return $this->subtaskRepository->list($subtaskFilterDTO, SubtaskResource::JSON_STRUCTURE);
+            return $this->subtaskRepository->list($subtaskFilter, SubtaskResource::JSON_STRUCTURE);
         }
     }
 
     /**
      * @throws Exception
      */
-    public function add(NewSubtaskDTO $newSubTaskDTO): void
+    public function add(NewSubtask $newSubTask): void
     {
-        $task = $this->taskRepository->getById($newSubTaskDTO->taskId);
+        $task = $this->taskRepository->getById($newSubTask->taskId);
         $isCompletedTask = $task->getStatus() === TaskStatus::COMPLETED;
         $subTask = $task->addSubtask(
-            title: new SubtaskTitle($newSubTaskDTO->title),
+            title: new SubtaskTitle($newSubTask->title),
             isCompletedTask: $isCompletedTask,
-            description: $newSubTaskDTO->description ? new SubtaskDescription($newSubTaskDTO->description) : null,
-            deadline: $newSubTaskDTO->deadline ? new SubtaskDeadline($newSubTaskDTO->deadline) : null,
+            description: $newSubTask->description ? new SubtaskDescription($newSubTask->description) : null,
+            deadline: $newSubTask->deadline ? new SubtaskDeadline($newSubTask->deadline) : null,
         );
         $this->subtaskRepository->store($subTask);
     }

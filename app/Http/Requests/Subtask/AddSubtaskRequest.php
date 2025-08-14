@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Subtask;
 
-use App\DTO\Subtask\NewSubtaskDTO;
+use App\DTO\Subtask\NewSubtask;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class AddSubtaskRequest extends FormRequest
@@ -22,9 +22,9 @@ final class AddSubtaskRequest extends FormRequest
         ];
     }
 
-    public function makeDTO(): NewSubtaskDTO
+    public function makeDTO(): NewSubtask
     {
-        return new NewSubtaskDTO(
+        return new NewSubtask(
             title: $this->title,
             taskId: $this->task_id,
             description: $this->description,

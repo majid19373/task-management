@@ -2,7 +2,7 @@
 
 namespace App\DTO\Board;
 
-final class BoardFilterDTO
+final class BoardFilter
 {
     public function __construct(
         public bool $isPaginated = true,

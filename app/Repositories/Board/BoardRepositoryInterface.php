@@ -4,6 +4,7 @@ namespace App\Repositories\Board;
 
 use App\Entities\Board;
 use App\Repositories\PaginatedResult;
+use App\ValueObjects\Board\BoardName;
 use Illuminate\Support\Collection;
 
 interface BoardRepositoryInterface
@@ -16,5 +17,5 @@ interface BoardRepositoryInterface
 
     public function store(Board $data): void;
 
-    public function existsByUserIdAndName(int $userId, string $name): bool;
+    public function existsByUserIdAndName(int $userId, BoardName $name): bool;
 }

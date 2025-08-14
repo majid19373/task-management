@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\DTO\Task\NewTaskDTO;
-use App\DTO\Task\TaskFilterDTO;
+use App\DTO\Task\NewTask;
+use App\DTO\Task\TaskFilter;
 use App\Entities\Task;
 use App\Http\Resources\Task\TaskResource;
 use App\Repositories\Board\BoardRepositoryInterface;
@@ -24,27 +24,27 @@ final readonly class TaskService
     /**
      * @throws Exception
      */
-    public function list(TaskFilterDTO $taskFilterDTO): PaginatedResult|Collection
+    public function list(TaskFilter $taskFilter): PaginatedResult|Collection
     {
-        TaskStatus::validate($taskFilterDTO->status);
-        TaskPriority::validate($taskFilterDTO->priority);
-        if($taskFilterDTO->isPaginated){
-            return $this->taskRepository->listWithPaginate($taskFilterDTO, TaskResource::JSON_STRUCTURE);
+        TaskStatus::validate($taskFilter->status);
+        TaskPriority::validate($taskFilter->priority);
+        if($taskFilter->isPaginated){
+            return $this->taskRepository->listWithPaginate($taskFilter, TaskResource::JSON_STRUCTURE);
         }else{
-            return $this->taskRepository->list($taskFilterDTO, TaskResource::JSON_STRUCTURE);
+            return $this->taskRepository->list($taskFilter, TaskResource::JSON_STRUCTURE);
         }
     }
 
     /**
      * @throws Exception
      */
-    public function add(NewTaskDTO $newTaskDTO): void
+    public function add(NewTask $newTask): void
     {
-        $board = $this->boardRepository->getById($newTaskDTO->boardId);
+        $board = $this->boardRepository->getById($newTask->boardId);
         $task = $board->addTask(
-            title: new TaskTitle($newTaskDTO->title),
-            description: $newTaskDTO->description ? new taskDescription($newTaskDTO->description) : null,
-            deadline: $newTaskDTO->deadline ? new taskDeadline($newTaskDTO->deadline) : null,
+            title: new TaskTitle($newTask->title),
+            description: $newTask->description ? new taskDescription($newTask->description) : null,
+            deadline: $newTask->deadline ? new taskDeadline($newTask->deadline) : null,
         );
         $this->taskRepository->store($task);
     }

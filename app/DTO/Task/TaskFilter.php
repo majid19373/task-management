@@ -2,7 +2,7 @@
 
 namespace App\DTO\Task;
 
-final class TaskFilterDTO
+final class TaskFilter
 {
     public function __construct(
         public int $boardId,

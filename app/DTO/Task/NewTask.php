@@ -2,7 +2,7 @@
 
 namespace App\DTO\Task;
 
-final class NewTaskDTO
+final class NewTask
 {
     public function __construct(
         public int $boardId,
