@@ -4,7 +4,7 @@ namespace App\Repositories\Subtask;
 
 use App\DTO\Subtask\SubtaskFilter;
 use App\Entities\Subtask;
-use App\Models\Task as Model;
+use App\Models\Subtask as Model;
 use App\Repositories\PaginatedResult;
 use App\ValueObjects\Subtask\{SubtaskDescription, SubtaskStatus, SubtaskTitle};
 use Exception;
@@ -66,7 +66,6 @@ final class SubtaskRepository implements SubtaskRepositoryInterface
     {
         $task = $this->model->query()->create([
             'task_id' => $data->getTaskId(),
-            'board_id' => $this->model->query()->find($data->getTaskId())->pluck('id')->first(),
             'title' => $data->getTitle()->value(),
             'description' => $data->getDescription()?->value(),
             'status' => $data->getStatus()->value,
@@ -98,7 +97,7 @@ final class SubtaskRepository implements SubtaskRepositoryInterface
     {
         return Subtask::reconstitute(
             id: (int)$data->id,
-            taskId: (int)$data->board_id,
+            taskId: (int)$data->task_id,
             title: SubtaskTitle::reconstitute($data->title ?? ''),
             status: SubtaskStatus::from($data->status),
             description: $data->description ? SubtaskDescription::reconstitute($data->description) : null

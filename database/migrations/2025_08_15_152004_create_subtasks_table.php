@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\ValueObjects\Task\{TaskStatus, TaskPriority};
+use App\ValueObjects\Subtask\SubtaskStatus;
 
 return new class extends Migration
 {
@@ -12,14 +12,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tasks', function (Blueprint $table) {
+        Schema::create('subtasks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('board_id')->constrained('boards')->onDelete('cascade');
+            $table->foreignId('task_id')->constrained('tasks')->onDelete('cascade');
             $table->string('title', 100);
             $table->string('description', 500)->nullable();
-            $table->enum('status', TaskStatus::toArray())->default(TaskStatus::NOT_STARTED->value);
-            $table->enum('priority', TaskPriority::toArray())->default(TaskPriority::MEDIUM->value);
-            $table->timestamp('deadline')->nullable();
+            $table->enum('status', SubtaskStatus::toArray())->default(SubtaskStatus::NOT_STARTED->value);
             $table->timestamps();
         });
     }
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tasks');
+        Schema::dropIfExists('subtasks');
     }
 };

@@ -15,7 +15,6 @@ class Task extends Model
 
     protected $fillable = [
         'board_id',
-        'task_id',
         'title',
         'description',
         'status',
@@ -30,6 +29,6 @@ class Task extends Model
 
     public function subtasks(): HasMany
     {
-        return $this->hasMany(Task::class, 'task_id', 'id');
+        return $this->hasMany(Subtask::class);
     }
 }

@@ -3,7 +3,7 @@
 namespace Feature\Subtask;
 
 use App\Http\Resources\Subtask\SubtaskResource;
-use App\Models\{Task};
+use App\Models\{Subtask, Task};
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -16,7 +16,7 @@ class ListSubtaskTest extends TestCase
     public function setUpFaker(): void
     {
         $task = Task::factory()->create();
-        Task::factory()->count(10)->create([
+        Subtask::factory()->count(10)->create([
             'task_id' => $task->id,
         ]);
     }

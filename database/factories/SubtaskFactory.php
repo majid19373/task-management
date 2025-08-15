@@ -2,16 +2,15 @@
 
 namespace Database\Factories;
 
-use App\Models\Board;
+use App\Models\Subtask;
 use App\Models\Task;
-use App\ValueObjects\Task\TaskStatus;
-use App\ValueObjects\Task\TaskPriority;
+use App\ValueObjects\Subtask\SubtaskStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Task>
+ * @extends Factory<Subtask>
  */
-class TaskFactory extends Factory
+class SubtaskFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -21,12 +20,10 @@ class TaskFactory extends Factory
     public function definition(): array
     {
         return [
-            'board_id' => Board::factory(),
+            'task_id' => Task::factory()->create()->id,
             'title' => $this->faker->unique()->words(5, true),
             'description' => $this->faker->optional()->text(500),
-            'status' => TaskStatus::NOT_STARTED,
-            'priority' => TaskPriority::MEDIUM,
-            'deadline' => $this->faker->dateTimeBetween('+1 day', '+7 days'),
+            'status' => SubtaskStatus::NOT_STARTED,
         ];
     }
 }

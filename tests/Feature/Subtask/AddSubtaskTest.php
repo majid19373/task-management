@@ -30,7 +30,7 @@ class AddSubtaskTest extends TestCase
 
         //Assert
         $response->assertCreated();
-        $this->assertDatabaseHas('tasks', [
+        $this->assertDatabaseHas('subtasks', [
             'task_id' => $task->id,
         ]);
     }
