@@ -169,5 +169,19 @@ final class Task
     {
         $subtask = $this->getSubtask($subtaskId);
         $subtask->complete();
+
+        if(!collect($this->subtasks)->contains('status', '!=', SubtaskStatus::COMPLETED)){
+            $this->status = TaskStatus::COMPLETED;
+        }
+    }
+
+    public function reopenSubtask(int $subtaskId): void
+    {
+        $subtask = $this->getSubtask($subtaskId);
+        $subtask->reopen();
+
+        if($this->status === TaskStatus::COMPLETED){
+            $this->status = TaskStatus::IN_PROGRESS;
+        }
     }
 }

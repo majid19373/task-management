@@ -66,5 +66,15 @@ final readonly class SubtaskService
         $task->completeSubtask($subtaskId);
 
         $this->subtaskRepository->update($task->getSubtask($subtaskId));
+        $this->taskRepository->update($task);
+    }
+
+    public function reopen(int $subtaskId): void
+    {
+        $task = $this->taskRepository->getBySubtaskId($subtaskId);
+        $task->reopenSubtask($subtaskId);
+
+        $this->subtaskRepository->update($task->getSubtask($subtaskId));
+        $this->taskRepository->update($task);
     }
 }

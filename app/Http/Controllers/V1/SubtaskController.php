@@ -51,7 +51,7 @@ final class SubtaskController extends Controller
     {
         $this->subtaskService->start($subtaskId);
         return $this->respondUpdated(
-            message: 'The task was started.',
+            message: 'The subtask was started.',
         );
     }
 
@@ -62,7 +62,18 @@ final class SubtaskController extends Controller
     {
         $this->subtaskService->complete($taskId);
         return $this->respondUpdated(
-            message: 'The task was completed.',
+            message: 'The subtask was completed.',
+        );
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function reopen(int $taskId): JsonResponse
+    {
+        $this->subtaskService->reopen($taskId);
+        return $this->respondUpdated(
+            message: 'The subtask was reopened.',
         );
     }
 

@@ -84,9 +84,17 @@ final class Subtask
     public function complete(): void
     {
         if($this->status !== SubtaskStatus::IN_PROGRESS){
-            throw new DomainException('The task must not have completed.');
+            throw new DomainException('The subtask must not have completed.');
         }
         $this->status = SubtaskStatus::COMPLETED;
+    }
+
+    public function reopen(): void
+    {
+        if($this->status !== SubtaskStatus::COMPLETED){
+            throw new DomainException('The subtask cannot reopened.');
+        }
+        $this->status = SubtaskStatus::NOT_STARTED;
     }
 
     public function getId(): int { return $this->id; }
