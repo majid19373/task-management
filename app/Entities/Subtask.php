@@ -81,7 +81,7 @@ final class Subtask
         $this->status = SubtaskStatus::IN_PROGRESS;
     }
 
-    public function completed(): void
+    public function complete(): void
     {
         if($this->status !== SubtaskStatus::IN_PROGRESS){
             throw new DomainException('The task must not have completed.');

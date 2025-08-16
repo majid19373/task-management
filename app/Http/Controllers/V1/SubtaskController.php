@@ -58,9 +58,9 @@ final class SubtaskController extends Controller
     /**
      * @throws Exception
      */
-    public function completed(int $taskId): JsonResponse
+    public function complete(int $taskId): JsonResponse
     {
-        $this->subtaskService->completed($taskId);
+        $this->subtaskService->complete($taskId);
         return $this->respondUpdated(
             message: 'The task was completed.',
         );

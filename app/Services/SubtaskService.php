@@ -52,23 +52,19 @@ final readonly class SubtaskService
      */
     public function start(int $subtaskId): void
     {
-        $subtask = $this->subtaskRepository->getById($subtaskId);
-        $task = $this->taskRepository->getById($subtask->getTaskId());
+        $task = $this->taskRepository->getBySubtaskId($subtaskId);
 
-        $subtask->start($task->getStatus());
-        $this->subtaskRepository->update($subtask);
+        $task->startSubtask($subtaskId);
 
-        $task->start();
+        $this->subtaskRepository->update($task->getSubtask($subtaskId));
         $this->taskRepository->update($task);
     }
 
-    /**
-     * @throws Exception
-     */
-    public function completed(int $taskId): void
+    public function complete(int $subtaskId): void
     {
-        $subtask = $this->subtaskRepository->getById($taskId);
-        $subtask->completed();
-        $this->subtaskRepository->update($subtask);
+        $task = $this->taskRepository->getBySubtaskId($subtaskId);
+        $task->completeSubtask($subtaskId);
+
+        $this->subtaskRepository->update($task->getSubtask($subtaskId));
     }
 }

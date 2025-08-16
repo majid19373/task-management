@@ -3,15 +3,19 @@
 namespace App\Repositories\Task;
 
 use App\DTO\Task\TaskFilter;
+use App\Entities\Subtask;
 use App\Entities\Task;
 use App\Models\Task as Model;
+use App\Models\Subtask as SubtaskModel;
 use App\Repositories\PaginatedResult;
+use App\ValueObjects\Subtask\SubtaskDescription;
 use App\ValueObjects\Subtask\SubtaskStatus;
+use App\ValueObjects\Subtask\SubtaskTitle;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\ValueObjects\Task\{TaskDescription, TaskStatus, TaskPriority, TaskTitle};
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
-use ReflectionException;
 
 final class TaskRepository implements TaskRepositoryInterface
 {
@@ -57,27 +61,23 @@ final class TaskRepository implements TaskRepositoryInterface
     /**
      * @throws Exception
      */
-    public function getById(int $id, array $select = ['*'], array $relations = []): Task
+    public function getById(int $id): Task
     {
-        $task = $this->model->query()->select($select)->with($relations)->findOrFail($id);
+        $task = $this->model->query()->with(['subtasks'])->findOrFail($id);
         return $this->makeEntityForTask($task);
     }
 
     /**
-     * @throws ReflectionException
      * @throws Exception
      */
-    public function getByIdIfSubtasksAreCompleted(int $id, array $select = ['*']): Task
+    public function getBySubtaskId(int $id): Task
     {
         $task = $this->model->query()
-            ->select($select)
-            ->with(['subtasks' => function ($query) {
-                $query->where('status', '<>', SubtaskStatus::COMPLETED);
-            }])
-            ->where('id', '=', $id)
+            ->with(['subtasks'])
+            ->where('subtask_id', '=', $id)
             ->first();
-        if (!$task) {
-            throw new Exception('Task cannot be completed.');
+        if(!$task) {
+            throw new Exception('Subtask not found');
         }
         return $this->makeEntityForTask($task);
     }
@@ -129,13 +129,34 @@ final class TaskRepository implements TaskRepositoryInterface
      */
     private function makeEntityForTask(Model $data): Task
     {
+        $subtasks = [];
+        if($data->subtasks){
+            $subtasks = $data->subtasks->map(function (SubtaskModel $subtask) {
+                return $this->makeEntityForSubtask($subtask);
+            })->toArray();
+        }
         return Task::reconstitute(
             id: (int)$data->id,
             boardId: (int)$data->board_id,
             title: TaskTitle::reconstitute($data->title ?? ''),
             status: TaskStatus::from($data->status),
             priority: TaskPriority::from($data->priority),
-            description: $data->description ? TaskDescription::reconstitute($data->description) : null
+            description: $data->description ? TaskDescription::reconstitute($data->description) : null,
+            subtasks: $subtasks,
+        );
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function makeEntityForSubtask(SubtaskModel $data): Subtask
+    {
+        return Subtask::reconstitute(
+            id: (int)$data->id,
+            taskId: (int)$data->task_id,
+            title: SubtaskTitle::reconstitute($data->title ?? ''),
+            status: SubtaskStatus::from($data->status),
+            description: $data->description ? SubtaskDescription::reconstitute($data->description) : null
         );
     }
 }

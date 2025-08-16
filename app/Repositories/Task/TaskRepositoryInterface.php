@@ -17,9 +17,10 @@ interface TaskRepositoryInterface
         array      $relations = []
     ): PaginatedResult;
 
-    public function getById(int $id, array $select = ['*'], array $relations = []): Task;
+    public function getById(int $id): Task;
 
-    public function getByIdIfSubtasksAreCompleted(int $id, array $select = ['*']): Task;
+    public function getBySubtaskId(int $id): Task;
+
 
     public function store(Task $data): void;
 

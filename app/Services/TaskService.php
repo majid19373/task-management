@@ -75,7 +75,7 @@ final readonly class TaskService
      */
     public function complete(int $taskId): void
     {
-        $task = $this->taskRepository->getByIdIfSubtasksAreCompleted($taskId);
+        $task = $this->taskRepository->getById($taskId);
         $task->complete();
         $this->taskRepository->update($task);
     }

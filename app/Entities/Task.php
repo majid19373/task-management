@@ -3,7 +3,7 @@
 namespace App\Entities;
 
 use App\ValueObjects\Task\{TaskDeadline, TaskDescription, TaskPriority, TaskStatus, TaskTitle};
-use App\ValueObjects\Subtask\{SubtaskDescription, SubtaskTitle};
+use App\ValueObjects\Subtask\{SubtaskDescription, SubtaskStatus, SubtaskTitle};
 use DomainException;
 
 final class Task
@@ -16,6 +16,9 @@ final class Task
     private ?TaskDeadline $deadline;
     private ?TaskDescription $description;
 
+    /** @var Array<Subtask> */
+    private array $subtasks;
+
     private function __construct(
         int              $boardId,
         TaskTitle        $title,
@@ -23,6 +26,7 @@ final class Task
         TaskPriority     $priority,
         ?TaskDescription $description = null,
         ?TaskDeadline    $deadline = null,
+        ?array           $subtasks = []
     )
     {
         $this->boardId = $boardId;
@@ -31,6 +35,7 @@ final class Task
         $this->priority = $priority;
         $this->description = $description;
         $this->deadline = $deadline;
+        $this->subtasks = $subtasks;
     }
 
     public static function createNew(
@@ -58,6 +63,7 @@ final class Task
         TaskPriority     $priority,
         ?TaskDescription $description = null,
         ?TaskDeadline    $deadline = null,
+        ?array           $subtasks = [],
     ): Task
     {
         $task = new self(
@@ -66,7 +72,8 @@ final class Task
             $status,
             $priority,
             $description,
-            $deadline
+            $deadline,
+            $subtasks
         );
         $task->setId($id);
         return $task;
@@ -87,6 +94,9 @@ final class Task
 
     public function complete(): void
     {
+        if(collect($this->subtasks)->contains('status', '!=', SubtaskStatus::COMPLETED)){
+            throw new DomainException('The task must not complete.');
+        }
         if($this->status !== TaskStatus::IN_PROGRESS){
             throw new DomainException('The task must not have completed.');
         }
@@ -138,5 +148,26 @@ final class Task
             isCompletedTask: $isCompletedTask,
             description: $description,
         );
+    }
+
+    public function getSubtask(int $subtaskId): Subtask
+    {
+        return collect($this->subtasks)->firstWhere('id', $subtaskId);
+    }
+
+    public function startSubtask(int $subtaskId): void
+    {
+        $subtask = $this->getSubtask($subtaskId);
+        $subtask->start($this->getStatus());
+
+        if($this->status === TaskStatus::NOT_STARTED){
+            $this->status = TaskStatus::COMPLETED;
+        }
+    }
+
+    public function completeSubtask(int $subtaskId): void
+    {
+        $subtask = $this->getSubtask($subtaskId);
+        $subtask->complete();
     }
 }
