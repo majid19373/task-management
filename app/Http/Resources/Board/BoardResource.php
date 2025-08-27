@@ -22,9 +22,9 @@ final class BoardResource
         ];
     }
 
-    public static function toArrayList(Collection $boards): Collection
+    public static function toArrayList(array $boards): Collection
     {
-        return $boards->map(function ($board) {
+        return collect($boards)->map(function ($board) {
             return BoardResource::toArray($board);
         });
     }

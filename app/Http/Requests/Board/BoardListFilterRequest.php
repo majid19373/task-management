@@ -15,7 +15,7 @@ final class BoardListFilterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'is_paginated' => ['nullable', 'in:0,1'],
+            'page' => ['nullable', 'integer', 'min:1'],
             'per_page' => ['nullable', 'integer', 'min:1'],
         ];
     }
@@ -23,7 +23,8 @@ final class BoardListFilterRequest extends FormRequest
     public function makeDTO(): BoardFilter
     {
         return new BoardFilter(
-            isPaginated: $this->is_paginated == 1 || $this->is_paginated === null,
+            isPaginated: $this->page > 0,
+            page: $this->page ?? 1,
             perPage: $this->per_page ?? 10,
         );
     }

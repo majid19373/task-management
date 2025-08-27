@@ -2,33 +2,31 @@
 
 namespace App\ValueObjects\Board;
 
+use Doctrine\ORM\Mapping\{Column, Embeddable};
 use DomainException;
 
+#[Embeddable]
 final class BoardName
 {
-    private string $name;
+    #[Column(name: "name", type: "string", length: 50)]
+    private string $value;
 
-    private function __construct(string $name)
+    public function __construct(string $value)
     {
-        $this->name = $name;
-    }
-
-    public static function createNew(string $name): BoardName
-    {
-        $length = strlen($name);
+        $length = strlen($value);
         if ($length < 3 || $length > 50) {
             throw new DomainException("Board name must be between 3 and 50 characters.");
         }
-        return new self($name);
-    }
-
-    public static function reconstitute(string $name): BoardName
-    {
-        return new self($name);
+        $this->value = $value;
     }
 
     public function value(): string
     {
-        return $this->name;
+        return $this->value;
+    }
+
+    public function __toString(): string
+    {
+        return $this->value;
     }
 }

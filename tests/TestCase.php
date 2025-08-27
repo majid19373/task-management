@@ -2,10 +2,15 @@
 
 namespace Tests;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Doctrine\ORM\Tools\SchemaTool;
 
 abstract class TestCase extends BaseTestCase
 {
+    protected EntityManagerInterface $em;
+
     protected const array BASE_HEADERS = [
         'Accept' => 'application/json',
     ];
@@ -21,6 +26,23 @@ abstract class TestCase extends BaseTestCase
         'current_page',
         'limit',
     ];
+
+    /**
+     * @throws BindingResolutionException
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->em = $this->app->make(EntityManagerInterface::class);
+        $metaData = $this->em->getMetadataFactory()->getAllMetadata();
+
+        if (!empty($metaData)) {
+            $tool = new SchemaTool($this->em);
+            $tool->dropSchema($metaData);
+            $tool->createSchema($metaData);
+        }
+    }
 
     protected function makeMainJsonStructure(mixed $data): array
     {

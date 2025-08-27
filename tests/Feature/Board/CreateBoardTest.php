@@ -15,9 +15,8 @@ final class CreateBoardTest extends TestCase
     public function test_create_board(): void
     {
         //Arrange
-        $user = User::factory()->create();
         $data = [
-            'user_id' => $user->id,
+            'user_id' => 1,
             'name' => 'Test Board',
             'description' => $this->faker->optional()->text(200),
         ];
@@ -36,9 +35,8 @@ final class CreateBoardTest extends TestCase
     public function test_failed_create_board_with_same_name_same_user(): void
     {
         //Arrange
-        $user = User::factory()->create();
         $data = [
-            'user_id' => $user->id,
+            'user_id' => 1,
             'name' => 'Test Board',
             'description' => $this->faker->optional()->text(200),
         ];

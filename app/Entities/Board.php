@@ -3,57 +3,42 @@
 namespace App\Entities;
 
 
+use Doctrine\ORM\Mapping\{Column, Embedded, Entity, GeneratedValue, Id, Table, UniqueConstraint};
 use App\ValueObjects\Task\{TaskDeadline, TaskDescription, TaskTitle};
 use App\ValueObjects\Board\{BoardName, BoardDescription};
 use DomainException;
 
+#[Entity, Table(name: "boards"), UniqueConstraint(name: 'user_board_unique', columns: ['user_id', 'name'])]
 final class Board
 {
-    private int $id;
-    private int $userId;
-    private BoardName $name;
-    private ?BoardDescription $description;
+    #[Id, Column(type: "integer"), GeneratedValue()]
+    protected int $id;
+
+    #[Column(type: "integer")]
+    protected int $userId;
+
+    #[Column(name: "name", type: "string", length: 50), Embedded(class: BoardName::class, columnPrefix: false)]
+    protected BoardName $name;
+
+    #[Column(name: "description", type: "string", length: 200, nullable: true), Embedded(class: TaskDescription::class, columnPrefix: false)]
+    protected ?BoardDescription $description;
 
     /**
      * @throws DomainException
      */
-    private function __construct(
+    public function __construct(
+        bool $existsByUserIdAndName,
         BoardName $name,
         int $userId,
         ?BoardDescription $description = null
     )
     {
-        $this->name = $name;
-        $this->userId = $userId;
-        $this->description = $description;
-    }
-
-    /**
-     * @throws DomainException
-     */
-    public static function createNew(
-        bool $existsByUserIdAndName,
-        BoardName $name,
-        int $userId,
-        ?BoardDescription $description = null
-    ): Board
-    {
         if($existsByUserIdAndName){
             throw new DomainException('Board name already exists for this user.');
         }
-        return new self($name, $userId, $description);
-    }
-
-    public static function reconstitute(
-        int $id,
-        BoardName $name,
-        int $userId,
-        ?BoardDescription $description = null
-    ): Board
-    {
-        $board = new self($name, $userId, $description);
-        $board->setId($id);
-        return $board;
+        $this->name = $name;
+        $this->userId = $userId;
+        $this->description = $description;
     }
 
     public function setId(int $id): void

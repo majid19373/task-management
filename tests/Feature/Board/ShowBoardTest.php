@@ -3,7 +3,7 @@
 namespace Feature\Board;
 
 use App\Http\Resources\Board\BoardResource;
-use App\Models\Board;
+use Database\Factories\BoardFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -16,8 +16,8 @@ final class ShowBoardTest extends TestCase
     public function test_show_board(): void
     {
         //Arrange
-        $board = Board::factory()->create();
-        $route = self::BASE_ROUTE . "/{$board->id}";
+        $board = BoardFactory::create($this->em);
+        $route = self::BASE_ROUTE . "/{$board->getId()}";
 
         //Act
         $response = $this->get($route, parent::BASE_HEADERS);

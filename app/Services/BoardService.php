@@ -17,10 +17,10 @@ final readonly class BoardService
     )
     {}
 
-    public function list(BoardFilter $boardFilter): Collection|PaginatedResult
+    public function list(BoardFilter $boardFilter): array|PaginatedResult
     {
         if($boardFilter->isPaginated){
-            $result = $this->boardRepository->getWithPaginate($boardFilter->perPage);
+            $result = $this->boardRepository->getWithPaginate($boardFilter->page, $boardFilter->perPage);
         }else{
             $result = $this->boardRepository->getAll();
         }
@@ -32,13 +32,13 @@ final readonly class BoardService
      */
     public function create(NewBoard $newBoard): void
     {
-        $name = BoardName::createNew($newBoard->name);
+        $name = new BoardName($newBoard->name);
         $existsByUserIdAndName = $this->boardRepository->existsByUserIdAndName($newBoard->userId, $name);
-        $board = Board::createNew(
+        $board = new Board(
             existsByUserIdAndName: $existsByUserIdAndName,
             name: $name,
             userId: (int)$newBoard->userId,
-            description: $newBoard->description ? BoardDescription::createNew($newBoard->description) : null,
+            description: $newBoard->description ? new BoardDescription($newBoard->description) : null,
         );
         $this->boardRepository->store($board);
     }

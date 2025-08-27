@@ -5,17 +5,16 @@ namespace App\Repositories\Board;
 use App\Entities\Board;
 use App\Repositories\PaginatedResult;
 use App\ValueObjects\Board\BoardName;
-use Illuminate\Support\Collection;
 
 interface BoardRepositoryInterface
 {
-    public function getAll(array $select = ['*'], array $relations = []): Collection;
+    public function getAll(): array;
 
-    public function getWithPaginate(int $perPage, array $select = ['*'], array $relations = []): PaginatedResult;
+    public function getWithPaginate(int $page, int $perPage): PaginatedResult;
 
-    public function getById(int $id, array $select = ['*'], array $relations = []): Board;
+    public function getById(int $id): Board;
 
-    public function store(Board $data): void;
+    public function store(Board $board): void;
 
     public function existsByUserIdAndName(int $userId, BoardName $name): bool;
 }

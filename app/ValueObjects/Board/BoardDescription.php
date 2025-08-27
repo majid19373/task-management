@@ -2,32 +2,30 @@
 
 namespace App\ValueObjects\Board;
 
+use Doctrine\ORM\Mapping\{Column, Embeddable};
 use DomainException;
 
+#[Embeddable]
 final class BoardDescription
 {
-    private string $description;
+    #[Column(name: "description", type: "string", length: 200)]
+    public string $value;
 
-    private function __construct(string $description)
+    public function __construct(string $value)
     {
-        $this->description = $description;
-    }
-
-    public static function createNew(string $description): BoardDescription
-    {
-        if (strlen($description) > 200) {
+        if (strlen($value) > 200) {
             throw new DomainException("Board description must be less than 200 characters.");
         }
-        return new self($description);
-    }
-
-    public static function reconstitute(string $description): BoardDescription
-    {
-        return new self($description);
+        $this->value = $value;
     }
 
     public function value(): ?string
     {
-        return $this->description;
+        return $this->value;
+    }
+
+    public function __toString(): string
+    {
+        return $this->value;
     }
 }

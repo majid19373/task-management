@@ -3,84 +3,75 @@
 namespace App\Repositories\Board;
 
 use App\Entities\Board;
-use App\Models\Board as Model;
 use App\Repositories\PaginatedResult;
-use App\ValueObjects\Board\{BoardDescription, BoardName};
+use App\ValueObjects\Board\{BoardName};
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
-use Illuminate\Support\Collection;
 
-final class BoardRepository implements BoardRepositoryInterface
+final readonly class BoardRepository implements BoardRepositoryInterface
 {
-    private Model $model;
 
     public function __construct(
-        Model $model
-    ){
-        $this->model = $model;
-    }
+        private EntityManagerInterface $em
+    ){}
 
-    public function getAll(array $select = ['*'], array $relations = []): Collection
+    public function getAll(): array
     {
-        $boards = $this->model->query()->select($select)->with($relations)->get();
-        return $boards->map(function (Model $board) {
-            return $this->makeEntity($board);
-        });
+        return $this->em->getRepository(Board::class)->findAll();
 
     }
 
-    public function getWithPaginate(int $perPage, array $select = ['*'], array $relations = []): PaginatedResult
+    public function getWithPaginate(int $page = 1, int $perPage = 15): PaginatedResult
     {
-        $boards = $this->model->query()->select($select)->with($relations)->paginate($perPage);
-        $all = $boards->map(function (Model $board) {
-            return $this->makeEntity($board);
-        });
+        $qb = $this->em->createQueryBuilder()
+            ->select('b')
+            ->from(Board::class, 'b')
+            ->orderBy('b.id');
+
+        $query = $qb->getQuery()
+            ->setFirstResult(($page - 1) * $perPage) // OFFSET
+            ->setMaxResults($perPage);
+
+        $paginator = new Paginator($query);
+
         return PaginatedResult::make(
-            list: $all,
+            list: iterator_to_array($paginator),
             paginator: [
-                'total' => $boards->total(),
-                'limit' => $boards->perPage(),
-                'current_page' => $boards->currentPage(),
+                'total' => count($paginator),
+                'current_page' => $page,
+                'limit' => $perPage,
             ]
         );
     }
 
-    public function getById(int $id, array $select = ['*'], array $relations = []): Board
+    public function getById(int $id): Board
     {
-        $board = $this->model->query()->select($select)->with($relations)->findOrFail($id);
-        return $this->makeEntity($board);
+        return $this->em->getRepository(Board::class)->find($id);
     }
 
     /**
      * @throws Exception
      */
-    public function store(Board $data): void
+    public function store(Board $board): void
     {
-        $board = $this->model->query()->create([
-            'name' => $data->getName()->value(),
-            'user_id' => $data->getUserId(),
-            'description' => $data->getDescription()?->value(),
-        ]);
-        if(!$board){
+        $this->em->persist($board);
+        $this->em->flush();
+        if(!$board->getId()){
             throw new Exception('Board not created');
         }
-        $data->setId($board->id);
     }
 
     public function existsByUserIdAndName(int $userId, BoardName $name): bool
     {
-        return $this->model->query()
-            ->where('user_id', '=', $userId)
-            ->where('name', '=', $name->value())
-            ->exists();
-    }
+        $qb = $this->em->createQueryBuilder();
+        $qb->select('count(b.id)')
+            ->from(Board::class, 'b')
+            ->where('b.userId = :userId')
+            ->andWhere('b.name = :name')
+            ->setParameter('userId', $userId)
+            ->setParameter('name', $name->value());
 
-    private function makeEntity(Model $data): Board
-    {
-        return Board::reconstitute(
-            id: $data->id,
-            name: BoardName::reconstitute($data->name),
-            userId: $data->user_id,
-            description: $data->description ? BoardDescription::reconstitute($data->description): null,
-        );
+        return (int)$qb->getQuery()->getSingleScalarResult() > 0;
     }
 }

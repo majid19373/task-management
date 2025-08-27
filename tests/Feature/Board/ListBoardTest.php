@@ -3,7 +3,7 @@
 namespace Feature\Board;
 
 use App\Http\Resources\Board\BoardResource;
-use App\Models\Board;
+use Database\Factories\BoardFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -16,8 +16,8 @@ final class ListBoardTest extends TestCase
     public function test_list_board(): void
     {
         //Arrange
-        Board::factory()->count(10)->create();
-        $route = self::BASE_ROUTE;
+        BoardFactory::createWithCount($this->em, 10);
+        $route = self::BASE_ROUTE . '?page=1';
 
         //Act
         $response = $this->get($route, parent::BASE_HEADERS);
@@ -32,8 +32,8 @@ final class ListBoardTest extends TestCase
     public function test_list_board_without_pagination(): void
     {
         //Arrange
-        Board::factory()->count(10)->create();
-        $route = self::BASE_ROUTE . '?is_paginated=0';
+        BoardFactory::createWithCount($this->em, 10);
+        $route = self::BASE_ROUTE;
 
         //Act
         $response = $this->get($route, parent::BASE_HEADERS);
