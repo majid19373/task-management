@@ -2,9 +2,9 @@
 
 namespace Feature\Subtask;
 
-use App\Entities\Subtask;
-use App\Entities\Task;
-use App\Http\Resources\Subtask\SubtaskResource;
+use Src\domain\Entities\Subtask\Subtask;
+use Src\domain\Entities\Task\Task;
+use Src\infrastructure\DeliveryMechanism\Http\Api\V1\Resources\Subtask\SubtaskResource;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 

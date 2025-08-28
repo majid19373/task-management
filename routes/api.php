@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\V1\{BoardController, TaskController, SubtaskController};
+use Src\infrastructure\DeliveryMechanism\Http\Api\V1\Controllers\{BoardController, SubtaskController, TaskController};
 
 Route::prefix('v1')->group(function () {
     Route::prefix('board')->name('board.')->group(function () {

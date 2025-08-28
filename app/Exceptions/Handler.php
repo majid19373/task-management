@@ -2,7 +2,7 @@
 
 namespace App\Exceptions;
 
-use App\Tools\Responses;
+use Src\infrastructure\DeliveryMechanism\Http\Api\V1\Controllers\Responses;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
 use Throwable;

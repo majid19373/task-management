@@ -2,16 +2,10 @@
 
 namespace Tests;
 
-use App\Entities\Board;
-use App\Entities\Task;
-use Database\Factories\BoardFactory;
-use Database\Factories\TaskFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Doctrine\ORM\Tools\SchemaTool;
-use LaravelDoctrine\ORM\Testing\Factory;
-use Faker\Generator;
 
 abstract class TestCase extends BaseTestCase
 {

@@ -2,8 +2,8 @@
 
 namespace Feature\Task;
 
-use App\Entities\Task;
-use App\Http\Resources\Task\TaskResource;
+use Src\domain\Entities\Task\Task;
+use Src\infrastructure\DeliveryMechanism\Http\Api\V1\Resources\Task\TaskResource;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
