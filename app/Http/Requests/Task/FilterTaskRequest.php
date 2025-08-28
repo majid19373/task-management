@@ -18,6 +18,7 @@ final class FilterTaskRequest extends FormRequest
             'board_id' => ['required'],
             'is_paginated' => ['nullable'],
             'per_page' => ['nullable', 'integer', 'min:1'],
+            'page' => ['nullable', 'integer', 'min:1'],
             'status' => ['nullable', 'string'],
             'priority' => ['nullable', 'string'],
         ];
@@ -27,7 +28,8 @@ final class FilterTaskRequest extends FormRequest
     {
         return new TaskFilter(
             boardId: $this->board_id,
-            isPaginated:$this->is_paginated == 1 || $this->is_paginated === null,
+            isPaginated: $this->page > 0,
+            page: $this->page ?? 1,
             perPage: $this->per_page ?? 10,
             priority: $this->priority,
             status: $this->status,

@@ -2,6 +2,7 @@
 
 namespace App\ValueObjects\Task;
 
+use Doctrine\ORM\Mapping\{Embeddable};
 use DomainException;
 
 enum TaskStatus: string

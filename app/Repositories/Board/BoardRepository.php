@@ -19,7 +19,6 @@ final readonly class BoardRepository implements BoardRepositoryInterface
     public function getAll(): array
     {
         return $this->em->getRepository(Board::class)->findAll();
-
     }
 
     public function getWithPaginate(int $page = 1, int $perPage = 15): PaginatedResult

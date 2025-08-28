@@ -2,22 +2,21 @@
 
 namespace Feature\Task;
 
+use App\Entities\Task;
 use App\ValueObjects\Task\TaskStatus;
-use App\Models\{Task};
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class StartTaskTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use WithFaker;
     private const string BASE_ROUTE = 'api/v1/task';
 
     public function test_start_task(): void
     {
         //Arrange
-        $task = Task::factory()->create();
-        $route = self::BASE_ROUTE . "/{$task->id}/start";
+        $task = entity(Task::class)->create();
+        $route = self::BASE_ROUTE . "/{$task->getId()}/start";
 
         //Act
         $response = $this->get($route, parent::BASE_HEADERS);
@@ -32,10 +31,10 @@ class StartTaskTest extends TestCase
     public function test_dont_be_start_task_with_in_progress_status(): void
     {
         //Arrange
-        $task = Task::factory()->create([
-            'status' => TaskStatus::IN_PROGRESS->value,
+        $task = entity(Task::class)->create([
+            'status' => TaskStatus::IN_PROGRESS,
         ]);
-        $route = self::BASE_ROUTE . "/{$task->id}/start";
+        $route = self::BASE_ROUTE . "/{$task->getId()}/start";
 
         //Act
         $response = $this->get($route, parent::BASE_HEADERS);
@@ -50,10 +49,10 @@ class StartTaskTest extends TestCase
     public function test_dont_be_start_task_with_completed_status(): void
     {
         //Arrange
-        $task = Task::factory()->create([
-            'status' => TaskStatus::COMPLETED->value,
+        $task = entity(Task::class)->create([
+            'status' => TaskStatus::COMPLETED,
         ]);
-        $route = self::BASE_ROUTE . "/{$task->id}/start";
+        $route = self::BASE_ROUTE . "/{$task->getId()}/start";
 
         //Act
         $response = $this->get($route, parent::BASE_HEADERS);

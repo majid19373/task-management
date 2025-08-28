@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Http\Resources\Task\TaskEditResource;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Task\{DeadlineTaskRequest, FilterTaskRequest, AddTaskRequest, PriorityTaskRequest};
 use App\Http\Resources\Task\TaskResource;
@@ -53,17 +52,6 @@ final class TaskController extends Controller
         $task = $this->taskService->findById($taskId);
         return $this->respond(
             data: TaskResource::toArray($task),
-        );
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function showWithStatusPriorityFields(int $taskId): JsonResponse
-    {
-        $task = $this->taskService->findById($taskId);
-        return $this->respond(
-            data: TaskEditResource::toArray($task),
         );
     }
 

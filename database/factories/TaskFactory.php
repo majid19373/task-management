@@ -1,32 +1,26 @@
 <?php
+/** @var Factory $factory */
 
-namespace Database\Factories;
-
-use App\Models\Board;
-use App\Models\Task;
-use App\ValueObjects\Task\TaskStatus;
+use App\Entities\Board;
+use App\Entities\Task;
+use App\ValueObjects\Task\TaskDeadline;
+use App\ValueObjects\Task\TaskDescription;
 use App\ValueObjects\Task\TaskPriority;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use App\ValueObjects\Task\TaskStatus;
+use App\ValueObjects\Task\TaskTitle;
+use LaravelDoctrine\ORM\Testing\Factory;
+use Faker\Generator;
 
-/**
- * @extends Factory<Task>
- */
-class TaskFactory extends Factory
-{
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
-    {
-        return [
-            'board_id' => Board::factory(),
-            'title' => $this->faker->unique()->words(5, true),
-            'description' => $this->faker->optional()->text(500),
-            'status' => TaskStatus::NOT_STARTED,
-            'priority' => TaskPriority::MEDIUM,
-            'deadline' => $this->faker->dateTimeBetween('+1 day', '+7 days'),
-        ];
-    }
-}
+$factory->define(Task::class, function (Generator $faker) {
+    $description = $faker->optional()->text(500);
+    $deadline = $overrides['deadline'] ?? fake()->optional()->dateTimeBetween('+1 day', '+7 days');
+    $deadline = $deadline?->format('Y-m-d H:i:s');
+    return [
+        'board' => entity(Board::class)->create(),
+        'title' => new TaskTitle($faker->unique()->words(5, true)),
+        'description' => $description ? new TaskDescription($description) : null,
+        'deadline' => $deadline ? new TaskDeadline($deadline, new DateTimeImmutable()) : null,
+        'status' => TaskStatus::NOT_STARTED,
+        'priority' => TaskPriority::MEDIUM,
+    ];
+});

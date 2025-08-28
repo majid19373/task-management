@@ -2,30 +2,35 @@
 
 namespace App\ValueObjects\Task;
 
-use Carbon\CarbonImmutable;
-use DateTimeInterface;
+use DateTimeImmutable;
+use Doctrine\ORM\Mapping\{Column, Embeddable};
 use DomainException;
 
+#[Embeddable]
 final class TaskDeadline
 {
-    private CarbonImmutable $deadline;
+    #[Column(name: "deadline", type: 'string')]
+    private DateTimeImmutable $value;
 
-    private function __construct(CarbonImmutable $deadline)
+    public function __construct(string $value, DateTimeImmutable $currentDate)
     {
-        $this->deadline = $deadline;
-    }
-
-    public static function createNew(string $date, DateTimeInterface $currentDate): TaskDeadline
-    {
-        $deadline = CarbonImmutable::make($date);
-        if(!$deadline->greaterThan($currentDate)){
-           throw new DomainException('The deadline field must be a valid date');
+        if(!$value){
+            throw new DomainException('The deadline field must be a valid date');
         }
-        return new self($deadline);
+        $value = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $value);
+        if($currentDate > $value){
+            throw new DomainException('The deadline field must be a valid date');
+        }
+        $this->value = $value;
     }
 
-    public function value(): ?CarbonImmutable
+    public function value(): DateTimeImmutable
     {
-        return $this->deadline;
+        return $this->value;
+    }
+
+    public function __toString(): string
+    {
+        return $this->value->format('Y-m-d H:i:s');
     }
 }

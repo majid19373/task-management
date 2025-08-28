@@ -14,8 +14,6 @@ Route::prefix('v1')->group(function () {
         Route::get('', [TaskController::class, 'list'])->name('list');
         Route::post('', [TaskController::class, 'add'])->name('add');
         Route::get('{task}', [TaskController::class, 'show'])->name('show');
-        Route::get('{task}/status-priority-fields', [TaskController::class, 'showWithStatusPriorityFields'])
-            ->name('showWithStatusPriorityFields');
         Route::get('{task}/start', [TaskController::class, 'start'])->name('start');
         Route::get('{task}/complete', [TaskController::class, 'complete'])->name('complete');
         Route::get('{task}/reopen', [TaskController::class, 'reopen'])->name('reopen');

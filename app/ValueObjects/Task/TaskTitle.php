@@ -2,34 +2,31 @@
 
 namespace App\ValueObjects\Task;
 
+use Doctrine\ORM\Mapping\{Column, Embeddable};
 use DomainException;
 
+#[Embeddable]
 final class TaskTitle
 {
-    private string $title;
+    #[Column(name: "title", type: "string", length: 100)]
+    private string $value;
 
-    private function __construct(string $title)
+    public function __construct(string $value)
     {
-        $this->title = $title;
-    }
-
-
-    public static function createNew(string $title): TaskTitle
-    {
-        $length = strlen($title);
+        $length = strlen($value);
         if ($length < 5 || $length > 100) {
             throw new DomainException("Task title must be between 5 and 100 characters.");
         }
-        return new self($title);
-    }
-
-    public static function reconstitute(string $title): TaskTitle
-    {
-        return new self($title);
+        $this->value = $value;
     }
 
     public function value(): string
     {
-        return $this->title;
+        return $this->value;
+    }
+
+    public function __toString(): string
+    {
+        return $this->value;
     }
 }

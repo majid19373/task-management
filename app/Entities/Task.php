@@ -2,86 +2,52 @@
 
 namespace App\Entities;
 
+use Doctrine\ORM\Mapping\{Column, Embedded, Entity, GeneratedValue, Id, JoinColumn, ManyToOne, OneToMany, Table};
 use App\ValueObjects\Task\{TaskDeadline, TaskDescription, TaskPriority, TaskStatus, TaskTitle};
 use App\ValueObjects\Subtask\{SubtaskDescription, SubtaskStatus, SubtaskTitle};
 use DomainException;
 
+#[Entity, Table(name: "tasks")]
 final class Task
 {
-    private int $id;
-    private int $boardId;
-    private TaskTitle $title;
-    private TaskStatus $status;
-    private TaskPriority $priority;
-    private ?TaskDeadline $deadline;
-    private ?TaskDescription $description;
+    #[Id, Column(type: "integer"), GeneratedValue()]
+    protected int $id;
 
-    /** @var Array<Subtask> */
-    private array $subtasks;
+    #[JoinColumn(name: "board_id", referencedColumnName: "id", nullable: false, onDelete: 'CASCADE'), ManyToOne(targetEntity: Board::class, inversedBy: "task")]
+    protected Board $board;
 
-    private function __construct(
-        int              $boardId,
+    #[Column(name: "title", type: "string", length: 100), Embedded(class: TaskTitle::class, columnPrefix: false)]
+    protected TaskTitle $title;
+
+    #[Column(name: "status", enumType: TaskStatus::class)]
+    protected TaskStatus $status;
+
+    #[Column(name: "priority", enumType: TaskPriority::class)]
+    protected TaskPriority $priority;
+
+    #[Column(name: "deadline", type: "string", nullable: true), Embedded(class: TaskDeadline::class, columnPrefix: false)]
+    protected ?TaskDeadline $deadline;
+
+    #[Column(name: "description", type: "string", length: 500, nullable: true), Embedded(class: TaskDescription::class, columnPrefix: false)]
+    protected ?TaskDescription $description;
+
+//    #[OneToMany(targetEntity: Subtask::class, mappedBy: "task", cascade: ["persist", "remove"], orphanRemoval: true)]
+//    protected array $subtasks;
+
+    public function __construct(
+        Board            $board,
         TaskTitle        $title,
-        TaskStatus       $status,
-        TaskPriority     $priority,
         ?TaskDescription $description = null,
         ?TaskDeadline    $deadline = null,
-        ?array           $subtasks = []
     )
     {
-        $this->boardId = $boardId;
+        $this->board = $board;
         $this->title = $title;
-        $this->status = $status;
-        $this->priority = $priority;
+        $this->status = TaskStatus::NOT_STARTED;
+        $this->priority = TaskPriority::MEDIUM;
         $this->description = $description;
         $this->deadline = $deadline;
-        $this->subtasks = $subtasks;
-    }
-
-    public static function createNew(
-        int              $boardId,
-        TaskTitle        $title,
-        ?TaskDescription $description = null,
-        ?TaskDeadline    $deadline = null,
-    ): Task
-    {
-        return new self(
-            $boardId,
-            $title,
-            TaskStatus::NOT_STARTED,
-            TaskPriority::MEDIUM,
-            $description,
-            $deadline
-        );
-    }
-
-    public static function reconstitute(
-        int              $id,
-        int              $boardId,
-        TaskTitle        $title,
-        TaskStatus       $status,
-        TaskPriority     $priority,
-        ?TaskDescription $description = null,
-        ?TaskDeadline    $deadline = null,
-        ?array           $subtasks = [],
-    ): Task
-    {
-        $task = new self(
-            $boardId,
-            $title,
-            $status,
-            $priority,
-            $description,
-            $deadline,
-            $subtasks
-        );
-        $task->setId($id);
-        return $task;
-    }
-
-    public function setId(int $id): void
-    {
-        $this->id = $id;
+//        $this->subtasks = [];
     }
 
     public function start(): void
@@ -94,9 +60,9 @@ final class Task
 
     public function complete(): void
     {
-        if(collect($this->subtasks)->contains('status', '!=', SubtaskStatus::COMPLETED)){
-            throw new DomainException('The task must not complete.');
-        }
+//        if(collect($this->subtasks)->contains('status', '!=', SubtaskStatus::COMPLETED)){
+//            throw new DomainException('The task must not complete.');
+//        }
         if($this->status !== TaskStatus::IN_PROGRESS){
             throw new DomainException('The task must not have completed.');
         }
@@ -119,7 +85,7 @@ final class Task
         $this->priority = $priority;
     }
 
-    public function setDeadline(?TaskDeadline $deadline): void
+    public function changeDeadline(TaskDeadline $deadline): void
     {
         if($this->status === TaskStatus::COMPLETED){
             throw new DomainException('The task cannot change the deadline.');
@@ -129,7 +95,7 @@ final class Task
 
 
     public function getId(): int { return $this->id; }
-    public function getBoardId(): int { return $this->boardId; }
+    public function getBoard(): Board { return $this->board; }
     public function getTitle(): TaskTitle { return $this->title; }
     public function getDescription(): ?TaskDescription { return $this->description; }
     public function getStatus(): TaskStatus { return $this->status; }

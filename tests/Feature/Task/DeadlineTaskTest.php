@@ -2,25 +2,24 @@
 
 namespace Feature\Task;
 
-use App\Models\{Task};
+use App\Entities\Task;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class DeadlineTaskTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use WithFaker;
     private const string BASE_ROUTE = 'api/v1/task';
 
     public function test_change_deadline_task(): void
     {
         //Arrange
-        $task = Task::factory()->create();
+        $task = entity(Task::class)->create();
         $route = self::BASE_ROUTE . "/deadline";
         $data = [
-            'id' => $task->id,
-            'deadline' => Carbon::tomorrow(),
+            'id' => $task->getId(),
+            'deadline' => Carbon::tomorrow()->format('Y-m-d H:i:s'),
         ];
 
         //Act
@@ -36,11 +35,11 @@ class DeadlineTaskTest extends TestCase
     public function test_change_deadline_task_with_past_date(): void
     {
         //Arrange
-        $task = Task::factory()->create();
+        $task = entity(Task::class)->create();
         $route = self::BASE_ROUTE . "/deadline";
         $data = [
-            'id' => $task->id,
-            'deadline' => Carbon::now()->subDay(),
+            'id' => $task->getId(),
+            'deadline' => Carbon::now()->subDay()->toString(),
         ];
 
         //Act

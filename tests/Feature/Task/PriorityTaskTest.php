@@ -2,9 +2,9 @@
 
 namespace Feature\Task;
 
+use App\Entities\Task;
 use App\ValueObjects\Task\TaskPriority;
 use App\ValueObjects\Task\TaskStatus;
-use App\Models\{Task};
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -17,10 +17,10 @@ class PriorityTaskTest extends TestCase
     public function test_change_priority_task(): void
     {
         //Arrange
-        $task = Task::factory()->create();
+        $task = entity(Task::class)->create();
         $route = self::BASE_ROUTE . "/prioritize";
         $data = [
-            'id' => $task->id,
+            'id' => $task->getId(),
             'priority' => TaskPriority::LOW->value,
         ];
 
@@ -37,10 +37,10 @@ class PriorityTaskTest extends TestCase
     public function test_wrong_change_priority_task(): void
     {
         //Arrange
-        $task = Task::factory()->create();
+        $task = entity(Task::class)->create();
         $route = self::BASE_ROUTE . "/prioritize";
         $data = [
-            'id' => $task->id,
+            'id' => $task->getId(),
             'priority' => 'test_priority',
         ];
 
@@ -54,12 +54,12 @@ class PriorityTaskTest extends TestCase
     public function test_dont_be_changed_priority_task_with_completed_status(): void
     {
         //Arrange
-        $task = Task::factory()->create([
-            'status' => TaskStatus::COMPLETED->value,
+        $task = entity(Task::class)->create([
+            'status' => TaskStatus::COMPLETED,
         ]);
         $route = self::BASE_ROUTE . "/prioritize";
         $data = [
-            'id' => $task->id,
+            'id' => $task->getId(),
             'priority' => TaskPriority::LOW->value,
         ];
 

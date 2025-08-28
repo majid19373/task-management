@@ -21,7 +21,7 @@ final class TaskResource
     {
         return [
             'id' => $task->getId(),
-            'board_id' => $task->getBoardId(),
+            'board_id' => $task->getBoard()->getId(),
             'title' => $task->getTitle()->value(),
             'description' => $task->getDescription()?->value(),
             'status' => $task->getStatus()->value,
@@ -30,9 +30,9 @@ final class TaskResource
         ];
     }
 
-    public static function toArrayList(Collection $tasks): Collection
+    public static function toArrayList(array $tasks): Collection
     {
-        return $tasks->map(function ($task) {
+        return collect($tasks)->map(function ($task) {
             return TaskResource::toArray($task);
         });
     }

@@ -5,16 +5,13 @@ namespace App\Repositories\Task;
 use App\DTO\Task\TaskFilter;
 use App\Entities\Task;
 use App\Repositories\PaginatedResult;
-use Illuminate\Support\Collection;
 
 interface TaskRepositoryInterface
 {
-    public function list(TaskFilter $filters, array $select = ['*'], array $relations = []): Collection;
+    public function list(TaskFilter $filters): array;
 
     public function listWithPaginate(
         TaskFilter $filters,
-        array      $select = ['*'],
-        array      $relations = []
     ): PaginatedResult;
 
     public function getById(int $id): Task;
@@ -22,8 +19,8 @@ interface TaskRepositoryInterface
     public function getBySubtaskId(int $id): Task;
 
 
-    public function store(Task $data): void;
+    public function store(Task $task): void;
 
-    public function update(Task $data): void;
+    public function update(Task $task): void;
 
 }

@@ -2,21 +2,18 @@
 
 namespace Feature\Board;
 
+use App\Entities\Board;
 use App\Http\Resources\Board\BoardResource;
-use Database\Factories\BoardFactory;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 final class ShowBoardTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
     private const string BASE_ROUTE = 'api/v1/board';
 
     public function test_show_board(): void
     {
         //Arrange
-        $board = BoardFactory::create($this->em);
+        $board = entity(Board::class)->create();
         $route = self::BASE_ROUTE . "/{$board->getId()}";
 
         //Act

@@ -2,21 +2,18 @@
 
 namespace Feature\Board;
 
+use App\Entities\Board;
 use App\Http\Resources\Board\BoardResource;
-use Database\Factories\BoardFactory;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 final class ListBoardTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
     private const string BASE_ROUTE = 'api/v1/board';
 
     public function test_list_board(): void
     {
         //Arrange
-        BoardFactory::createWithCount($this->em, 10);
+        entity(Board::class, 10)->create();
         $route = self::BASE_ROUTE . '?page=1';
 
         //Act
@@ -32,7 +29,7 @@ final class ListBoardTest extends TestCase
     public function test_list_board_without_pagination(): void
     {
         //Arrange
-        BoardFactory::createWithCount($this->em, 10);
+        entity(Board::class, 10)->create();
         $route = self::BASE_ROUTE;
 
         //Act

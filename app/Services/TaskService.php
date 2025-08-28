@@ -7,10 +7,10 @@ use App\DTO\Task\TaskFilter;
 use App\Entities\Task;
 use App\Repositories\Board\BoardRepositoryInterface;
 use App\Repositories\Task\TaskRepositoryInterface;
+use DateTimeImmutable;
 use App\ValueObjects\Task\{TaskDeadline, TaskDescription, TaskPriority, TaskStatus, TaskTitle};
 use Exception;
 use App\Repositories\PaginatedResult;
-use Illuminate\Support\Collection;
 
 final readonly class TaskService
 {
@@ -23,7 +23,7 @@ final readonly class TaskService
     /**
      * @throws Exception
      */
-    public function list(TaskFilter $taskFilter): PaginatedResult|Collection
+    public function list(TaskFilter $taskFilter): PaginatedResult|array
     {
         if($taskFilter->status){
             TaskStatus::validate($taskFilter->status);
@@ -45,9 +45,9 @@ final readonly class TaskService
     {
         $board = $this->boardRepository->getById($newTask->boardId);
         $task = $board->addTask(
-            title: TaskTitle::createNew($newTask->title),
-            description: $newTask->description ? TaskDescription::createNew($newTask->description) : null,
-            deadline: $newTask->deadline ? TaskDeadline::createNew($newTask->deadline, now()) : null,
+            title: new TaskTitle($newTask->title),
+            description: $newTask->description ? new TaskDescription($newTask->description) : null,
+            deadline: $newTask->deadline ? new TaskDeadline($newTask->deadline, new DateTimeImmutable()) : null,
         );
         $this->taskRepository->store($task);
     }
@@ -106,7 +106,7 @@ final readonly class TaskService
     public function changeDeadline(int $taskId, string $deadline): void
     {
         $task = $this->taskRepository->getById($taskId);
-        $task->setDeadline(TaskDeadline::createNew($deadline, now()));
+        $task->changeDeadline(new TaskDeadline($deadline, new DateTimeImmutable()));
         $this->taskRepository->update($task);
     }
 }

@@ -41,11 +41,6 @@ final class Board
         $this->description = $description;
     }
 
-    public function setId(int $id): void
-    {
-        $this->id = $id;
-    }
-
     public function getId(): int { return $this->id; }
     public function getName(): BoardName { return $this->name; }
     public function getUserId(): int { return $this->userId; }
@@ -53,8 +48,8 @@ final class Board
 
     public function addTask(TaskTitle $title, ?TaskDescription $description, ?TaskDeadline $deadline): Task
     {
-        return Task::createNew(
-            boardId: $this->id,
+        return new Task(
+            board: $this,
             title: $title,
             description: $description,
             deadline: $deadline,
