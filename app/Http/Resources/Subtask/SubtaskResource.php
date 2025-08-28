@@ -3,7 +3,7 @@
 namespace App\Http\Resources\Subtask;
 
 use App\Entities\Subtask;
-use Illuminate\Support\Collection;
+use Doctrine\Common\Collections\Collection;
 
 final class SubtaskResource
 {
@@ -19,7 +19,7 @@ final class SubtaskResource
     {
         return [
             'id' => $subtask->getId(),
-            'task_id' => $subtask->getTaskId(),
+            'task' => $subtask->getTask()->getId(),
             'title' => $subtask->getTitle()->value(),
             'description' => $subtask->getDescription()?->value(),
             'status' => $subtask->getStatus()->value,

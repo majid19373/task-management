@@ -18,9 +18,6 @@ interface TaskRepositoryInterface
 
     public function getBySubtaskId(int $id): Task;
 
-
     public function store(Task $task): void;
-
-    public function update(Task $task): void;
 
 }

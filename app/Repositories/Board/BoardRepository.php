@@ -29,7 +29,7 @@ final readonly class BoardRepository implements BoardRepositoryInterface
             ->orderBy('b.id');
 
         $query = $qb->getQuery()
-            ->setFirstResult(($page - 1) * $perPage) // OFFSET
+            ->setFirstResult(($page - 1) * $perPage)
             ->setMaxResults($perPage);
 
         $paginator = new Paginator($query);

@@ -7,7 +7,8 @@ final class SubtaskFilter
     public function __construct(
         public int $taskId,
         public bool $isPaginated = true,
-        public int $perPage = 10,
+        public ?int $page = 1,
+        public ?int $perPage = 10,
     )
     {}
 }

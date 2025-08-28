@@ -22,15 +22,9 @@ final class SubtaskController extends Controller
     public function list(FilterSubtaskRequest $request): JsonResponse
     {
         $subtaskFilterDTO = $request->makeDTO();
-        $tasks = $this->subtaskService->list($subtaskFilterDTO);
-        if($subtaskFilterDTO->isPaginated){
-            return $this->respondWithPagination(
-                paginate: $tasks->paginator,
-                data: SubtaskResource::toArrayList($tasks->list),
-            );
-        }
+        $subtasks = $this->subtaskService->list($subtaskFilterDTO);
         return $this->respond(
-            data: SubtaskResource::toArrayList($tasks),
+            data: SubtaskResource::toArrayList($subtasks),
         );
     }
 
@@ -47,9 +41,9 @@ final class SubtaskController extends Controller
     /**
      * @throws Exception
      */
-    public function start(int $subtaskId): JsonResponse
+    public function start(int $taskId, int $subtaskId): JsonResponse
     {
-        $this->subtaskService->start($subtaskId);
+        $this->subtaskService->start($taskId, $subtaskId);
         return $this->respondUpdated(
             message: 'The subtask was started.',
         );

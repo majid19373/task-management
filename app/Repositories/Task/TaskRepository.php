@@ -8,7 +8,6 @@ use App\Repositories\PaginatedResult;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
-use Illuminate\Database\Eloquent\Builder;
 
 final readonly class TaskRepository implements TaskRepositoryInterface
 {
@@ -86,44 +85,30 @@ final readonly class TaskRepository implements TaskRepositoryInterface
      */
     public function getBySubtaskId(int $id): Task
     {
-        $task = $this->model->query()
-            ->with(['subtasks'])
-            ->where('subtask_id', '=', $id)
-            ->first();
-        if(!$task) {
+        $qb = $this->em->createQueryBuilder();
+
+        $qb->select('t', 's')
+        ->from(Task::class, 't')
+            ->leftJoin('t.subtasks', 's')
+            ->where('s.id = :subtaskId')
+            ->setParameter('subtaskId', $id)
+            ->setMaxResults(1);
+
+        $subtask = $qb->getQuery()->getOneOrNullResult();
+        if(!$subtask) {
             throw new Exception('Subtask not found');
         }
-        return $this->makeEntityForTask($task);
+        return $subtask;
     }
 
-    /**
-     * @throws Exception
-     */
     public function store(Task $task): void
     {
         $this->em->persist($task);
         $this->em->flush();
-        if(!$task->getId()){
-            throw new Exception('Task not created');
-        }
-    }
 
-    /**
-     * @throws Exception
-     */
-    public function update(Task $task): void
-    {
-        if (!$task->getId()) {
-            throw new Exception('Task must already exist before update.');
-        }
-        $this->em->persist($task);
-        $this->em->flush();
-    }
-
-    private function applyTaskFilters(Builder $query, TaskFilter $filters): Builder
-    {
-        return $query
-            ->when($filters->status, fn($q) => $q->where('status', $filters->status))
-            ->when($filters->priority, fn($q) => $q->where('priority', $filters->priority));
+//        foreach ($task->getSubtasks() as $subtask) {
+//            $this->em->persist($subtask);
+//            $this->em->flush();
+//        }
     }
 }

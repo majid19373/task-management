@@ -15,9 +15,9 @@ final class FilterSubtaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'task_id' => ['required'],
             'is_paginated' => ['nullable'],
             'per_page' => ['nullable', 'integer', 'min:1'],
+            'page' => ['nullable', 'integer', 'min:1'],
         ];
     }
 
@@ -25,7 +25,8 @@ final class FilterSubtaskRequest extends FormRequest
     {
         return new SubtaskFilter(
             taskId: $this->task_id,
-            isPaginated:$this->is_paginated == 1 || $this->is_paginated === null,
+            isPaginated: $this->page > 0,
+            page: $this->page ?? 1,
             perPage: $this->per_page ?? 10,
         );
     }

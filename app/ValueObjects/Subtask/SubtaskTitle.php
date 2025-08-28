@@ -6,29 +6,24 @@ use DomainException;
 
 final class SubtaskTitle
 {
-    private string $title;
+    private string $value;
 
-    private function __construct(string $title)
+    public function __construct(string $value)
     {
-        $this->title = $title;
-    }
-
-    public static function createNew(string $title): SubtaskTitle
-    {
-        $length = strlen($title);
+        $length = strlen($value);
         if ($length < 5 || $length > 100) {
             throw new DomainException("Subtask title must be between 5 and 100 characters.");
         }
-        return new self($title);
-    }
-
-    public static function reconstitute(string $title): SubtaskTitle
-    {
-        return new self($title);
+        $this->value = $value;
     }
 
     public function value(): string
     {
-        return $this->title;
+        return $this->value;
+    }
+
+    public function __toString(): string
+    {
+        return $this->value;
     }
 }

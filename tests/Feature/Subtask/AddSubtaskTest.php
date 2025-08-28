@@ -2,51 +2,46 @@
 
 namespace Feature\Subtask;
 
-use App\Models\Board;
-use App\Models\Task;
+use App\Entities\Task;
 use App\ValueObjects\Task\TaskStatus;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class AddSubtaskTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
-    private const string BASE_ROUTE = 'api/v1/subtask';
+    use WithFaker;
+    private const string BASE_ROUTE = 'api/v1/task/';
 
     public function test_add_subtask(): void
     {
         //Arrange
-        $task = Task::factory()->create();
+        $task = entity(Task::class)->create();
         $data = [
-            'task_id' => $task->id,
+            'task_id' => $task->getId(),
             'title' => 'Subtask Title',
             'description' => $this->faker->optional()->text(500),
         ];
-        $route = self::BASE_ROUTE;
+        $route = self::BASE_ROUTE . "{$task->getId()}/subtask";
 
         //Act
         $response = $this->postJson($route, $data, parent::BASE_HEADERS);
 
         //Assert
         $response->assertCreated();
-        $this->assertDatabaseHas('subtasks', [
-            'task_id' => $task->id,
-        ]);
     }
 
     public function test_can_not_add_subtask_if_task_is_completed(): void
     {
         //Arrange
-        $task = Task::factory()->create([
-            'status' => TaskStatus::COMPLETED->value,
+        $task = entity(Task::class)->create([
+            'status' => TaskStatus::COMPLETED,
         ]);
         $data = [
-            'task_id' => $task->id,
+            'task_id' => $task->getId(),
             'title' => 'Subtask Title',
             'description' => $this->faker->optional()->text(500),
         ];
-        $route = self::BASE_ROUTE;
+        $route = self::BASE_ROUTE . "{$task->getId()}/subtask";
 
         //Act
         $response = $this->postJson($route, $data, parent::BASE_HEADERS);

@@ -3,9 +3,11 @@
 namespace App\Entities;
 
 use Doctrine\ORM\Mapping\{Column, Embedded, Entity, GeneratedValue, Id, JoinColumn, ManyToOne, OneToMany, Table};
+use Doctrine\Common\Collections\ArrayCollection;
 use App\ValueObjects\Task\{TaskDeadline, TaskDescription, TaskPriority, TaskStatus, TaskTitle};
 use App\ValueObjects\Subtask\{SubtaskDescription, SubtaskStatus, SubtaskTitle};
 use DomainException;
+use Doctrine\Common\Collections\Collection;
 
 #[Entity, Table(name: "tasks")]
 final class Task
@@ -31,8 +33,8 @@ final class Task
     #[Column(name: "description", type: "string", length: 500, nullable: true), Embedded(class: TaskDescription::class, columnPrefix: false)]
     protected ?TaskDescription $description;
 
-//    #[OneToMany(targetEntity: Subtask::class, mappedBy: "task", cascade: ["persist", "remove"], orphanRemoval: true)]
-//    protected array $subtasks;
+    #[OneToMany(targetEntity: Subtask::class, mappedBy: "task", cascade: ['persist', 'remove'], orphanRemoval: true)]
+    protected Collection $subtasks;
 
     public function __construct(
         Board            $board,
@@ -47,7 +49,7 @@ final class Task
         $this->priority = TaskPriority::MEDIUM;
         $this->description = $description;
         $this->deadline = $deadline;
-//        $this->subtasks = [];
+        $this->subtasks = new ArrayCollection();
     }
 
     public function start(): void
@@ -60,9 +62,9 @@ final class Task
 
     public function complete(): void
     {
-//        if(collect($this->subtasks)->contains('status', '!=', SubtaskStatus::COMPLETED)){
-//            throw new DomainException('The task must not complete.');
-//        }
+        if(collect($this->subtasks)->contains('status', '!=', SubtaskStatus::COMPLETED)){
+            throw new DomainException('The task must not complete.');
+        }
         if($this->status !== TaskStatus::IN_PROGRESS){
             throw new DomainException('The task must not have completed.');
         }
@@ -101,17 +103,22 @@ final class Task
     public function getStatus(): TaskStatus { return $this->status; }
     public function getPriority(): TaskPriority { return $this->priority; }
     public function getDeadline(): ?TaskDeadline { return $this->deadline; }
+    public function getSubtasks(): Collection
+    {
+        return $this->subtasks;
+    }
 
     public function addSubtask(
         SubtaskTitle $title,
-        bool $isCompletedTask,
         ?SubtaskDescription $description,
-    ): Subtask
+    ): void
     {
-        return Subtask::createNew(
-            taskId: $this->id,
+        if($this->status === TaskStatus::COMPLETED){
+            throw new DomainException("Can not add a subtask to a completed task.");
+        }
+        $this->subtasks[] = new Subtask(
+            task: $this,
             title: $title,
-            isCompletedTask: $isCompletedTask,
             description: $description,
         );
     }
@@ -123,8 +130,15 @@ final class Task
 
     public function startSubtask(int $subtaskId): void
     {
+        if($this->status === TaskStatus::COMPLETED){
+            throw new DomainException('The subtask does not start if the task was completed.');
+        }
+        if($this->status !== TaskStatus::IN_PROGRESS){
+            throw new DomainException('The subtask must not have started.');
+        }
+
         $subtask = $this->getSubtask($subtaskId);
-        $subtask->start($this->getStatus());
+        $subtask->start();
 
         if($this->status === TaskStatus::NOT_STARTED){
             $this->status = TaskStatus::COMPLETED;

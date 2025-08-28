@@ -67,7 +67,7 @@ final readonly class TaskService
     {
         $task = $this->taskRepository->getById($taskId);
         $task->start();
-        $this->taskRepository->update($task);
+        $this->taskRepository->store($task);
     }
 
     /**
@@ -77,7 +77,7 @@ final readonly class TaskService
     {
         $task = $this->taskRepository->getById($taskId);
         $task->complete();
-        $this->taskRepository->update($task);
+        $this->taskRepository->store($task);
     }
 
     /**
@@ -87,7 +87,7 @@ final readonly class TaskService
     {
         $task = $this->taskRepository->getById($taskId);
         $task->reopen();
-        $this->taskRepository->update($task);
+        $this->taskRepository->store($task);
     }
 
     /**
@@ -97,7 +97,7 @@ final readonly class TaskService
     {
         $task = $this->taskRepository->getById($taskId);
         $task->prioritize(TaskPriority::validate($priority));
-        $this->taskRepository->update($task);
+        $this->taskRepository->store($task);
     }
 
     /**
@@ -107,6 +107,6 @@ final readonly class TaskService
     {
         $task = $this->taskRepository->getById($taskId);
         $task->changeDeadline(new TaskDeadline($deadline, new DateTimeImmutable()));
-        $this->taskRepository->update($task);
+        $this->taskRepository->store($task);
     }
 }

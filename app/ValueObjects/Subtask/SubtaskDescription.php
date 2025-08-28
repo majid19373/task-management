@@ -6,28 +6,23 @@ use DomainException;
 
 final class SubtaskDescription
 {
-    private string $description;
+    private string $value;
 
-    public function __construct(?string $description)
+    public function __construct(?string $value)
     {
-        $this->description = $description;
-    }
-
-    public static function createNew(string $description): SubtaskDescription
-    {
-        if (strlen($description) > 500) {
+        if (strlen($value) > 500) {
             throw new DomainException("Subtask description must be less than 500 characters.");
         }
-        return new self($description);
-    }
-
-    public static function reconstitute(string $description): SubtaskDescription
-    {
-        return new self($description);
+        $this->value = $value;
     }
 
     public function value(): ?string
     {
-        return $this->description;
+        return $this->value;
+    }
+
+    public function __toString(): string
+    {
+        return $this->value;
     }
 }

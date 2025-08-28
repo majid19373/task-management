@@ -19,15 +19,17 @@ Route::prefix('v1')->group(function () {
         Route::get('{task}/reopen', [TaskController::class, 'reopen'])->name('reopen');
         Route::post('prioritize', [TaskController::class, 'prioritize'])->name('prioritize');
         Route::post('deadline', [TaskController::class, 'changeDeadline'])->name('deadline');
+
+        Route::prefix('{task_id}/subtask')->name('subtask.')->group(function () {
+            Route::get('', [SubtaskController::class, 'list'])->name('list');
+            Route::post('', [SubtaskController::class, 'add'])->name('add');
+            Route::get('{subtask}/start', [SubtaskController::class, 'start'])->name('start');
+            Route::get('{subtask}/complete', [SubtaskController::class, 'complete'])->name('complete');
+            Route::get('{subtask}/reopen', [SubtaskController::class, 'reopen'])->name('reopen');
+        });
     });
 
-    Route::prefix('subtask')->name('subtask.')->group(function () {
-        Route::get('', [SubtaskController::class, 'list'])->name('list');
-        Route::post('', [SubtaskController::class, 'add'])->name('add');
-        Route::get('{subtask}/start', [SubtaskController::class, 'start'])->name('start');
-        Route::get('{subtask}/complete', [SubtaskController::class, 'complete'])->name('complete');
-        Route::get('{subtask}/reopen', [SubtaskController::class, 'reopen'])->name('reopen');
-    });
+
 
 
 });

@@ -4,11 +4,8 @@ namespace App\Services;
 
 use App\DTO\Subtask\NewSubtask;
 use App\DTO\Subtask\SubtaskFilter;
-use App\Repositories\PaginatedResult;
-use App\Repositories\Subtask\SubtaskRepositoryInterface;
 use App\Repositories\Task\TaskRepositoryInterface;
-use App\ValueObjects\Task\TaskStatus;
-use Illuminate\Support\Collection;
+use Doctrine\Common\Collections\Collection;
 use App\ValueObjects\Subtask\{SubtaskDescription, SubtaskTitle};
 use Exception;
 
@@ -16,20 +13,15 @@ final readonly class SubtaskService
 {
     public function __construct(
         private TaskRepositoryInterface    $taskRepository,
-        private SubtaskRepositoryInterface $subtaskRepository,
     )
     {}
 
     /**
      * @throws Exception
      */
-    public function list(SubtaskFilter $subtaskFilter): PaginatedResult|Collection
+    public function list(SubtaskFilter $subtaskFilter): Collection
     {
-        if($subtaskFilter->isPaginated){
-            return $this->subtaskRepository->listWithPaginate($subtaskFilter);
-        }else{
-            return $this->subtaskRepository->list($subtaskFilter);
-        }
+        return $this->taskRepository->getById($subtaskFilter->taskId)->getSubtasks();
     }
 
     /**
@@ -38,26 +30,22 @@ final readonly class SubtaskService
     public function add(NewSubtask $newSubTask): void
     {
         $task = $this->taskRepository->getById($newSubTask->taskId);
-        $isCompletedTask = $task->getStatus() === TaskStatus::COMPLETED;
-        $subTask = $task->addSubtask(
-            title: SubtaskTitle::createNew($newSubTask->title),
-            isCompletedTask: $isCompletedTask,
-            description: $newSubTask->description ? SubtaskDescription::reconstitute($newSubTask->description) : null,
+        $task->addSubtask(
+            title: new SubtaskTitle($newSubTask->title),
+            description: $newSubTask->description ? new SubtaskDescription($newSubTask->description) : null,
         );
-        $this->subtaskRepository->store($subTask);
+        $this->taskRepository->store($task);
     }
 
     /**
      * @throws Exception
      */
-    public function start(int $subtaskId): void
+    public function start(int $taskId, int $subtaskId): void
     {
-        $task = $this->taskRepository->getBySubtaskId($subtaskId);
-
+        $task = $this->taskRepository->getById($taskId);
         $task->startSubtask($subtaskId);
 
-        $this->subtaskRepository->update($task->getSubtask($subtaskId));
-        $this->taskRepository->update($task);
+        $this->taskRepository->store($task);
     }
 
     public function complete(int $subtaskId): void
@@ -65,8 +53,7 @@ final readonly class SubtaskService
         $task = $this->taskRepository->getBySubtaskId($subtaskId);
         $task->completeSubtask($subtaskId);
 
-        $this->subtaskRepository->update($task->getSubtask($subtaskId));
-        $this->taskRepository->update($task);
+        $this->taskRepository->store($task);
     }
 
     public function reopen(int $subtaskId): void
@@ -74,7 +61,6 @@ final readonly class SubtaskService
         $task = $this->taskRepository->getBySubtaskId($subtaskId);
         $task->reopenSubtask($subtaskId);
 
-        $this->subtaskRepository->update($task->getSubtask($subtaskId));
-        $this->taskRepository->update($task);
+        $this->taskRepository->store($task);
     }
 }
