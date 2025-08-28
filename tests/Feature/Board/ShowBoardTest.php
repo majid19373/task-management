@@ -2,8 +2,8 @@
 
 namespace Feature\Board;
 
-use App\Entities\Board;
-use App\Http\Resources\Board\BoardResource;
+use Src\domain\Entities\Board\Board;
+use Src\infrastructure\DeliveryMechanism\Http\Api\V1\Resources\Board\BoardResource;
 use Tests\TestCase;
 
 final class ShowBoardTest extends TestCase

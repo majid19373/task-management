@@ -2,8 +2,8 @@
 
 namespace Tests;
 
-use App\Entities\Board;
-use App\Entities\Task;
+use Src\domain\Entities\Board\Board;
+use Src\domain\Entities\Task\Task;
 use Database\Factories\BoardFactory;
 use Database\Factories\TaskFactory;
 use Doctrine\ORM\EntityManagerInterface;

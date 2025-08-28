@@ -1,13 +1,13 @@
 <?php
 /** @var Factory $factory */
 
-use App\Entities\Board;
-use App\Entities\Task;
-use App\ValueObjects\Task\TaskDeadline;
-use App\ValueObjects\Task\TaskDescription;
-use App\ValueObjects\Task\TaskPriority;
-use App\ValueObjects\Task\TaskStatus;
-use App\ValueObjects\Task\TaskTitle;
+use Src\domain\Entities\Board\Board;
+use Src\domain\Entities\Task\Task;
+use Src\domain\Entities\Task\ValueObjects\TaskDeadline;
+use Src\domain\Entities\Task\ValueObjects\TaskDescription;
+use Src\domain\Entities\Task\ValueObjects\TaskPriority;
+use Src\domain\Entities\Task\ValueObjects\TaskStatus;
+use Src\domain\Entities\Task\ValueObjects\TaskTitle;
 use LaravelDoctrine\ORM\Testing\Factory;
 use Faker\Generator;
 

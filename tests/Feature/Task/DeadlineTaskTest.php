@@ -2,7 +2,7 @@
 
 namespace Feature\Task;
 
-use App\Entities\Task;
+use Src\domain\Entities\Task\Task;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
