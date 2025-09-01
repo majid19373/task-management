@@ -1,9 +1,9 @@
 <?php
 /** @var Factory $factory */
 
-use Src\domain\Entities\Board\Board;
-use Src\domain\Entities\Board\ValueObjects\BoardDescription;
-use Src\domain\Entities\Board\ValueObjects\BoardName;
+use Src\Domain\Board\Board;
+use Src\Domain\Board\BoardDescription;
+use Src\Domain\Board\BoardName;
 use LaravelDoctrine\ORM\Testing\Factory;
 use Faker\Generator;
 

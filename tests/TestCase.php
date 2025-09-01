@@ -13,7 +13,7 @@ abstract class TestCase extends BaseTestCase
     protected static bool $factoriesRegistered = false;
 
     protected const array BASE_HEADERS = [
-        'Accept' => 'application/json',
+        'Accept' => 'Application/json',
     ];
 
     protected const array MAIN_JSON_STRUCTURE = [

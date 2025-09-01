@@ -2,7 +2,7 @@
 
 namespace Feature\Board;
 
-use Src\domain\Entities\Board\Board;
+use Src\Domain\Board\Board;
 use Src\infrastructure\DeliveryMechanism\Http\Api\V1\Resources\Board\BoardResource;
 use Tests\TestCase;
 

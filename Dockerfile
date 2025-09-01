@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy existing application directory contents
+# Copy existing Application directory contents
 COPY . .
 
 # Install Laravel dependencies

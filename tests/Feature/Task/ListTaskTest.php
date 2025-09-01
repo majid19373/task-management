@@ -2,7 +2,7 @@
 
 namespace Feature\Task;
 
-use Src\domain\Entities\Task\Task;
+use Src\Domain\Task\Task;
 use Src\infrastructure\DeliveryMechanism\Http\Api\V1\Resources\Task\TaskResource;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -12,11 +12,11 @@ class ListTaskTest extends TestCase
     use WithFaker;
     private const string BASE_ROUTE = 'api/v1/task';
 
-    public function test_list_task(): void
+    public function test_paginate_task(): void
     {
         //Arrange
         entity(Task::class, 10)->create();
-        $route = self::BASE_ROUTE . '?board_id=1&page=1';
+        $route = self::BASE_ROUTE . '/paginate?board_id=1';
 
         //Act
         $response = $this->get($route, parent::BASE_HEADERS);
@@ -28,7 +28,7 @@ class ListTaskTest extends TestCase
             );
     }
 
-    public function test_list_task_without_pagination(): void
+    public function test_list_task(): void
     {
         //Arrange
         entity(Task::class, 10)->create();

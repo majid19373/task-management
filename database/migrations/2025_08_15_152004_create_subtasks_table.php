@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Src\domain\Entities\Subtask\ValueObjects\SubtaskStatus;
+use Src\Domain\Subtask\SubtaskStatus;
 
 return new class extends Migration
 {

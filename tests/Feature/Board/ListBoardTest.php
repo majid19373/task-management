@@ -2,7 +2,7 @@
 
 namespace Feature\Board;
 
-use Src\domain\Entities\Board\Board;
+use Src\Domain\Board\Board;
 use Src\infrastructure\DeliveryMechanism\Http\Api\V1\Resources\Board\BoardResource;
 use Tests\TestCase;
 
@@ -10,11 +10,11 @@ final class ListBoardTest extends TestCase
 {
     private const string BASE_ROUTE = 'api/v1/board';
 
-    public function test_list_board(): void
+    public function test_paginate_board(): void
     {
         //Arrange
         entity(Board::class, 10)->create();
-        $route = self::BASE_ROUTE . '?page=1';
+        $route = self::BASE_ROUTE . '/paginate';
 
         //Act
         $response = $this->get($route, parent::BASE_HEADERS);
@@ -26,7 +26,7 @@ final class ListBoardTest extends TestCase
             );
     }
 
-    public function test_list_board_without_pagination(): void
+    public function test_list_board(): void
     {
         //Arrange
         entity(Board::class, 10)->create();

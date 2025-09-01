@@ -6,12 +6,14 @@ use Src\infrastructure\DeliveryMechanism\Http\Api\V1\Controllers\{BoardControlle
 Route::prefix('v1')->group(function () {
     Route::prefix('board')->name('board.')->group(function () {
         Route::get('', [BoardController::class, 'list'])->name('list');
+        Route::get('paginate', [BoardController::class, 'paginate'])->name('paginate');
         Route::get('{boardId}', [BoardController::class, 'show'])->name('show');
         Route::post('', [BoardController::class, 'create'])->name('create');
     });
 
     Route::prefix('task')->name('task.')->group(function () {
         Route::get('', [TaskController::class, 'list'])->name('list');
+        Route::get('paginate', [TaskController::class, 'paginate'])->name('paginate');
         Route::post('', [TaskController::class, 'add'])->name('add');
         Route::get('{task}', [TaskController::class, 'show'])->name('show');
         Route::get('{task}/start', [TaskController::class, 'start'])->name('start');

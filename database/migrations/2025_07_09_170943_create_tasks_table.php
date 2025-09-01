@@ -3,8 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Src\domain\Entities\Task\ValueObjects\TaskPriority;
-use Src\domain\Entities\Task\ValueObjects\{TaskStatus};
+use Src\Domain\Task\TaskPriority;
+use Src\Domain\Task\{TaskStatus};
 
 return new class extends Migration
 {

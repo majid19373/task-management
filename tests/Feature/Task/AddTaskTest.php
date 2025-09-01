@@ -2,7 +2,7 @@
 
 namespace Feature\Task;
 
-use Src\domain\Entities\Board\Board;
+use Src\Domain\Board\Board;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 

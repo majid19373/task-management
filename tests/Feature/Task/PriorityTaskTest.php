@@ -2,9 +2,9 @@
 
 namespace Feature\Task;
 
-use Src\domain\Entities\Task\Task;
-use Src\domain\Entities\Task\ValueObjects\TaskPriority;
-use Src\domain\Entities\Task\ValueObjects\TaskStatus;
+use Src\Domain\Task\Task;
+use Src\Domain\Task\TaskPriority;
+use Src\Domain\Task\TaskStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
