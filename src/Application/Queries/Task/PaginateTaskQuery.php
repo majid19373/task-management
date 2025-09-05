@@ -2,7 +2,9 @@
 
 namespace Src\Application\Queries\Task;
 
-final readonly class PaginateTaskQuery
+use Src\Application\Queries\QueryInterface;
+
+final readonly class PaginateTaskQuery implements QueryInterface
 {
     public function __construct(
         public int $boardId,

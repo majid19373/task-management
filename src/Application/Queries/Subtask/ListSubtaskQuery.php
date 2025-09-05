@@ -2,7 +2,9 @@
 
 namespace Src\Application\Queries\Subtask;
 
-final readonly class ListSubtaskQuery
+use Src\Application\Queries\QueryInterface;
+
+final readonly class ListSubtaskQuery implements QueryInterface
 {
     public function __construct(
         public int $taskId,

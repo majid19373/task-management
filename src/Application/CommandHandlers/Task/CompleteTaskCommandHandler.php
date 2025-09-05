@@ -3,10 +3,12 @@
 namespace Src\Application\CommandHandlers\Task;
 
 use Exception;
+use Src\Application\CommandHandlers\CommandHandlerInterface;
+use Src\Application\Commands\CommandInterface;
 use Src\Application\Commands\Task\CompleteTaskCommand;
 use Src\Infrastructure\Persistence\Repositories\Task\TaskRepositoryInterface;
 
-final readonly class CompleteTaskCommandHandler
+final readonly class CompleteTaskCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
         private TaskRepositoryInterface  $taskRepository,
@@ -15,8 +17,9 @@ final readonly class CompleteTaskCommandHandler
 
     /**
      * @throws Exception
+     * @var CompleteTaskCommand $command
      */
-    public function handle(CompleteTaskCommand $command): void
+    public function handle(CommandInterface $command): void
     {
         $task = $this->taskRepository->getById($command->id);
         $task->complete();

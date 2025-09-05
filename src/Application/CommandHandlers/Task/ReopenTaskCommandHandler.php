@@ -3,10 +3,12 @@
 namespace Src\Application\CommandHandlers\Task;
 
 use Exception;
+use Src\Application\CommandHandlers\CommandHandlerInterface;
+use Src\Application\Commands\CommandInterface;
 use Src\Application\Commands\Task\ReopenTaskCommand;
 use Src\Infrastructure\Persistence\Repositories\Task\TaskRepositoryInterface;
 
-final readonly class ReopenTaskCommandHandler
+final readonly class ReopenTaskCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
         private TaskRepositoryInterface  $taskRepository,
@@ -15,8 +17,9 @@ final readonly class ReopenTaskCommandHandler
 
     /**
      * @throws Exception
+     * @var ReopenTaskCommand $command
      */
-    public function handle(ReopenTaskCommand $command): void
+    public function handle(CommandInterface $command): void
     {
         $task = $this->taskRepository->getById($command->id);
         $task->reopen();

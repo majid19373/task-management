@@ -2,7 +2,9 @@
 
 namespace Src\Application\Commands\Board;
 
-final readonly class CreateBoardCommand
+use Src\Application\Commands\CommandInterface;
+
+final readonly class CreateBoardCommand implements CommandInterface
 {
     public function __construct(
         public int $userId,

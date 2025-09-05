@@ -2,7 +2,9 @@
 
 namespace Src\Application\Commands\Subtask;
 
-final readonly class ReopenSubtaskCommand
+use Src\Application\Commands\CommandInterface;
+
+final readonly class ReopenSubtaskCommand implements CommandInterface
 {
     public function __construct(
         public int $taskId,

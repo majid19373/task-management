@@ -2,7 +2,9 @@
 
 namespace Src\Application\Commands\Task;
 
-final readonly class StartTaskCommand
+use Src\Application\Commands\CommandInterface;
+
+final readonly class StartTaskCommand implements CommandInterface
 {
 
     public function __construct(

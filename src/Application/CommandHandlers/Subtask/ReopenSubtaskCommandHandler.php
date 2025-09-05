@@ -3,11 +3,12 @@
 namespace Src\Application\CommandHandlers\Subtask;
 
 use Exception;
-use Src\Application\Commands\Subtask\CompleteSubtaskCommand;
+use Src\Application\CommandHandlers\CommandHandlerInterface;
+use Src\Application\Commands\CommandInterface;
 use Src\Application\Commands\Subtask\ReopenSubtaskCommand;
 use Src\Infrastructure\Persistence\Repositories\Task\TaskRepositoryInterface;
 
-final readonly class ReopenSubtaskCommandHandler
+final readonly class ReopenSubtaskCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
         private TaskRepositoryInterface $taskRepository,
@@ -16,8 +17,9 @@ final readonly class ReopenSubtaskCommandHandler
 
     /**
      * @throws Exception
+     * @var ReopenSubtaskCommand $command
      */
-    public function handle(ReopenSubtaskCommand $command): void
+    public function handle(CommandInterface $command): void
     {
         $task = $this->taskRepository->getById($command->taskId);
         $task->reopenSubtask($command->subtaskId);

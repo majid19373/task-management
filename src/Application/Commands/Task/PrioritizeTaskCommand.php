@@ -2,7 +2,9 @@
 
 namespace Src\Application\Commands\Task;
 
-final readonly class PrioritizeTaskCommand
+use Src\Application\Commands\CommandInterface;
+
+final readonly class PrioritizeTaskCommand implements CommandInterface
 {
 
     public function __construct(

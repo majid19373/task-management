@@ -2,7 +2,9 @@
 
 namespace Src\Application\Queries\Board;
 
-final readonly class GetBoardQuery
+use Src\Application\Queries\QueryInterface;
+
+final readonly class GetBoardQuery implements QueryInterface
 {
     public function __construct(
         public int $id,

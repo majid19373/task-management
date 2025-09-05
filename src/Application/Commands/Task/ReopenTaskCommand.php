@@ -2,7 +2,9 @@
 
 namespace Src\Application\Commands\Task;
 
-final readonly class ReopenTaskCommand
+use Src\Application\Commands\CommandInterface;
+
+final readonly class ReopenTaskCommand implements CommandInterface
 {
 
     public function __construct(

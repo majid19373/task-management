@@ -3,15 +3,17 @@
 namespace Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Controllers;
 
 use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Requests\Subtask\{AddSubtaskRequest};
-use Src\Application\CommandHandlers\Subtask\AddSubtaskCommandHandler;
-use Src\Application\CommandHandlers\Subtask\CompeteSubtaskCommandHandler;
-use Src\Application\CommandHandlers\Subtask\ReopenSubtaskCommandHandler;
-use Src\Application\CommandHandlers\Subtask\StartSubtaskCommandHandler;
-use Src\Application\Commands\Subtask\CompleteSubtaskCommand;
-use Src\Application\Commands\Subtask\ReopenSubtaskCommand;
-use Src\Application\Commands\Subtask\StartSubtaskCommand;
-use Src\Application\Queries\Subtask\ListSubtaskQuery;
-use Src\Application\QueryHandlers\Subtask\ListSubtaskQueryHandler;
+use Src\Application\Bus\CommandBus;
+use Src\Application\CommandHandlers\Subtask\{
+    AddSubtaskCommandHandler,
+    CompeteSubtaskCommandHandler,
+    ReopenSubtaskCommandHandler,
+    StartSubtaskCommandHandler
+};
+use Src\Application\Commands\Subtask\{CompleteSubtaskCommand, ReopenSubtaskCommand, StartSubtaskCommand};
+use Src\Application\Queries\Subtask\{ListSubtaskQuery};
+use Src\Application\QueryHandlers\Subtask\{ListSubtaskQueryHandler};
+use Src\Application\Bus\QueryBus;
 use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Common\Controller;
 use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Resources\Subtask\SubtaskResource;
 use Exception;
@@ -19,19 +21,13 @@ use Illuminate\Http\JsonResponse;
 
 final class SubtaskController extends Controller
 {
-    public function __construct(
-        private readonly ListSubtaskQueryHandler      $listSubtaskQueryHandler,
-        private readonly AddSubtaskCommandHandler     $addSubtaskCommandHandler,
-        private readonly StartSubtaskCommandHandler   $startSubtaskCommandHandler,
-        private readonly CompeteSubtaskCommandHandler $competeSubtaskCommandHandler,
-        private readonly ReopenSubtaskCommandHandler  $reopenSubtaskCommandHandler,
-    )
-    {}
-
     public function list(int $taskId): JsonResponse
     {
         $query = new ListSubtaskQuery($taskId);
-        $subtasks = $this->listSubtaskQueryHandler->handle($query);
+
+        $bus = new QueryBus(resolve(ListSubtaskQueryHandler::class));
+        $subtasks = $bus->ask($query);
+
         return $this->respond(
             data: SubtaskResource::toArrayList($subtasks),
         );
@@ -42,8 +38,11 @@ final class SubtaskController extends Controller
      */
     public function add(AddSubtaskRequest $request): JsonResponse
     {
-        $subtaskDTO = $request->makeDTO();
-        $this->addSubtaskCommandHandler->handle($subtaskDTO);
+        $command = $request->makeDTO();
+
+        $bus = new CommandBus(resolve(AddSubtaskCommandHandler::class));
+        $bus->dispatch($command);
+
         return $this->respondCreated();
     }
 
@@ -53,7 +52,10 @@ final class SubtaskController extends Controller
     public function start(int $taskId, int $subtaskId): JsonResponse
     {
         $command = new StartSubtaskCommand($taskId, $subtaskId);
-        $this->startSubtaskCommandHandler->handle($command);
+
+        $bus = new CommandBus(resolve(StartSubtaskCommandHandler::class));
+        $bus->dispatch($command);
+
         return $this->respondUpdated(
             message: 'The subtask was started.',
         );
@@ -65,7 +67,10 @@ final class SubtaskController extends Controller
     public function complete(int $taskId, int $subtaskId): JsonResponse
     {
         $command = new CompleteSubtaskCommand($taskId, $subtaskId);
-        $this->competeSubtaskCommandHandler->handle($command);
+
+        $bus = new CommandBus(resolve(CompeteSubtaskCommandHandler::class));
+        $bus->dispatch($command);
+
         return $this->respondUpdated(
             message: 'The subtask was completed.',
         );
@@ -77,7 +82,10 @@ final class SubtaskController extends Controller
     public function reopen(int $taskId, int $subtaskId): JsonResponse
     {
         $command = new ReopenSubtaskCommand($taskId, $subtaskId);
-        $this->reopenSubtaskCommandHandler->handle($command);
+
+        $bus = new CommandBus(resolve(ReopenSubtaskCommandHandler::class));
+        $bus->dispatch($command);
+
         return $this->respondUpdated(
             message: 'The subtask was reopened.',
         );
