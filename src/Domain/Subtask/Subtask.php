@@ -3,9 +3,6 @@
 namespace Src\Domain\Subtask;
 
 use Src\Domain\Task\Task;
-use Src\Domain\Subtask\SubtaskStatus;
-use Src\Domain\Subtask\SubtaskTitle;
-use Src\Domain\Subtask\{SubtaskDescription};
 use Doctrine\ORM\Mapping\{Column, Embedded, Entity, GeneratedValue, Id, JoinColumn, ManyToOne, Table};
 use DomainException;
 
@@ -15,16 +12,16 @@ final class Subtask
     #[Id, Column(type: "integer"), GeneratedValue()]
     protected int $id;
 
-    #[JoinColumn(name: 'task_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE'), ManyToOne(targetEntity: Task::class, inversedBy: 'subtasks')]
+    #[JoinColumn(name: 'task_id', nullable: false), ManyToOne(targetEntity: Task::class, inversedBy: 'subtasks')]
     protected Task $task;
 
-    #[Column(name: "title", type: "string", length: 100), Embedded(class: SubtaskTitle::class, columnPrefix: false)]
+    #[Column(name: "title", type: "subtask_title", length: 100), Embedded(class: SubtaskTitle::class, columnPrefix: false)]
     protected SubtaskTitle $title;
 
     #[Column(name: "status", enumType: SubtaskStatus::class)]
     protected SubtaskStatus $status;
 
-    #[Column(name: "description", type: "string", length: 500, nullable: true), Embedded(class: SubtaskDescription::class, columnPrefix: false)]
+    #[Column(name: "description", type: "subtask_description", length: 500, nullable: true), Embedded(class: SubtaskDescription::class, columnPrefix: false)]
     protected ?SubtaskDescription $description;
 
     public function __construct(
@@ -64,7 +61,7 @@ final class Subtask
     }
 
     public function getId(): int { return $this->id; }
-    public function getTask(): Task { return $this->task; }
+    public function getTaskId(): Task { return $this->task; }
     public function getTitle(): SubtaskTitle { return $this->title; }
     public function getDescription(): ?SubtaskDescription { return $this->description; }
     public function getStatus(): SubtaskStatus { return $this->status; }

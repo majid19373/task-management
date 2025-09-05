@@ -19,20 +19,20 @@ final class Board
     #[Column(type: "integer")]
     protected int $userId;
 
-    #[Column(name: "name", type: "string", length: 50), Embedded(class: \Src\Domain\Board\BoardName::class, columnPrefix: false)]
-    protected \Src\Domain\Board\BoardName $name;
+    #[Column(name: "name", type: "board_name", length: 50), Embedded(class: BoardName::class, columnPrefix: false)]
+    protected BoardName $name;
 
-    #[Column(name: "description", type: "string", length: 200, nullable: true), Embedded(class: TaskDescription::class, columnPrefix: false)]
-    protected ?\Src\Domain\Board\BoardDescription $description;
+    #[Column(name: "description", type: "board_description", length: 200, nullable: true), Embedded(class: TaskDescription::class, columnPrefix: false)]
+    protected ?BoardDescription $description;
 
     /**
      * @throws DomainException
      */
     public function __construct(
-        bool                                $existsByUserIdAndName,
-        \Src\Domain\Board\BoardName         $name,
-        int                                 $userId,
-        ?\Src\Domain\Board\BoardDescription $description = null
+        bool              $existsByUserIdAndName,
+        BoardName         $name,
+        int               $userId,
+        ?BoardDescription $description = null
     )
     {
         if($existsByUserIdAndName){
@@ -44,14 +44,14 @@ final class Board
     }
 
     public function getId(): int { return $this->id; }
-    public function getName(): \Src\Domain\Board\BoardName { return $this->name; }
+    public function getName(): BoardName { return $this->name; }
     public function getUserId(): int { return $this->userId; }
-    public function getDescription(): ?\Src\Domain\Board\BoardDescription { return $this->description; }
+    public function getDescription(): ?BoardDescription { return $this->description; }
 
     public function addTask(TaskTitle $title, ?TaskDescription $description, ?TaskDeadline $deadline): Task
     {
         return new Task(
-            board: $this,
+            boardId: $this->id,
             title: $title,
             description: $description,
             deadline: $deadline,

@@ -2,17 +2,11 @@
 
 namespace Src\Domain\Task;
 
-use Doctrine\ORM\Mapping\{Column, Embedded, Entity, GeneratedValue, Id, JoinColumn, ManyToOne, OneToMany, Table};
+use Doctrine\ORM\Mapping\{Column, Embedded, Entity, GeneratedValue, Id, OneToMany, Table};
 use Doctrine\Common\Collections\ArrayCollection;
-use Src\Domain\Board\Board;
 use Src\Domain\Subtask\Subtask;
 use Src\Domain\Subtask\SubtaskStatus;
 use Src\Domain\Subtask\SubtaskTitle;
-use Src\Domain\Task\TaskDeadline;
-use Src\Domain\Task\TaskDescription;
-use Src\Domain\Task\TaskStatus;
-use Src\Domain\Task\TaskTitle;
-use Src\Domain\Task\{TaskPriority};
 use Src\Domain\Subtask\{SubtaskDescription};
 use DomainException;
 use Doctrine\Common\Collections\Collection;
@@ -23,10 +17,10 @@ final class Task
     #[Id, Column(type: "integer"), GeneratedValue()]
     protected int $id;
 
-    #[JoinColumn(name: "board_id", referencedColumnName: "id", nullable: false, onDelete: 'CASCADE'), ManyToOne(targetEntity: Board::class, inversedBy: "task")]
-    protected Board $board;
+    #[Column(name: "board_id", type: "integer")]
+    protected int $boardId;
 
-    #[Column(name: "title", type: "string", length: 100), Embedded(class: TaskTitle::class, columnPrefix: false)]
+    #[Column(name: "title", type: "task_title", length: 100), Embedded(class: TaskTitle::class, columnPrefix: false)]
     protected TaskTitle $title;
 
     #[Column(name: "status", enumType: TaskStatus::class)]
@@ -35,23 +29,23 @@ final class Task
     #[Column(name: "priority", enumType: TaskPriority::class)]
     protected TaskPriority $priority;
 
-    #[Column(name: "deadline", type: "string", nullable: true), Embedded(class: TaskDeadline::class, columnPrefix: false)]
+    #[Column(name: "deadline", type: "task_deadline", nullable: true), Embedded(class: TaskDeadline::class, columnPrefix: false)]
     protected ?TaskDeadline $deadline;
 
-    #[Column(name: "description", type: "string", length: 500, nullable: true), Embedded(class: TaskDescription::class, columnPrefix: false)]
+    #[Column(name: "description", type: "task_description", length: 500, nullable: true), Embedded(class: TaskDescription::class, columnPrefix: false)]
     protected ?TaskDescription $description;
 
-    #[OneToMany(targetEntity: Subtask::class, mappedBy: "task", cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[OneToMany(targetEntity: Subtask::class, mappedBy: "task", cascade: ['persist', 'remove'], fetch: "LAZY", orphanRemoval: true)]
     protected Collection $subtasks;
 
     public function __construct(
-        Board                         $board,
+        int              $boardId,
         TaskTitle        $title,
         ?TaskDescription $description = null,
         ?TaskDeadline    $deadline = null,
     )
     {
-        $this->board = $board;
+        $this->boardId = $boardId;
         $this->title = $title;
         $this->status = TaskStatus::NOT_STARTED;
         $this->priority = TaskPriority::MEDIUM;
@@ -105,7 +99,7 @@ final class Task
 
 
     public function getId(): int { return $this->id; }
-    public function getBoard(): Board { return $this->board; }
+    public function getBoardId(): int { return $this->boardId; }
     public function getTitle(): TaskTitle { return $this->title; }
     public function getDescription(): ?TaskDescription { return $this->description; }
     public function getStatus(): TaskStatus { return $this->status; }
@@ -133,7 +127,8 @@ final class Task
 
     public function getSubtask(int $subtaskId): Subtask
     {
-        return collect($this->subtasks)->firstWhere('id', $subtaskId);
+        return array_find($this->subtasks->toArray(), fn($subtask) => $subtask->getId() === $subtaskId);
+
     }
 
     public function startSubtask(int $subtaskId): void

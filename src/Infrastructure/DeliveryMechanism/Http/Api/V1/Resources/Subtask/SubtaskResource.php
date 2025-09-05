@@ -9,7 +9,6 @@ final class SubtaskResource
 {
     public const array JSON_STRUCTURE = [
         'id',
-        'task_id',
         'title',
         'description',
         'status',
@@ -19,17 +18,16 @@ final class SubtaskResource
     {
         return [
             'id' => $subtask->getId(),
-            'task' => $subtask->getTask()->getId(),
             'title' => $subtask->getTitle()->value(),
             'description' => $subtask->getDescription()?->value(),
             'status' => $subtask->getStatus()->value,
         ];
     }
 
-    public static function toArrayList(Collection $subtasks): Collection
+    public static function toArrayList(Collection $subtasks): array
     {
-        return $subtasks->map(function ($subtask) {
+        return array_map(function ($subtask) {
             return SubtaskResource::toArray($subtask);
-        });
+        }, $subtasks->toArray());
     }
 }

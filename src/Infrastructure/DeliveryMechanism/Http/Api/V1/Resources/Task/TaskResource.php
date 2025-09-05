@@ -2,8 +2,10 @@
 
 namespace Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Resources\Task;
 
+use Src\Domain\Subtask\Subtask;
 use Src\Domain\Task\Task;
 use Illuminate\Support\Collection;
+use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Resources\Subtask\SubtaskResource;
 
 final class TaskResource
 {
@@ -15,18 +17,20 @@ final class TaskResource
         'status',
         'priority',
         'deadline',
+        'subtasks',
     ];
 
     public static function toArray(Task $task): array
     {
         return [
             'id' => $task->getId(),
-            'board_id' => $task->getBoard()->getId(),
+            'board_id' => $task->getBoardId(),
             'title' => $task->getTitle()->value(),
             'description' => $task->getDescription()?->value(),
             'status' => $task->getStatus()->value,
             'priority' => $task->getPriority()->value,
             'deadline' => $task->getDeadline()?->value(),
+            'subtasks' => SubtaskResource::toArrayList($task->getSubtasks()),
         ];
     }
 

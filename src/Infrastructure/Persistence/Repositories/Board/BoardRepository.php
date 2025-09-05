@@ -45,9 +45,16 @@ final readonly class BoardRepository implements BoardRepositoryInterface
         );
     }
 
+    /**
+     * @throws Exception
+     */
     public function getById(int $id): Board
     {
-        return $this->em->getRepository(Board::class)->find($id);
+        $board = $this->em->getRepository(Board::class)->find($id);
+        if (!$board) {
+            throw new Exception('The board not found.');
+        }
+        return $board;
     }
 
     /**
