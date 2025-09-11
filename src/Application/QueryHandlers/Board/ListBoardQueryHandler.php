@@ -5,7 +5,7 @@ namespace Src\Application\QueryHandlers\Board;
 use Exception;
 use Src\Application\Queries\QueryInterface;
 use Src\Application\QueryHandlers\QueryHandlerInterface;
-use Src\Infrastructure\Persistence\Repositories\Board\BoardRepositoryInterface;
+use Src\Application\Contracts\Repositories\BoardRepositoryInterface;
 
 final readonly class ListBoardQueryHandler implements QueryHandlerInterface
 {

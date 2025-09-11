@@ -6,7 +6,7 @@ use Src\Application\Queries\QueryInterface;
 use Src\Application\Queries\Subtask\ListSubtaskQuery;
 use Doctrine\Common\Collections\Collection;
 use Src\Application\QueryHandlers\QueryHandlerInterface;
-use Src\Infrastructure\Persistence\Repositories\Task\TaskRepositoryInterface;
+use Src\Application\Contracts\Repositories\TaskRepositoryInterface;
 
 final readonly class ListSubtaskQueryHandler implements QueryHandlerInterface
 {

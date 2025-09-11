@@ -3,8 +3,8 @@
 namespace Src\Infrastructure\Persistence\Repositories\Board;
 
 use Src\Domain\Board\Board;
-use Src\Infrastructure\Persistence\Repositories\Board\BoardRepositoryInterface;
-use Src\Infrastructure\Persistence\Repositories\PaginatedResult;
+use Src\Application\Contracts\Repositories\BoardRepositoryInterface;
+use Src\Application\Contracts\Repositories\PaginatedResult;
 use Src\Domain\Board\BoardName;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;

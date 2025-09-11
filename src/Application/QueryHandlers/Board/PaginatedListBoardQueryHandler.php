@@ -5,8 +5,8 @@ namespace Src\Application\QueryHandlers\Board;
 use Src\Application\Queries\Board\PaginateBoardQuery;
 use Src\Application\Queries\QueryInterface;
 use Src\Application\QueryHandlers\QueryHandlerInterface;
-use Src\Infrastructure\Persistence\Repositories\Board\BoardRepositoryInterface;
-use Src\Infrastructure\Persistence\Repositories\PaginatedResult;
+use Src\Application\Contracts\Repositories\BoardRepositoryInterface;
+use Src\Application\Contracts\Repositories\PaginatedResult;
 
 final readonly class PaginatedListBoardQueryHandler implements QueryHandlerInterface
 {

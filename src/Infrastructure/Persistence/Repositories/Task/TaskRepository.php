@@ -5,11 +5,11 @@ namespace Src\Infrastructure\Persistence\Repositories\Task;
 use Src\Application\Queries\Task\ListTaskQuery;
 use Src\Application\Queries\Task\PaginateTaskQuery;
 use Src\Domain\Task\Task;
-use Src\Infrastructure\Persistence\Repositories\PaginatedResult;
+use Src\Application\Contracts\Repositories\PaginatedResult;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
-use Src\Infrastructure\Persistence\Repositories\Task\TaskRepositoryInterface;
+use Src\Application\Contracts\Repositories\TaskRepositoryInterface;
 
 final readonly class TaskRepository implements TaskRepositoryInterface
 {

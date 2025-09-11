@@ -2,9 +2,9 @@
 
 namespace Src\Infrastructure\Laravel\Providers;
 
-use Src\Infrastructure\Persistence\Repositories\Board\BoardRepositoryInterface;
+use Src\Application\Contracts\Repositories\BoardRepositoryInterface;
 use Src\Infrastructure\Persistence\Repositories\Task\TaskRepository;
-use Src\Infrastructure\Persistence\Repositories\Task\{TaskRepositoryInterface};
+use Src\Application\Contracts\Repositories\{TaskRepositoryInterface};
 use Src\Infrastructure\Persistence\Repositories\Board\{BoardRepository};
 use Illuminate\Support\ServiceProvider;
 

@@ -7,7 +7,7 @@ use Src\Application\CommandHandlers\CommandHandlerInterface;
 use Src\Application\Commands\CommandInterface;
 use Src\Application\Commands\Task\PrioritizeTaskCommand;
 use Src\Domain\Task\TaskPriority;
-use Src\Infrastructure\Persistence\Repositories\Task\TaskRepositoryInterface;
+use Src\Application\Contracts\Repositories\TaskRepositoryInterface;
 
 final readonly class PrioritizeTaskCommandHandler implements CommandHandlerInterface
 {

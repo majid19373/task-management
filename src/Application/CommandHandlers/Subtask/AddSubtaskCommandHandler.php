@@ -8,7 +8,7 @@ use Src\Application\Commands\Subtask\AddSubtaskCommand;
 use Exception;
 use Src\Domain\Subtask\SubtaskDescription;
 use Src\Domain\Subtask\SubtaskTitle;
-use Src\Infrastructure\Persistence\Repositories\Task\TaskRepositoryInterface;
+use Src\Application\Contracts\Repositories\TaskRepositoryInterface;
 
 final readonly class AddSubtaskCommandHandler implements CommandHandlerInterface
 {

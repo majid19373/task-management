@@ -3,11 +3,11 @@
 namespace Src\Infrastructure\Laravel\Exceptions;
 
 use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Common\Responses;
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Foundation\Exceptions\Handler;
 use Illuminate\Http\JsonResponse;
 use Throwable;
 
-class Handler extends ExceptionHandler
+class ExceptionHandler extends Handler
 {
     use Responses;
 

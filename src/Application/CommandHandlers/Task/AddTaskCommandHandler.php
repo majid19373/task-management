@@ -8,8 +8,8 @@ use Src\Application\Commands\CommandInterface;
 use Src\Application\Commands\Task\AddTaskCommand;
 use Exception;
 use Src\Domain\Task\{TaskDeadline, TaskDescription, TaskTitle};
-use Src\Infrastructure\Persistence\Repositories\Board\BoardRepositoryInterface;
-use Src\Infrastructure\Persistence\Repositories\Task\TaskRepositoryInterface;
+use Src\Application\Contracts\Repositories\BoardRepositoryInterface;
+use Src\Application\Contracts\Repositories\TaskRepositoryInterface;
 
 final readonly class AddTaskCommandHandler implements CommandHandlerInterface
 {

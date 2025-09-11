@@ -5,7 +5,7 @@ namespace Src\Application\Bus;
 use Exception;
 use Src\Application\Queries\QueryInterface;
 use Src\Application\QueryHandlers\QueryHandlerInterface;
-use Src\Infrastructure\Persistence\Repositories\PaginatedResult;
+use Src\Application\Contracts\Repositories\PaginatedResult;
 
 final readonly class PaginateQueryBus
 {

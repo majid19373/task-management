@@ -7,7 +7,7 @@ use Src\Application\Queries\QueryInterface;
 use Src\Application\QueryHandlers\QueryHandlerInterface;
 use Src\Domain\Board\Board;
 use Exception;
-use Src\Infrastructure\Persistence\Repositories\Board\BoardRepositoryInterface;
+use Src\Application\Contracts\Repositories\BoardRepositoryInterface;
 
 final readonly class GetBoardQueryHandler implements QueryHandlerInterface
 {

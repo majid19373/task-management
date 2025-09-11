@@ -6,7 +6,7 @@ use Src\Application\Queries\QueryInterface;
 use Src\Application\Queries\Task\ListTaskQuery;
 use Src\Application\QueryHandlers\QueryHandlerInterface;
 use Src\Domain\Task\{TaskPriority, TaskStatus};
-use Src\Infrastructure\Persistence\Repositories\Task\TaskRepositoryInterface;
+use Src\Application\Contracts\Repositories\TaskRepositoryInterface;
 
 final readonly class ListTaskQueryHandler implements QueryHandlerInterface
 {

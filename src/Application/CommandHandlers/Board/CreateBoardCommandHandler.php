@@ -9,7 +9,7 @@ use Src\Domain\Board\Board;
 use Src\Domain\Board\BoardDescription;
 use Src\Domain\Board\BoardName;
 use Exception;
-use Src\Infrastructure\Persistence\Repositories\Board\BoardRepositoryInterface;
+use Src\Application\Contracts\Repositories\BoardRepositoryInterface;
 
 final readonly class CreateBoardCommandHandler implements CommandHandlerInterface
 {

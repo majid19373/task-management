@@ -7,7 +7,7 @@ use Src\Application\Queries\Task\FindTaskQuery;
 use Exception;
 use Src\Application\QueryHandlers\QueryHandlerInterface;
 use Src\Domain\Task\Task;
-use Src\Infrastructure\Persistence\Repositories\Task\TaskRepositoryInterface;
+use Src\Application\Contracts\Repositories\TaskRepositoryInterface;
 
 final readonly class FindTaskQueryHandler implements QueryHandlerInterface
 {
