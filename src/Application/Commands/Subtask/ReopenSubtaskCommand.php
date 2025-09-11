@@ -2,7 +2,7 @@
 
 namespace Src\Application\Commands\Subtask;
 
-use Src\Application\Commands\CommandInterface;
+use Src\Application\Contracts\CommandInterface;
 
 final readonly class ReopenSubtaskCommand implements CommandInterface
 {

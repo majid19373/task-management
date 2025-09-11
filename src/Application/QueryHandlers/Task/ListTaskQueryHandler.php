@@ -2,23 +2,18 @@
 
 namespace Src\Application\QueryHandlers\Task;
 
-use Src\Application\Queries\QueryInterface;
 use Src\Application\Queries\Task\ListTaskQuery;
-use Src\Application\QueryHandlers\QueryHandlerInterface;
 use Src\Domain\Task\{TaskPriority, TaskStatus};
 use Src\Application\Contracts\Repositories\TaskRepositoryInterface;
 
-final readonly class ListTaskQueryHandler implements QueryHandlerInterface
+final readonly class ListTaskQueryHandler
 {
     public function __construct(
         private TaskRepositoryInterface $taskRepository
     )
     {}
 
-    /**
-     *@var ListTaskQuery $query
-     */
-    public function handle(QueryInterface $query): array
+    public function handle(ListTaskQuery $query): array
     {
         if($query->status){
             TaskStatus::validate($query->status);

@@ -2,23 +2,18 @@
 
 namespace Src\Application\QueryHandlers\Subtask;
 
-use Src\Application\Queries\QueryInterface;
 use Src\Application\Queries\Subtask\ListSubtaskQuery;
 use Doctrine\Common\Collections\Collection;
-use Src\Application\QueryHandlers\QueryHandlerInterface;
 use Src\Application\Contracts\Repositories\TaskRepositoryInterface;
 
-final readonly class ListSubtaskQueryHandler implements QueryHandlerInterface
+final readonly class ListSubtaskQueryHandler
 {
     public function __construct(
         private TaskRepositoryInterface $taskRepository
     )
     {}
 
-    /**
-     * @var ListSubtaskQuery $query
-     */
-    public function handle(QueryInterface $query): Collection
+    public function handle(ListSubtaskQuery $query): Collection
     {
         return $this->taskRepository->getById($query->taskId)->getSubtasks();
     }

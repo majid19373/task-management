@@ -2,10 +2,13 @@
 
 namespace Src\Domain\Subtask;
 
+use Doctrine\ORM\Mapping\{Column, Embeddable};
 use DomainException;
 
+#[Embeddable]
 final class SubtaskDescription
 {
+    #[Column(name: "description", type: "string", length: 500, nullable: true)]
     private string $value;
 
     public function __construct(?string $value)

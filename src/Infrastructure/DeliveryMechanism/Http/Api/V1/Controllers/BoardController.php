@@ -2,24 +2,29 @@
 
 namespace Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Controllers;
 
-use Src\Application\Bus\{CommandBus, PaginateQueryBus, QueryBus};
-use Src\Application\CommandHandlers\Board\CreateBoardCommandHandler;
+use Src\Application\Bus\{CommandBus, QueryBus};
 use Src\Application\Queries\Board\GetBoardQuery;
-use Src\Application\QueryHandlers\Board\{GetBoardQueryHandler, ListBoardQueryHandler, PaginatedListBoardQueryHandler};
 use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Common\Controller;
-use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Requests\Board\{PaginateBoardFilterRequest, CreateBoardRequest};
+use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Requests\Board\{BoardListRequest,
+    PaginateBoardFilterRequest,
+    CreateBoardRequest};
 use Illuminate\Http\JsonResponse;
 use Exception;
 use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Resources\Board\BoardResource;
 
 final class BoardController extends Controller
 {
-    public function list(PaginateBoardFilterRequest $request): JsonResponse
+    public function __construct(
+        private readonly QueryBus   $queryBus,
+        private readonly CommandBus $commandBus,
+    )
+    {}
+
+    public function list(BoardListRequest $request): JsonResponse
     {
         $query = $request->makeDTO();
 
-        $bus = new QueryBus(resolve(ListBoardQueryHandler::class));
-        $boards = $bus->ask($query);
+        $boards = $this->queryBus->ask($query);
 
         return $this->respond(
             data: BoardResource::toArrayList($boards),
@@ -30,8 +35,7 @@ final class BoardController extends Controller
     {
         $query = $request->makeDTO();
 
-        $bus = new PaginateQueryBus(resolve(PaginatedListBoardQueryHandler::class));
-        $boards = $bus->ask($query);
+        $boards = $this->queryBus->ask($query);
 
         return $this->respondWithPagination(
             paginate: $boards->paginator,
@@ -46,8 +50,7 @@ final class BoardController extends Controller
     {
         $command = $request->makeDTO();
 
-        $bus = new CommandBus(resolve(CreateBoardCommandHandler::class));
-        $bus->dispatch($command);
+        $this->commandBus->dispatch($command);
 
         return $this->respondCreated();
     }
@@ -56,8 +59,7 @@ final class BoardController extends Controller
     {
         $query = new GetBoardQuery($boardId);
 
-        $bus = new QueryBus(resolve(GetBoardQueryHandler::class));
-        $board = $bus->ask($query);
+        $board = $this->queryBus->ask($query);
 
         return $this->respond(
             data: BoardResource::toArray($board),

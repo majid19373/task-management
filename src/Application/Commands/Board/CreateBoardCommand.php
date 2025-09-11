@@ -2,7 +2,7 @@
 
 namespace Src\Application\Commands\Board;
 
-use Src\Application\Commands\CommandInterface;
+use Src\Application\Contracts\CommandInterface;
 
 final readonly class CreateBoardCommand implements CommandInterface
 {

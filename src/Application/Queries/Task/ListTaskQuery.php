@@ -2,9 +2,7 @@
 
 namespace Src\Application\Queries\Task;
 
-use Src\Application\Queries\QueryInterface;
-
-final readonly class ListTaskQuery implements QueryInterface
+final readonly class ListTaskQuery
 {
     public function __construct(
         public int $boardId,

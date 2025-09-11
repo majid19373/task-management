@@ -8,7 +8,7 @@ use DomainException;
 #[Embeddable]
 final class TaskDescription
 {
-    #[Column(name: "description", type: "string", length: 500)]
+    #[Column(name: "description", type: "string", length: 500, nullable: true)]
     private string $value;
 
     public function __construct(string $value)

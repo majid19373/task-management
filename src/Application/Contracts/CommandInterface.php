@@ -1,6 +1,6 @@
 <?php
 
-namespace Src\Application\Commands;
+namespace Src\Application\Contracts;
 
 interface CommandInterface
 {

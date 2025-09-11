@@ -2,9 +2,7 @@
 
 namespace Src\Application\Commands\Task;
 
-use Src\Application\Commands\CommandInterface;
-
-final readonly class ChangeDeadlineTaskCommand implements CommandInterface
+final readonly class ChangeDeadlineTaskCommand
 {
 
     public function __construct(

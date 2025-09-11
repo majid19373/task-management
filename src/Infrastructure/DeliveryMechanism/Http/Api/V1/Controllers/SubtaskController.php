@@ -4,15 +4,8 @@ namespace Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Controllers;
 
 use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Requests\Subtask\{AddSubtaskRequest};
 use Src\Application\Bus\CommandBus;
-use Src\Application\CommandHandlers\Subtask\{
-    AddSubtaskCommandHandler,
-    CompeteSubtaskCommandHandler,
-    ReopenSubtaskCommandHandler,
-    StartSubtaskCommandHandler
-};
 use Src\Application\Commands\Subtask\{CompleteSubtaskCommand, ReopenSubtaskCommand, StartSubtaskCommand};
 use Src\Application\Queries\Subtask\{ListSubtaskQuery};
-use Src\Application\QueryHandlers\Subtask\{ListSubtaskQueryHandler};
 use Src\Application\Bus\QueryBus;
 use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Common\Controller;
 use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Resources\Subtask\SubtaskResource;
@@ -21,12 +14,17 @@ use Illuminate\Http\JsonResponse;
 
 final class SubtaskController extends Controller
 {
+    public function __construct(
+        private readonly QueryBus   $queryBus,
+        private readonly CommandBus $commandBus,
+    )
+    {}
+
     public function list(int $taskId): JsonResponse
     {
         $query = new ListSubtaskQuery($taskId);
 
-        $bus = new QueryBus(resolve(ListSubtaskQueryHandler::class));
-        $subtasks = $bus->ask($query);
+        $subtasks = $this->queryBus->ask($query);
 
         return $this->respond(
             data: SubtaskResource::toArrayList($subtasks),
@@ -40,8 +38,7 @@ final class SubtaskController extends Controller
     {
         $command = $request->makeDTO();
 
-        $bus = new CommandBus(resolve(AddSubtaskCommandHandler::class));
-        $bus->dispatch($command);
+        $this->commandBus->dispatch($command);
 
         return $this->respondCreated();
     }
@@ -53,8 +50,7 @@ final class SubtaskController extends Controller
     {
         $command = new StartSubtaskCommand($taskId, $subtaskId);
 
-        $bus = new CommandBus(resolve(StartSubtaskCommandHandler::class));
-        $bus->dispatch($command);
+        $this->commandBus->dispatch($command);
 
         return $this->respondUpdated(
             message: 'The subtask was started.',
@@ -68,8 +64,7 @@ final class SubtaskController extends Controller
     {
         $command = new CompleteSubtaskCommand($taskId, $subtaskId);
 
-        $bus = new CommandBus(resolve(CompeteSubtaskCommandHandler::class));
-        $bus->dispatch($command);
+        $this->commandBus->dispatch($command);
 
         return $this->respondUpdated(
             message: 'The subtask was completed.',
@@ -83,8 +78,7 @@ final class SubtaskController extends Controller
     {
         $command = new ReopenSubtaskCommand($taskId, $subtaskId);
 
-        $bus = new CommandBus(resolve(ReopenSubtaskCommandHandler::class));
-        $bus->dispatch($command);
+        $this->commandBus->dispatch($command);
 
         return $this->respondUpdated(
             message: 'The subtask was reopened.',

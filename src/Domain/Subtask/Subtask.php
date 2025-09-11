@@ -15,13 +15,13 @@ final class Subtask
     #[JoinColumn(name: 'task_id', nullable: false), ManyToOne(targetEntity: Task::class, inversedBy: 'subtasks')]
     protected Task $task;
 
-    #[Column(name: "title", type: "subtask_title", length: 100), Embedded(class: SubtaskTitle::class, columnPrefix: false)]
+    #[Column(name: 'title', type: 'subtask_title'), Embedded(class: SubtaskTitle::class, columnPrefix: false)]
     protected SubtaskTitle $title;
 
     #[Column(name: "status", enumType: SubtaskStatus::class)]
     protected SubtaskStatus $status;
 
-    #[Column(name: "description", type: "subtask_description", length: 500, nullable: true), Embedded(class: SubtaskDescription::class, columnPrefix: false)]
+    #[Column(name: 'description', type: "subtask_description"), Embedded(class: SubtaskDescription::class, columnPrefix: false)]
     protected ?SubtaskDescription $description;
 
     public function __construct(

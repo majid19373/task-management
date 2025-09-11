@@ -3,15 +3,12 @@
 namespace Src\Application\CommandHandlers\Task;
 
 use DateTimeImmutable;
-use Src\Application\CommandHandlers\CommandHandlerInterface;
-use Src\Application\Commands\CommandInterface;
 use Src\Application\Commands\Task\AddTaskCommand;
-use Exception;
 use Src\Domain\Task\{TaskDeadline, TaskDescription, TaskTitle};
 use Src\Application\Contracts\Repositories\BoardRepositoryInterface;
 use Src\Application\Contracts\Repositories\TaskRepositoryInterface;
 
-final readonly class AddTaskCommandHandler implements CommandHandlerInterface
+final readonly class AddTaskCommandHandler
 {
     public function __construct(
         private TaskRepositoryInterface  $taskRepository,
@@ -19,11 +16,7 @@ final readonly class AddTaskCommandHandler implements CommandHandlerInterface
     )
     {}
 
-    /**
-     * @throws Exception
-     * @var AddTaskCommand $command
-     */
-    public function handle(CommandInterface $command): void
+    public function handle(AddTaskCommand $command): void
     {
         $board = $this->boardRepository->getById($command->boardId);
         $task = $board->addTask(

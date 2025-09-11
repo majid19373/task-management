@@ -2,26 +2,19 @@
 
 namespace Src\Application\CommandHandlers\Subtask;
 
-use Src\Application\CommandHandlers\CommandHandlerInterface;
-use Src\Application\Commands\CommandInterface;
 use Src\Application\Commands\Subtask\AddSubtaskCommand;
-use Exception;
 use Src\Domain\Subtask\SubtaskDescription;
 use Src\Domain\Subtask\SubtaskTitle;
 use Src\Application\Contracts\Repositories\TaskRepositoryInterface;
 
-final readonly class AddSubtaskCommandHandler implements CommandHandlerInterface
+final readonly class AddSubtaskCommandHandler
 {
     public function __construct(
         private TaskRepositoryInterface  $taskRepository,
     )
     {}
 
-    /**
-     * @throws Exception
-     * @var AddSubtaskCommand $command
-     */
-    public function handle(CommandInterface $command): void
+    public function handle(AddSubtaskCommand $command): void
     {
         $task = $this->taskRepository->getById($command->taskId);
         $task->addSubtask(

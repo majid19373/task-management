@@ -2,9 +2,7 @@
 
 namespace Src\Application\Queries\Task;
 
-use Src\Application\Queries\QueryInterface;
-
-final readonly class FindTaskQuery implements QueryInterface
+final readonly class FindTaskQuery
 {
     public function __construct(
         public int $id,

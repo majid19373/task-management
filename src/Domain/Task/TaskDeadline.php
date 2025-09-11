@@ -9,7 +9,7 @@ use DomainException;
 #[Embeddable]
 final class TaskDeadline
 {
-    #[Column(name: "deadline", type: 'string')]
+    #[Column(name: "deadline", type: 'string', nullable: true)]
     private DateTimeImmutable $value;
 
     public function __construct(string $value, DateTimeImmutable $currentDate)

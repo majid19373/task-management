@@ -13,7 +13,6 @@ use Src\Infrastructure\Persistence\Doctrine\Types\Task\{TaskDeadlineType, TaskDe
 class DoctrineProvider extends ServiceProvider
 {
     /**
-     * Register any Application services.
      * @throws Exception
      * @throws TypesException
      */
@@ -24,9 +23,6 @@ class DoctrineProvider extends ServiceProvider
         $this->SubtaskTypes();
     }
 
-    /**
-     * Bootstrap any Application services.
-     */
     public function boot(): void
     {
         //

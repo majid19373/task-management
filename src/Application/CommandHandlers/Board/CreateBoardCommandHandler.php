@@ -2,27 +2,20 @@
 
 namespace Src\Application\CommandHandlers\Board;
 
-use Src\Application\CommandHandlers\CommandHandlerInterface;
 use Src\Application\Commands\Board\CreateBoardCommand;
-use Src\Application\Commands\CommandInterface;
 use Src\Domain\Board\Board;
 use Src\Domain\Board\BoardDescription;
 use Src\Domain\Board\BoardName;
-use Exception;
 use Src\Application\Contracts\Repositories\BoardRepositoryInterface;
 
-final readonly class CreateBoardCommandHandler implements CommandHandlerInterface
+final readonly class CreateBoardCommandHandler
 {
     public function __construct(
         private BoardRepositoryInterface $boardRepository
     )
     {}
 
-    /**
-     * @throws Exception
-     * @var CreateBoardCommand $command
-     */
-    public function handle(CommandInterface $command): void
+    public function handle(CreateBoardCommand $command): void
     {
         $name = new BoardName($command->name);
         $existsByUserIdAndName = $this->boardRepository->existsByUserIdAndName($command->userId, $name);

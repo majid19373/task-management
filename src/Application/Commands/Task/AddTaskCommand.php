@@ -2,9 +2,7 @@
 
 namespace Src\Application\Commands\Task;
 
-use Src\Application\Commands\CommandInterface;
-
-final readonly class AddTaskCommand implements CommandInterface
+final readonly class AddTaskCommand
 {
     public function __construct(
         public int $boardId,

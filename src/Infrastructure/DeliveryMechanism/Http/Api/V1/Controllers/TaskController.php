@@ -3,20 +3,9 @@
 namespace Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Controllers;
 
 use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Requests\Task\{DeadlineTaskRequest, ListTaskRequest};
-use Src\Application\Bus\{CommandBus, PaginateQueryBus, QueryBus};
-use Src\Application\CommandHandlers\Task\{
-    AddTaskCommandHandler,
-    ChangeDeadlineTaskCommandHandler,
-    CompleteTaskCommandHandler,
-    PrioritizeTaskCommandHandler,
-    ReopenTaskCommandHandler,
-    StartTaskCommandHandler
-};
+use Src\Application\Bus\{CommandBus, QueryBus};
 use Src\Application\Commands\Task\{CompleteTaskCommand, ReopenTaskCommand, StartTaskCommand};
 use Src\Application\Queries\Task\{FindTaskQuery};
-use Src\Application\QueryHandlers\Task\{FindTaskQueryHandler};
-use Src\Application\QueryHandlers\Task\ListTaskQueryHandler;
-use Src\Application\QueryHandlers\Task\PaginateTaskQueryHandler;
 use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Common\Controller;
 use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Requests\Task\{
     AddTaskRequest,
@@ -29,12 +18,17 @@ use Exception;
 
 final class TaskController extends Controller
 {
+    public function __construct(
+        private readonly QueryBus   $queryBus,
+        private readonly CommandBus $commandBus,
+    )
+    {}
+
     public function list(ListTaskRequest $request): JsonResponse
     {
         $query = $request->makeDTO();
 
-        $bus = new QueryBus(resolve(ListTaskQueryHandler::class));
-        $tasks = $bus->ask($query);
+        $tasks = $this->queryBus->ask($query);
 
         return $this->respond(
             data: TaskResource::toArrayList($tasks),
@@ -46,8 +40,7 @@ final class TaskController extends Controller
     {
         $query = $request->makeDTO();
 
-        $bus = new PaginateQueryBus(resolve(PaginateTaskQueryHandler::class));
-        $tasks = $bus->ask($query);
+        $tasks = $this->queryBus->ask($query);
 
         return $this->respondWithPagination(
             paginate: $tasks->paginator,
@@ -62,8 +55,7 @@ final class TaskController extends Controller
     {
         $command = $request->makeDTO();
 
-        $bus = new CommandBus(resolve(AddTaskCommandHandler::class));
-        $bus->dispatch($command);
+        $this->commandBus->dispatch($command);
 
         return $this->respondCreated();
     }
@@ -75,8 +67,7 @@ final class TaskController extends Controller
     {
         $query = new FindTaskQuery($taskId);
 
-        $bus = new QueryBus(resolve(FindTaskQueryHandler::class));
-        $task = $bus->ask($query);
+        $task = $this->queryBus->ask($query);
 
         return $this->respond(
             data: TaskResource::toArray($task),
@@ -90,8 +81,7 @@ final class TaskController extends Controller
     {
         $command = new StartTaskCommand($taskId);
 
-        $bus = new CommandBus(resolve(StartTaskCommandHandler::class));
-        $bus->dispatch($command);
+        $this->commandBus->dispatch($command);
 
         return $this->respondUpdated(
             message: 'The task was started.',
@@ -105,8 +95,7 @@ final class TaskController extends Controller
     {
         $command = new CompleteTaskCommand($taskId);
 
-        $bus = new CommandBus(resolve(CompleteTaskCommandHandler::class));
-        $bus->dispatch($command);
+        $this->commandBus->dispatch($command);
 
         return $this->respondUpdated(
             message: 'The task was completed.',
@@ -120,8 +109,7 @@ final class TaskController extends Controller
     {
         $command = new ReopenTaskCommand($taskId);
 
-        $bus = new CommandBus(resolve(ReopenTaskCommandHandler::class));
-        $bus->dispatch($command);
+        $this->commandBus->dispatch($command);
 
         return $this->respondUpdated(
             message: 'The task was reopened.',
@@ -135,8 +123,7 @@ final class TaskController extends Controller
     {
         $command = $request->makeDTO();
 
-        $bus = new CommandBus(resolve(PrioritizeTaskCommandHandler::class));
-        $bus->dispatch($command);
+        $this->commandBus->dispatch($command);
 
         return $this->respondUpdated(
             message: 'The task was changed priority.',
@@ -150,8 +137,7 @@ final class TaskController extends Controller
     {
         $command = $request->makeDTO();
 
-        $bus = new CommandBus(resolve(ChangeDeadlineTaskCommandHandler::class));
-        $bus->dispatch($command);
+        $this->commandBus->dispatch($command);
 
         return $this->respondUpdated(
             message: 'The task was changed deadline.',

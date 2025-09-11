@@ -19,10 +19,10 @@ final class Board
     #[Column(type: "integer")]
     protected int $userId;
 
-    #[Column(name: "name", type: "board_name", length: 50), Embedded(class: BoardName::class, columnPrefix: false)]
+    #[Column(name: "name", type: "board_name"), Embedded(class: BoardName::class, columnPrefix: false)]
     protected BoardName $name;
 
-    #[Column(name: "description", type: "board_description", length: 200, nullable: true), Embedded(class: TaskDescription::class, columnPrefix: false)]
+    #[Column(name: 'description', type: "board_description"), Embedded(class: BoardDescription::class, columnPrefix: false)]
     protected ?BoardDescription $description;
 
     /**

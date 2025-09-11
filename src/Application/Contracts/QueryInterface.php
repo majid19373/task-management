@@ -1,6 +1,6 @@
 <?php
 
-namespace Src\Application\Queries;
+namespace Src\Application\Contracts;
 
 interface QueryInterface
 {

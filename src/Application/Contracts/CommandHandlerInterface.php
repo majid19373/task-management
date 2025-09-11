@@ -1,8 +1,8 @@
 <?php
 
-namespace Src\Application\CommandHandlers;
+namespace Src\Application\Contracts;
 
-use Src\Application\Commands\CommandInterface;
+use Src\Application\Contracts\CommandInterface;
 
 interface CommandHandlerInterface
 {
