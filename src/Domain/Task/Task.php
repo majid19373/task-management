@@ -39,12 +39,14 @@ final class Task
     protected Collection $subtasks;
 
     public function __construct(
+        int              $id,
         int              $boardId,
         TaskTitle        $title,
         ?TaskDescription $description = null,
         ?TaskDeadline    $deadline = null,
     )
     {
+        $this->id = $id;
         $this->boardId = $boardId;
         $this->title = $title;
         $this->status = TaskStatus::NOT_STARTED;
@@ -111,6 +113,7 @@ final class Task
     }
 
     public function addSubtask(
+        int $subtaskNextId,
         SubtaskTitle $title,
         ?SubtaskDescription $description,
     ): void
@@ -119,6 +122,7 @@ final class Task
             throw new DomainException("Can not add a subtask to a completed task.");
         }
         $this->subtasks[] = new Subtask(
+            id: $subtaskNextId,
             task: $this,
             title: $title,
             description: $description,

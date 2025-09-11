@@ -2,8 +2,10 @@
 
 namespace Src\Infrastructure\Persistence\Repositories\Task;
 
+use Doctrine\DBAL\LockMode;
 use Src\Application\Queries\Task\ListTaskQuery;
 use Src\Application\Queries\Task\PaginateTaskQuery;
+use Src\Domain\Subtask\Subtask;
 use Src\Domain\Task\Task;
 use Src\Application\Contracts\Repositories\PaginatedResult;
 use Doctrine\ORM\EntityManagerInterface;
@@ -107,5 +109,49 @@ final readonly class TaskRepository implements TaskRepositoryInterface
     {
         $this->em->persist($task);
         $this->em->flush();
+    }
+
+    public function getNextIdentity(): int
+    {
+        return $this->em->wrapInTransaction(function($em) {
+            $qb = $em->createQueryBuilder();
+            $qb->select('b')
+                ->from(Task::class, 'b')
+                ->setMaxResults(1)
+                ->orderBy('b.id', 'DESC');
+
+            $query = $qb->getQuery();
+            $query->setLockMode(LockMode::PESSIMISTIC_WRITE);
+
+            $lastBoard = $query->getOneOrNullResult();
+
+            if ($lastBoard === null) {
+                return 1;
+            }
+
+            return $lastBoard->getId() + 1;
+        });
+    }
+
+    public function getNextSubtaskIdentity(): int
+    {
+        return $this->em->wrapInTransaction(function($em) {
+            $qb = $em->createQueryBuilder();
+            $qb->select('b')
+                ->from(Subtask::class, 'b')
+                ->setMaxResults(1)
+                ->orderBy('b.id', 'DESC');
+
+            $query = $qb->getQuery();
+            $query->setLockMode(LockMode::PESSIMISTIC_WRITE);
+
+            $lastBoard = $query->getOneOrNullResult();
+
+            if ($lastBoard === null) {
+                return 1;
+            }
+
+            return $lastBoard->getId() + 1;
+        });
     }
 }

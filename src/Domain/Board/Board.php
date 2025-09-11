@@ -29,6 +29,7 @@ final class Board
      * @throws DomainException
      */
     public function __construct(
+        int               $id,
         bool              $existsByUserIdAndName,
         BoardName         $name,
         int               $userId,
@@ -38,6 +39,7 @@ final class Board
         if($existsByUserIdAndName){
             throw new DomainException('Board name already exists for this user.');
         }
+        $this->id = $id;
         $this->name = $name;
         $this->userId = $userId;
         $this->description = $description;
@@ -45,12 +47,12 @@ final class Board
 
     public function getId(): int { return $this->id; }
     public function getName(): BoardName { return $this->name; }
-    public function getUserId(): int { return $this->userId; }
     public function getDescription(): ?BoardDescription { return $this->description; }
 
-    public function addTask(TaskTitle $title, ?TaskDescription $description, ?TaskDeadline $deadline): Task
+    public function addTask(int $taskNextId, TaskTitle $title, ?TaskDescription $description, ?TaskDeadline $deadline): Task
     {
         return new Task(
+            id: $taskNextId,
             boardId: $this->id,
             title: $title,
             description: $description,

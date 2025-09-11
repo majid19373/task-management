@@ -25,11 +25,13 @@ final class Subtask
     protected ?SubtaskDescription $description;
 
     public function __construct(
+        int                 $id,
         Task                $task,
         SubtaskTitle        $title,
         ?SubtaskDescription $description = null,
     )
     {
+        $this->id = $id;
         $this->task = $task;
         $this->title = $title;
         $this->status = SubtaskStatus::NOT_STARTED;

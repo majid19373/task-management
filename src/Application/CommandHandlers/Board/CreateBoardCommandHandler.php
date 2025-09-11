@@ -20,6 +20,7 @@ final readonly class CreateBoardCommandHandler
         $name = new BoardName($command->name);
         $existsByUserIdAndName = $this->boardRepository->existsByUserIdAndName($command->userId, $name);
         $board = new Board(
+            id: $this->boardRepository->getNextIdentity(),
             existsByUserIdAndName: $existsByUserIdAndName,
             name: $name,
             userId: (int)$command->userId,

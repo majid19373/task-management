@@ -17,4 +17,6 @@ interface BoardRepositoryInterface
     public function store(Board $board): void;
 
     public function existsByUserIdAndName(int $userId, BoardName $name): bool;
+
+    public function getNextIdentity(): int;
 }
