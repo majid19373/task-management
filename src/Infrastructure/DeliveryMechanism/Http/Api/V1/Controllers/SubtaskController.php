@@ -4,7 +4,10 @@ namespace Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Controllers;
 
 use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Requests\Subtask\{AddSubtaskRequest};
 use Src\Application\Bus\CommandBus;
-use Src\Application\Commands\Subtask\{CompleteSubtaskCommand, ReopenSubtaskCommand, StartSubtaskCommand};
+use Src\Application\Commands\Subtask\{CompleteSubtaskCommand,
+    RemoveSubtaskCommand,
+    ReopenSubtaskCommand,
+    StartSubtaskCommand};
 use Src\Application\Queries\Subtask\{ListSubtaskQuery};
 use Src\Application\Bus\QueryBus;
 use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Common\Controller;
@@ -82,6 +85,20 @@ final class SubtaskController extends Controller
 
         return $this->respondUpdated(
             message: 'The subtask was reopened.',
+        );
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function remove(int $taskId, int $subtaskId): JsonResponse
+    {
+        $command = new RemoveSubtaskCommand($taskId, $subtaskId);
+
+        $this->commandBus->dispatch($command);
+
+        return $this->respondUpdated(
+            message: 'The subtask was removed.',
         );
     }
 

@@ -13,7 +13,7 @@ final class Subtask
     protected int $id;
 
     #[JoinColumn(name: 'task_id', nullable: false), ManyToOne(targetEntity: Task::class, inversedBy: 'subtasks')]
-    protected Task $task;
+    protected ?Task $task;
 
     #[Column(name: 'title', type: 'subtask_title'), Embedded(class: SubtaskTitle::class, columnPrefix: false)]
     protected SubtaskTitle $title;
@@ -60,6 +60,11 @@ final class Subtask
             throw new DomainException('The subtask cannot reopened.');
         }
         $this->status = SubtaskStatus::NOT_STARTED;
+    }
+
+    public function remove(): void
+    {
+        $this->task = null;
     }
 
     public function getId(): int { return $this->id; }

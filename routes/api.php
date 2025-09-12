@@ -28,6 +28,7 @@ Route::prefix('v1')->group(function () {
             Route::get('{subtask}/start', [SubtaskController::class, 'start'])->name('start');
             Route::get('{subtask}/complete', [SubtaskController::class, 'complete'])->name('complete');
             Route::get('{subtask}/reopen', [SubtaskController::class, 'reopen'])->name('reopen');
+            Route::delete('{subtask}', [SubtaskController::class, 'remove'])->name('remove');
         });
     });
 

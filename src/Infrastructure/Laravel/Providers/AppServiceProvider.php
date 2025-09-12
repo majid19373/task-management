@@ -7,6 +7,7 @@ use Src\Application\Bus\QueryBus;
 use Src\Application\CommandHandlers\Board\CreateBoardCommandHandler;
 use Src\Application\CommandHandlers\Subtask\AddSubtaskCommandHandler;
 use Src\Application\CommandHandlers\Subtask\CompeteSubtaskCommandHandler;
+use Src\Application\CommandHandlers\Subtask\RemoveSubtaskCommandHandler;
 use Src\Application\CommandHandlers\Subtask\ReopenSubtaskCommandHandler;
 use Src\Application\CommandHandlers\Subtask\StartSubtaskCommandHandler;
 use Src\Application\CommandHandlers\Task\AddTaskCommandHandler;
@@ -74,6 +75,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->tag(CompeteSubtaskCommandHandler::class, 'command_handler');
         $this->app->tag(ReopenSubtaskCommandHandler::class, 'command_handler');
         $this->app->tag(StartSubtaskCommandHandler::class, 'command_handler');
+        $this->app->tag(RemoveSubtaskCommandHandler::class, 'command_handler');
 
         $this->app->singleton(CommandBus::class, function ($app) {
             return new CommandBus($app->tagged('command_handler'));

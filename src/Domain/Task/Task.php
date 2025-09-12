@@ -171,4 +171,15 @@ final class Task
             $this->status = TaskStatus::IN_PROGRESS;
         }
     }
+
+    public function removeSubtask(int $subtaskId): void
+    {
+        $subtask = $this->getSubtask($subtaskId);
+        $this->subtasks->removeElement($subtask);
+        $subtask->remove();
+
+        if(!count($this->subtasks)){
+            $this->status = TaskStatus::NOT_STARTED;
+        }
+    }
 }
