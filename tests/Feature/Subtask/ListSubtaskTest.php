@@ -18,7 +18,7 @@ class ListSubtaskTest extends TestCase
         //Arrange
         $task = entity(Task::class)->create();
         entity(Subtask::class, 10)->create([
-            'task_id' => $task->getId(),
+            'task' => $task,
         ]);
         $route = self::BASE_ROUTE . "{$task->getId()}/subtask";
 

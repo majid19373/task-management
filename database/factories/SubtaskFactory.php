@@ -9,12 +9,12 @@ use Src\Domain\Subtask\SubtaskTitle;
 use LaravelDoctrine\ORM\Testing\Factory;
 use Faker\Generator;
 
-$factory->define(Subtask::class, function (Generator $faker) {
-    $description = $faker->optional()->text(500);
+$factory->define(Subtask::class, function (Generator $faker, array $attributes) {
+    $description = $attributes['description'] ?? $faker->optional()->text(500);
     return [
-        'task' => entity(Task::class)->create(),
-        'title' => new SubtaskTitle($faker->unique()->words(5, true)),
-        'description' => $description ? new SubtaskDescription($description) : null,
-        'status' => SubtaskStatus::NOT_STARTED,
+        'task' => $attributes['task'] ?? entity(Task::class)->create(),
+        'title' => $attributes['title'] ?? new SubtaskTitle($faker->unique()->words(5, true)),
+        'description' => $attributes['description'] ?? $description ? new SubtaskDescription($description) : null,
+        'status' => $attributes['status'] ?? SubtaskStatus::NOT_STARTED,
     ];
 });

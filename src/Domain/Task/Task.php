@@ -29,10 +29,10 @@ final class Task
     #[Column(name: "priority", enumType: TaskPriority::class)]
     protected TaskPriority $priority;
 
-    #[Column(name: 'deadline', type: "task_deadline"), Embedded(class: TaskDeadline::class, columnPrefix: false)]
+    #[Column(name: 'deadline', type: "task_deadline", nullable: true), Embedded(class: TaskDeadline::class, columnPrefix: false)]
     protected ?TaskDeadline $deadline;
 
-    #[Column(name: 'description', type: "task_description"), Embedded(class: TaskDescription::class, columnPrefix: false)]
+    #[Column(name: 'description', type: "task_description", nullable: true), Embedded(class: TaskDescription::class, columnPrefix: false)]
     protected ?TaskDescription $description;
 
     #[OneToMany(targetEntity: Subtask::class, mappedBy: "task", cascade: ['persist', 'remove'], fetch: "LAZY", orphanRemoval: true)]

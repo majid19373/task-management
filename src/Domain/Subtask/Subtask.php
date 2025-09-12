@@ -21,7 +21,7 @@ final class Subtask
     #[Column(name: "status", enumType: SubtaskStatus::class)]
     protected SubtaskStatus $status;
 
-    #[Column(name: 'description', type: "subtask_description"), Embedded(class: SubtaskDescription::class, columnPrefix: false)]
+    #[Column(name: 'description', type: "subtask_description", nullable: true), Embedded(class: SubtaskDescription::class, columnPrefix: false)]
     protected ?SubtaskDescription $description;
 
     public function __construct(
@@ -63,7 +63,6 @@ final class Subtask
     }
 
     public function getId(): int { return $this->id; }
-    public function getTaskId(): Task { return $this->task; }
     public function getTitle(): SubtaskTitle { return $this->title; }
     public function getDescription(): ?SubtaskDescription { return $this->description; }
     public function getStatus(): SubtaskStatus { return $this->status; }

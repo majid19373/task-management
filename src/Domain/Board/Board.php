@@ -22,7 +22,7 @@ final class Board
     #[Column(name: "name", type: "board_name"), Embedded(class: BoardName::class, columnPrefix: false)]
     protected BoardName $name;
 
-    #[Column(name: 'description', type: "board_description"), Embedded(class: BoardDescription::class, columnPrefix: false)]
+    #[Column(name: 'description', type: "board_description", nullable: true), Embedded(class: BoardDescription::class, columnPrefix: false)]
     protected ?BoardDescription $description;
 
     /**
