@@ -14,8 +14,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tasks', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('board_id')->constrained('boards')->onDelete('cascade');
+            $table->ulid('id')->unique()->primary();
+            $table->foreignUlid('board_id')->constrained('boards')->onDelete('cascade');
             $table->string('title', 100);
             $table->string('description', 500)->nullable();
             $table->enum('status', TaskStatus::toArray())->default(TaskStatus::NOT_STARTED->value);

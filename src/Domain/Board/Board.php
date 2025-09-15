@@ -3,7 +3,7 @@
 namespace Src\Domain\Board;
 
 
-use Doctrine\ORM\Mapping\{Column, Embedded, Entity, GeneratedValue, Id, Table, UniqueConstraint};
+use Doctrine\ORM\Mapping\{Column, Embedded, Entity, Id, Table, UniqueConstraint};
 use Src\Domain\Task\Task;
 use Src\Domain\Task\TaskDeadline;
 use Src\Domain\Task\TaskTitle;
@@ -13,8 +13,8 @@ use DomainException;
 #[Entity, Table(name: "boards"), UniqueConstraint(name: 'user_board_unique', columns: ['user_id', 'name'])]
 final class Board
 {
-    #[Id, Column(type: "integer"), GeneratedValue()]
-    protected int $id;
+    #[Id, Column(type: "string")]
+    protected string $id;
 
     #[Column(type: "integer")]
     protected int $userId;
@@ -29,7 +29,7 @@ final class Board
      * @throws DomainException
      */
     public function __construct(
-        int               $id,
+        string            $id,
         bool              $existsByUserIdAndName,
         BoardName         $name,
         int               $userId,
@@ -45,14 +45,14 @@ final class Board
         $this->description = $description;
     }
 
-    public function getId(): int { return $this->id; }
+    public function getId(): string { return $this->id; }
     public function getName(): BoardName { return $this->name; }
     public function getDescription(): ?BoardDescription { return $this->description; }
 
-    public function addTask(int $taskNextId, TaskTitle $title, ?TaskDescription $description, ?TaskDeadline $deadline): Task
+    public function addTask(string $taskId, TaskTitle $title, ?TaskDescription $description, ?TaskDeadline $deadline): Task
     {
         return new Task(
-            id: $taskNextId,
+            id: $taskId,
             boardId: $this->id,
             title: $title,
             description: $description,

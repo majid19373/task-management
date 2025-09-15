@@ -8,7 +8,7 @@ final readonly class StartTaskCommand implements CommandInterface
 {
 
     public function __construct(
-        public int $id,
+        public string $id,
     )
     {}
 }

@@ -6,7 +6,7 @@ final readonly class PrioritizeTaskCommand
 {
 
     public function __construct(
-        public int    $id,
+        public string $id,
         public string $priority,
     )
     {}

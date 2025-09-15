@@ -9,8 +9,8 @@ use DomainException;
 #[Entity, Table(name: "subtasks")]
 final class Subtask
 {
-    #[Id, Column(type: "integer"), GeneratedValue()]
-    protected int $id;
+    #[Id, Column(type: "string")]
+    protected string $id;
 
     #[JoinColumn(name: 'task_id', nullable: false), ManyToOne(targetEntity: Task::class, inversedBy: 'subtasks')]
     protected ?Task $task;
@@ -25,7 +25,7 @@ final class Subtask
     protected ?SubtaskDescription $description;
 
     public function __construct(
-        int                 $id,
+        string              $id,
         Task                $task,
         SubtaskTitle        $title,
         ?SubtaskDescription $description = null,
@@ -67,7 +67,7 @@ final class Subtask
         $this->task = null;
     }
 
-    public function getId(): int { return $this->id; }
+    public function getId(): string { return $this->id; }
     public function getTitle(): SubtaskTitle { return $this->title; }
     public function getDescription(): ?SubtaskDescription { return $this->description; }
     public function getStatus(): SubtaskStatus { return $this->status; }

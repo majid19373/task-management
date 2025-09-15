@@ -55,7 +55,7 @@ final class BoardController extends Controller
         return $this->respondCreated();
     }
 
-    public function show(int $boardId): JsonResponse
+    public function show(string $boardId): JsonResponse
     {
         $query = new GetBoardQuery($boardId);
 

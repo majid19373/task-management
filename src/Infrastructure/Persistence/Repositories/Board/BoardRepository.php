@@ -2,7 +2,7 @@
 
 namespace Src\Infrastructure\Persistence\Repositories\Board;
 
-use Doctrine\DBAL\LockMode;
+use Illuminate\Support\Str;
 use Src\Domain\Board\Board;
 use Src\Application\Contracts\Repositories\BoardRepositoryInterface;
 use Src\Application\Contracts\Repositories\PaginatedResult;
@@ -49,7 +49,7 @@ final readonly class BoardRepository implements BoardRepositoryInterface
     /**
      * @throws Exception
      */
-    public function getById(int $id): Board
+    public function getById(string $id): Board
     {
         $board = $this->em->getRepository(Board::class)->find($id);
         if (!$board) {
@@ -83,25 +83,8 @@ final readonly class BoardRepository implements BoardRepositoryInterface
         return (int)$qb->getQuery()->getSingleScalarResult() > 0;
     }
 
-    public function getNextIdentity(): int
+    public function getNextIdentity(): string
     {
-        return $this->em->wrapInTransaction(function($em) {
-            $qb = $em->createQueryBuilder();
-            $qb->select('b')
-                ->from(Board::class, 'b')
-                ->setMaxResults(1)
-                ->orderBy('b.id', 'DESC');
-
-            $query = $qb->getQuery();
-            $query->setLockMode(LockMode::PESSIMISTIC_WRITE);
-
-            $lastBoard = $query->getOneOrNullResult();
-
-            if ($lastBoard === null) {
-                return 1;
-            }
-
-            return $lastBoard->getId() + 1;
-        });
+        return Str::ulid();
     }
 }

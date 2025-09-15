@@ -15,12 +15,11 @@ interface TaskRepositoryInterface
         PaginateTaskQuery $filters,
     ): PaginatedResult;
 
-    public function getById(int $id): Task;
+    public function getById(string $id): Task;
 
-    public function getBySubtaskId(int $id): Task;
+    public function getBySubtaskId(string $id): Task;
 
     public function store(Task $task): void;
-    public function getNextIdentity(): int;
-    public function getNextSubtaskIdentity(): int;
+    public function getNextIdentity(): string;
 
 }

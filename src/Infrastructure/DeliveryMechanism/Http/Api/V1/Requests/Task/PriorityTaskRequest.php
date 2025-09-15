@@ -15,7 +15,7 @@ final class PriorityTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required', 'integer'],
+            'id' => ['required'],
             'priority' => ['required'],
         ];
     }

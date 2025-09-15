@@ -17,6 +17,7 @@ $factory->define(Task::class, function (Generator $faker, array $attributes) {
     $deadline = $deadline?->format('Y-m-d H:i:s');
 
     return [
+        'id' => Str::ulid(),
         'boardId' => $attributes['boardId'] ?? entity(Board::class)->create()->getId(),
         'title' => $attributes['title'] ?? new TaskTitle($faker->unique()->words(5, true)),
         'description' => $description ? new TaskDescription($description) : null,

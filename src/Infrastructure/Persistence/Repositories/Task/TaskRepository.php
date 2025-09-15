@@ -3,6 +3,7 @@
 namespace Src\Infrastructure\Persistence\Repositories\Task;
 
 use Doctrine\DBAL\LockMode;
+use Illuminate\Support\Str;
 use Src\Application\Queries\Task\ListTaskQuery;
 use Src\Application\Queries\Task\PaginateTaskQuery;
 use Src\Domain\Subtask\Subtask;
@@ -23,9 +24,10 @@ final readonly class TaskRepository implements TaskRepositoryInterface
     public function list(ListTaskQuery $filters): array
     {
         $qb = $this->em->createQueryBuilder()
-            ->select('b')
-            ->from(Task::class, 'b')
-            ->orderBy('b.id');
+            ->select('t')
+            ->from(Task::class, 't')
+            ->where('t.boardId = :boardId')
+            ->setParameter('boardId', $filters->boardId);
 
         if ($filters->status !== null) {
             $qb->andWhere('b.status = :status')
@@ -46,17 +48,18 @@ final readonly class TaskRepository implements TaskRepositoryInterface
     ): PaginatedResult
     {
         $qb = $this->em->createQueryBuilder()
-            ->select('b')
-            ->from(Task::class, 'b')
-            ->orderBy('b.id');
+            ->select('t')
+            ->from(Task::class, 't')
+            ->where('t.boardId = :boardId')
+            ->setParameter('boardId', $filters->boardId);
 
         if ($filters->status !== null) {
-            $qb->andWhere('b.status = :status')
+            $qb->andWhere('t.status = :status')
                 ->setParameter('status', $filters->status);
         }
 
         if ($filters->priority !== null) {
-            $qb->andWhere('b.priority = :priority')
+            $qb->andWhere('t.priority = :priority')
                 ->setParameter('priority', $filters->priority);
         }
 
@@ -79,7 +82,7 @@ final readonly class TaskRepository implements TaskRepositoryInterface
     /**
      * @throws Exception
      */
-    public function getById(int $id): Task
+    public function getById(string $id): Task
     {
         return $this->em->getRepository(Task::class)->find($id);
     }
@@ -87,7 +90,7 @@ final readonly class TaskRepository implements TaskRepositoryInterface
     /**
      * @throws Exception
      */
-    public function getBySubtaskId(int $id): Task
+    public function getBySubtaskId(string $id): Task
     {
         $qb = $this->em->createQueryBuilder();
 
@@ -111,47 +114,8 @@ final readonly class TaskRepository implements TaskRepositoryInterface
         $this->em->flush();
     }
 
-    public function getNextIdentity(): int
+    public function getNextIdentity(): string
     {
-        return $this->em->wrapInTransaction(function($em) {
-            $qb = $em->createQueryBuilder();
-            $qb->select('b')
-                ->from(Task::class, 'b')
-                ->setMaxResults(1)
-                ->orderBy('b.id', 'DESC');
-
-            $query = $qb->getQuery();
-            $query->setLockMode(LockMode::PESSIMISTIC_WRITE);
-
-            $lastBoard = $query->getOneOrNullResult();
-
-            if ($lastBoard === null) {
-                return 1;
-            }
-
-            return $lastBoard->getId() + 1;
-        });
-    }
-
-    public function getNextSubtaskIdentity(): int
-    {
-        return $this->em->wrapInTransaction(function($em) {
-            $qb = $em->createQueryBuilder();
-            $qb->select('b')
-                ->from(Subtask::class, 'b')
-                ->setMaxResults(1)
-                ->orderBy('b.id', 'DESC');
-
-            $query = $qb->getQuery();
-            $query->setLockMode(LockMode::PESSIMISTIC_WRITE);
-
-            $lastBoard = $query->getOneOrNullResult();
-
-            if ($lastBoard === null) {
-                return 1;
-            }
-
-            return $lastBoard->getId() + 1;
-        });
+        return Str::ulid();
     }
 }

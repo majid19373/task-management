@@ -63,7 +63,7 @@ final class TaskController extends Controller
     /**
      * @throws Exception
      */
-    public function show(int $taskId): JsonResponse
+    public function show(string $taskId): JsonResponse
     {
         $query = new FindTaskQuery($taskId);
 
@@ -77,7 +77,7 @@ final class TaskController extends Controller
     /**
      * @throws Exception
      */
-    public function start(int $taskId): JsonResponse
+    public function start(string $taskId): JsonResponse
     {
         $command = new StartTaskCommand($taskId);
 
@@ -91,7 +91,7 @@ final class TaskController extends Controller
     /**
      * @throws Exception
      */
-    public function complete(int $taskId): JsonResponse
+    public function complete(string $taskId): JsonResponse
     {
         $command = new CompleteTaskCommand($taskId);
 
@@ -105,7 +105,7 @@ final class TaskController extends Controller
     /**
      * @throws Exception
      */
-    public function reopen(int $taskId): JsonResponse
+    public function reopen(string $taskId): JsonResponse
     {
         $command = new ReopenTaskCommand($taskId);
 

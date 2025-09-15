@@ -16,7 +16,7 @@ final class AddSubtaskRequest extends FormRequest
     {
         return [
             'title' => ['required', 'string'],
-            'task_id' => ['nullable', 'integer'],
+            'task_id' => ['nullable'],
             'description' => ['nullable', 'string'],
             'deadline' => ['nullable', 'date'],
         ];

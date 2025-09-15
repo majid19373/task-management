@@ -13,8 +13,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('subtasks', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('task_id')->constrained('tasks')->onDelete('cascade');
+            $table->ulid('id')->primary();
+            $table->foreignUlid('task_id')->constrained('tasks')->onDelete('cascade');
             $table->string('title', 100);
             $table->string('description', 500)->nullable();
             $table->enum('status', SubtaskStatus::toArray())->default(SubtaskStatus::NOT_STARTED->value);

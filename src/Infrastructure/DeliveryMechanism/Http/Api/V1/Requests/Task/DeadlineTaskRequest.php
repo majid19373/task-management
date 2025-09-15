@@ -17,7 +17,7 @@ final class DeadlineTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required', 'integer'],
+            'id' => ['required'],
             'deadline' => ['required', 'date'],
         ];
     }

@@ -20,7 +20,7 @@ final readonly class AddTaskCommandHandler
     {
         $board = $this->boardRepository->getById($command->boardId);
         $task = $board->addTask(
-            taskNextId: $this->taskRepository->getNextIdentity(),
+            taskId: $this->taskRepository->getNextIdentity(),
             title: new TaskTitle($command->title),
             description: $command->description ? new TaskDescription($command->description) : null,
             deadline: $command->deadline ? new TaskDeadline($command->deadline, new DateTimeImmutable()) : null,

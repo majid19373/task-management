@@ -23,7 +23,7 @@ final class SubtaskController extends Controller
     )
     {}
 
-    public function list(int $taskId): JsonResponse
+    public function list(string $taskId): JsonResponse
     {
         $query = new ListSubtaskQuery($taskId);
 
@@ -49,7 +49,7 @@ final class SubtaskController extends Controller
     /**
      * @throws Exception
      */
-    public function start(int $taskId, int $subtaskId): JsonResponse
+    public function start(string $taskId, string $subtaskId): JsonResponse
     {
         $command = new StartSubtaskCommand($taskId, $subtaskId);
 
@@ -63,7 +63,7 @@ final class SubtaskController extends Controller
     /**
      * @throws Exception
      */
-    public function complete(int $taskId, int $subtaskId): JsonResponse
+    public function complete(string $taskId, string $subtaskId): JsonResponse
     {
         $command = new CompleteSubtaskCommand($taskId, $subtaskId);
 
@@ -77,7 +77,7 @@ final class SubtaskController extends Controller
     /**
      * @throws Exception
      */
-    public function reopen(int $taskId, int $subtaskId): JsonResponse
+    public function reopen(string $taskId, string $subtaskId): JsonResponse
     {
         $command = new ReopenSubtaskCommand($taskId, $subtaskId);
 
@@ -91,7 +91,7 @@ final class SubtaskController extends Controller
     /**
      * @throws Exception
      */
-    public function remove(int $taskId, int $subtaskId): JsonResponse
+    public function remove(string $taskId, string $subtaskId): JsonResponse
     {
         $command = new RemoveSubtaskCommand($taskId, $subtaskId);
 

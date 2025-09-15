@@ -12,11 +12,11 @@ interface BoardRepositoryInterface
 
     public function getWithPaginate(int $page, int $perPage): PaginatedResult;
 
-    public function getById(int $id): Board;
+    public function getById(string $id): Board;
 
     public function store(Board $board): void;
 
     public function existsByUserIdAndName(int $userId, BoardName $name): bool;
 
-    public function getNextIdentity(): int;
+    public function getNextIdentity(): string;
 }

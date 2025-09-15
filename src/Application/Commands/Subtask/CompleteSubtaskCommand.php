@@ -8,8 +8,8 @@ final readonly class CompleteSubtaskCommand implements CommandInterface
 {
 
     public function __construct(
-        public int $taskId,
-        public int $subtaskId,
+        public string $taskId,
+        public string $subtaskId,
     )
     {}
 }

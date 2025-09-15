@@ -10,6 +10,7 @@ use Faker\Generator;
 $factory->define(Board::class, function (Generator $faker, array $attributes) {
     $description = $attributes['description'] ?? $faker->optional()->text(200);
     return [
+        'id' => Str::ulid(),
         'name' => $attributes['name'] ?? new BoardName($faker->unique()->words(3, true)),
         'userId' => $attributes['userId'] ?? 1,
         'description' => $description ? new BoardDescription($description) : null,

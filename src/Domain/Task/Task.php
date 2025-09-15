@@ -14,11 +14,11 @@ use Doctrine\Common\Collections\Collection;
 #[Entity, Table(name: "tasks")]
 final class Task
 {
-    #[Id, Column(type: "integer"), GeneratedValue()]
-    protected int $id;
+    #[Id, Column(type: "string")]
+    protected string $id;
 
-    #[Column(name: "board_id", type: "integer")]
-    protected int $boardId;
+    #[Column(name: "board_id", type: "string")]
+    protected string $boardId;
 
     #[Column(name: 'title', type: 'task_title'), Embedded(class: TaskTitle::class, columnPrefix: false)]
     protected TaskTitle $title;
@@ -39,8 +39,8 @@ final class Task
     protected Collection $subtasks;
 
     public function __construct(
-        int              $id,
-        int              $boardId,
+        string           $id,
+        string           $boardId,
         TaskTitle        $title,
         ?TaskDescription $description = null,
         ?TaskDeadline    $deadline = null,
@@ -100,8 +100,8 @@ final class Task
     }
 
 
-    public function getId(): int { return $this->id; }
-    public function getBoardId(): int { return $this->boardId; }
+    public function getId(): string { return $this->id; }
+    public function getBoardId(): string { return $this->boardId; }
     public function getTitle(): TaskTitle { return $this->title; }
     public function getDescription(): ?TaskDescription { return $this->description; }
     public function getStatus(): TaskStatus { return $this->status; }
@@ -113,7 +113,7 @@ final class Task
     }
 
     public function addSubtask(
-        int $subtaskNextId,
+        string $subtaskId,
         SubtaskTitle $title,
         ?SubtaskDescription $description,
     ): void
@@ -122,20 +122,20 @@ final class Task
             throw new DomainException("Can not add a subtask to a completed task.");
         }
         $this->subtasks[] = new Subtask(
-            id: $subtaskNextId,
+            id: $subtaskId,
             task: $this,
             title: $title,
             description: $description,
         );
     }
 
-    public function getSubtask(int $subtaskId): Subtask
+    public function getSubtask(string $subtaskId): Subtask
     {
         return array_find($this->subtasks->toArray(), fn($subtask) => $subtask->getId() === $subtaskId);
 
     }
 
-    public function startSubtask(int $subtaskId): void
+    public function startSubtask(string $subtaskId): void
     {
         if($this->status === TaskStatus::COMPLETED){
             throw new DomainException('The subtask does not start if the task was completed.');
@@ -152,7 +152,7 @@ final class Task
         }
     }
 
-    public function completeSubtask(int $subtaskId): void
+    public function completeSubtask(string $subtaskId): void
     {
         $subtask = $this->getSubtask($subtaskId);
         $subtask->complete();
@@ -162,7 +162,7 @@ final class Task
         }
     }
 
-    public function reopenSubtask(int $subtaskId): void
+    public function reopenSubtask(string $subtaskId): void
     {
         $subtask = $this->getSubtask($subtaskId);
         $subtask->reopen();
@@ -172,7 +172,7 @@ final class Task
         }
     }
 
-    public function removeSubtask(int $subtaskId): void
+    public function removeSubtask(string $subtaskId): void
     {
         $subtask = $this->getSubtask($subtaskId);
         $this->subtasks->removeElement($subtask);
