@@ -2,9 +2,7 @@
 
 namespace Src\Application\Commands\Subtask;
 
-use Src\Application\Contracts\CommandInterface;
-
-final readonly class CompleteSubtaskCommand implements CommandInterface
+final readonly class CompleteSubtaskCommand
 {
 
     public function __construct(

@@ -2,7 +2,6 @@
 
 namespace Src\Application\Bus;
 
-use ReflectionClass;
 use ReflectionException;
 use RuntimeException;
 
@@ -14,11 +13,12 @@ final class QueryBus
     /**
      * @throws ReflectionException
      */
-    public function __construct(iterable $handlers)
+    public function __construct(QueryBusFactory $busFactory, iterable $queries)
     {
-        foreach ($handlers as $handler) {
-            $queryClass = $this->resolveQueryClass($handler);
-            $this->map[$queryClass] = $handler;
+        $this->map = $busFactory->getHandlers();
+        if(!count($this->map)){
+            $busFactory->make($queries);
+            $this->map = $busFactory->getHandlers();
         }
     }
 
@@ -31,24 +31,5 @@ final class QueryBus
         }
 
         return $this->map[$queryClass]->handle($query);
-    }
-
-    /**
-     * @throws ReflectionException
-     */
-    private function resolveQueryClass(object $handler): string
-    {
-        $method = new ReflectionClass($handler)->getMethod('handle');
-        $param = $method->getParameters()[0] ?? null;
-
-        $type = $param?->getType();
-
-        if (!$type || $type->isBuiltin()) {
-            throw new RuntimeException(
-                "Handler ".get_class($handler)." must type-hint a Query class."
-            );
-        }
-
-        return $type->getName();
     }
 }

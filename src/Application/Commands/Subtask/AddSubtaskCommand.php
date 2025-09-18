@@ -2,9 +2,7 @@
 
 namespace Src\Application\Commands\Subtask;
 
-use Src\Application\Contracts\CommandInterface;
-
-final class AddSubtaskCommand implements CommandInterface
+final class AddSubtaskCommand
 {
     public function __construct(
         public string  $title,

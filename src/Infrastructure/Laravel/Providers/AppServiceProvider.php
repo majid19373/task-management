@@ -3,7 +3,9 @@
 namespace Src\Infrastructure\Laravel\Providers;
 
 use Src\Application\Bus\CommandBus;
+use Src\Application\Bus\CommandBusFactory;
 use Src\Application\Bus\QueryBus;
+use Src\Application\Bus\QueryBusFactory;
 use Src\Application\CommandHandlers\Board\CreateBoardCommandHandler;
 use Src\Application\CommandHandlers\Subtask\AddSubtaskCommandHandler;
 use Src\Application\CommandHandlers\Subtask\CompeteSubtaskCommandHandler;
@@ -45,40 +47,46 @@ class AppServiceProvider extends ServiceProvider
 
     private function bindQueryDependencies(): void
     {
-        $this->app->tag(GetBoardQueryHandler::class, 'query_handler');
-        $this->app->tag(ListBoardQueryHandler::class, 'query_handler');
-        $this->app->tag(PaginatedListBoardQueryHandler::class, 'query_handler');
-
-        $this->app->tag(FindTaskQueryHandler::class, 'query_handler');
-        $this->app->tag(ListTaskQueryHandler::class, 'query_handler');
-        $this->app->tag(PaginateTaskQueryHandler::class, 'query_handler');
-
-        $this->app->tag(ListSubtaskQueryHandler::class, 'query_handler');
+        $this->app->tag(
+            [
+                GetBoardQueryHandler::class,
+                ListBoardQueryHandler::class,
+                PaginatedListBoardQueryHandler::class,
+                FindTaskQueryHandler::class,
+                ListTaskQueryHandler::class,
+                PaginateTaskQueryHandler::class,
+                ListSubtaskQueryHandler::class,
+            ],
+            'query_handler'
+        );
 
         $this->app->singleton(QueryBus::class, function ($app) {
-            return new QueryBus($app->tagged('query_handler'));
+            return new QueryBus(new QueryBusFactory(), $app->tagged('query_handler'));
         });
     }
 
     private function bindCommandDependencies(): void
     {
-        $this->app->tag(CreateBoardCommandHandler::class, 'command_handler');
-
-        $this->app->tag(AddTaskCommandHandler::class, 'command_handler');
-        $this->app->tag(ChangeDeadlineTaskCommandHandler::class, 'command_handler');
-        $this->app->tag(CompleteTaskCommandHandler::class, 'command_handler');
-        $this->app->tag(PrioritizeTaskCommandHandler::class, 'command_handler');
-        $this->app->tag(ReopenTaskCommandHandler::class, 'command_handler');
-        $this->app->tag(StartTaskCommandHandler::class, 'command_handler');
-
-        $this->app->tag(AddSubtaskCommandHandler::class, 'command_handler');
-        $this->app->tag(CompeteSubtaskCommandHandler::class, 'command_handler');
-        $this->app->tag(ReopenSubtaskCommandHandler::class, 'command_handler');
-        $this->app->tag(StartSubtaskCommandHandler::class, 'command_handler');
-        $this->app->tag(RemoveSubtaskCommandHandler::class, 'command_handler');
+        $this->app->tag(
+            [
+                CreateBoardCommandHandler::class,
+                AddTaskCommandHandler::class,
+                ChangeDeadlineTaskCommandHandler::class,
+                CompleteTaskCommandHandler::class,
+                PrioritizeTaskCommandHandler::class,
+                ReopenTaskCommandHandler::class,
+                StartTaskCommandHandler::class,
+                AddSubtaskCommandHandler::class,
+                CompeteSubtaskCommandHandler::class,
+                ReopenSubtaskCommandHandler::class,
+                StartSubtaskCommandHandler::class,
+                RemoveSubtaskCommandHandler::class,
+            ],
+            'command_handler'
+        );
 
         $this->app->singleton(CommandBus::class, function ($app) {
-            return new CommandBus($app->tagged('command_handler'));
+            return new CommandBus(new CommandBusFactory(), $app->tagged('command_handler'));
         });
     }
 

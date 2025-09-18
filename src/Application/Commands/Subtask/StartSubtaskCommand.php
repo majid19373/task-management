@@ -2,9 +2,7 @@
 
 namespace Src\Application\Commands\Subtask;
 
-use Src\Application\Contracts\CommandInterface;
-
-final readonly class StartSubtaskCommand implements CommandInterface
+final readonly class StartSubtaskCommand
 {
 
     public function __construct(
