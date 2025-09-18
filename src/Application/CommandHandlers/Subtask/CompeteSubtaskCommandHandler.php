@@ -3,7 +3,7 @@
 namespace Src\Application\CommandHandlers\Subtask;
 
 use Src\Application\Commands\Subtask\CompleteSubtaskCommand;
-use Src\Application\Contracts\Repositories\TaskRepositoryInterface;
+use Src\Application\Repositories\TaskRepositoryInterface;
 
 final readonly class CompeteSubtaskCommandHandler
 {

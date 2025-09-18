@@ -1,6 +1,6 @@
 <?php
 
-namespace Src\Application\Contracts\Repositories;
+namespace Src\Application\Repositories;
 
 use Illuminate\Support\Collection;
 

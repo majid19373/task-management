@@ -4,7 +4,7 @@ namespace Src\Application\QueryHandlers\Board;
 
 use Src\Application\Queries\Board\GetBoardQuery;
 use Src\Domain\Board\Board;
-use Src\Application\Contracts\Repositories\BoardRepositoryInterface;
+use Src\Application\Repositories\BoardRepositoryInterface;
 
 final readonly class GetBoardQueryHandler
 {

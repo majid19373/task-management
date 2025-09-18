@@ -2,7 +2,7 @@
 
 namespace Src\Application\QueryHandlers\Board;
 
-use Src\Application\Contracts\Repositories\BoardRepositoryInterface;
+use Src\Application\Repositories\BoardRepositoryInterface;
 use Src\Application\Queries\Board\ListBoardQuery;
 
 final readonly class ListBoardQueryHandler

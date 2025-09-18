@@ -6,7 +6,7 @@ use Src\Application\Commands\Board\CreateBoardCommand;
 use Src\Domain\Board\Board;
 use Src\Domain\Board\BoardDescription;
 use Src\Domain\Board\BoardName;
-use Src\Application\Contracts\Repositories\BoardRepositoryInterface;
+use Src\Application\Repositories\BoardRepositoryInterface;
 
 final readonly class CreateBoardCommandHandler
 {

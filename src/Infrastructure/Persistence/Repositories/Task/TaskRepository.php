@@ -8,11 +8,11 @@ use Src\Application\Queries\Task\ListTaskQuery;
 use Src\Application\Queries\Task\PaginateTaskQuery;
 use Src\Domain\Subtask\Subtask;
 use Src\Domain\Task\Task;
-use Src\Application\Contracts\Repositories\PaginatedResult;
+use Src\Application\Repositories\PaginatedResult;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
-use Src\Application\Contracts\Repositories\TaskRepositoryInterface;
+use Src\Application\Repositories\TaskRepositoryInterface;
 
 final readonly class TaskRepository implements TaskRepositoryInterface
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Src\Application\Contracts\Repositories;
+namespace Src\Application\Repositories;
 
 use Src\Domain\Board\Board;
-use Src\Application\Contracts\Repositories\PaginatedResult;
+use Src\Application\Repositories\PaginatedResult;
 use Src\Domain\Board\BoardName;
 
 interface BoardRepositoryInterface

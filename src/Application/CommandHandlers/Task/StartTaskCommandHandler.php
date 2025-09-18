@@ -3,7 +3,7 @@
 namespace Src\Application\CommandHandlers\Task;
 
 use Src\Application\Commands\Task\StartTaskCommand;
-use Src\Application\Contracts\Repositories\TaskRepositoryInterface;
+use Src\Application\Repositories\TaskRepositoryInterface;
 
 final readonly class StartTaskCommandHandler
 {

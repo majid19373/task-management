@@ -5,8 +5,8 @@ namespace Src\Application\CommandHandlers\Task;
 use DateTimeImmutable;
 use Src\Application\Commands\Task\AddTaskCommand;
 use Src\Domain\Task\{TaskDeadline, TaskDescription, TaskTitle};
-use Src\Application\Contracts\Repositories\BoardRepositoryInterface;
-use Src\Application\Contracts\Repositories\TaskRepositoryInterface;
+use Src\Application\Repositories\BoardRepositoryInterface;
+use Src\Application\Repositories\TaskRepositoryInterface;
 
 final readonly class AddTaskCommandHandler
 {

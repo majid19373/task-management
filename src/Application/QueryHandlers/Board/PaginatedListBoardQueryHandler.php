@@ -3,8 +3,8 @@
 namespace Src\Application\QueryHandlers\Board;
 
 use Src\Application\Queries\Board\PaginateBoardQuery;
-use Src\Application\Contracts\Repositories\BoardRepositoryInterface;
-use Src\Application\Contracts\Repositories\PaginatedResult;
+use Src\Application\Repositories\BoardRepositoryInterface;
+use Src\Application\Repositories\PaginatedResult;
 
 final readonly class PaginatedListBoardQueryHandler
 {

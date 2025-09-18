@@ -4,8 +4,8 @@ namespace Src\Infrastructure\Persistence\Repositories\Board;
 
 use Illuminate\Support\Str;
 use Src\Domain\Board\Board;
-use Src\Application\Contracts\Repositories\BoardRepositoryInterface;
-use Src\Application\Contracts\Repositories\PaginatedResult;
+use Src\Application\Repositories\BoardRepositoryInterface;
+use Src\Application\Repositories\PaginatedResult;
 use Src\Domain\Board\BoardName;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;

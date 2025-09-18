@@ -16,7 +16,7 @@ use Src\Application\CommandHandlers\Task\CompleteTaskCommandHandler;
 use Src\Application\CommandHandlers\Task\PrioritizeTaskCommandHandler;
 use Src\Application\CommandHandlers\Task\ReopenTaskCommandHandler;
 use Src\Application\CommandHandlers\Task\StartTaskCommandHandler;
-use Src\Application\Contracts\Repositories\BoardRepositoryInterface;
+use Src\Application\Repositories\BoardRepositoryInterface;
 use Src\Application\QueryHandlers\Board\GetBoardQueryHandler;
 use Src\Application\QueryHandlers\Board\ListBoardQueryHandler;
 use Src\Application\QueryHandlers\Board\PaginatedListBoardQueryHandler;
@@ -25,7 +25,7 @@ use Src\Application\QueryHandlers\Task\FindTaskQueryHandler;
 use Src\Application\QueryHandlers\Task\ListTaskQueryHandler;
 use Src\Application\QueryHandlers\Task\PaginateTaskQueryHandler;
 use Src\Infrastructure\Persistence\Repositories\Task\TaskRepository;
-use Src\Application\Contracts\Repositories\{TaskRepositoryInterface};
+use Src\Application\Repositories\{TaskRepositoryInterface};
 use Src\Infrastructure\Persistence\Repositories\Board\{BoardRepository};
 use Illuminate\Support\ServiceProvider;
 

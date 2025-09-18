@@ -5,7 +5,7 @@ namespace Src\Application\CommandHandlers\Subtask;
 use Src\Application\Commands\Subtask\AddSubtaskCommand;
 use Src\Domain\Subtask\SubtaskDescription;
 use Src\Domain\Subtask\SubtaskTitle;
-use Src\Application\Contracts\Repositories\TaskRepositoryInterface;
+use Src\Application\Repositories\TaskRepositoryInterface;
 
 final readonly class AddSubtaskCommandHandler
 {

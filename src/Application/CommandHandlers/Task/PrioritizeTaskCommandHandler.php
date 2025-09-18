@@ -4,7 +4,7 @@ namespace Src\Application\CommandHandlers\Task;
 
 use Src\Application\Commands\Task\PrioritizeTaskCommand;
 use Src\Domain\Task\TaskPriority;
-use Src\Application\Contracts\Repositories\TaskRepositoryInterface;
+use Src\Application\Repositories\TaskRepositoryInterface;
 
 final readonly class PrioritizeTaskCommandHandler
 {

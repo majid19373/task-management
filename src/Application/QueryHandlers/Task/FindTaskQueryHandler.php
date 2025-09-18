@@ -4,7 +4,7 @@ namespace Src\Application\QueryHandlers\Task;
 
 use Src\Application\Queries\Task\FindTaskQuery;
 use Src\Domain\Task\Task;
-use Src\Application\Contracts\Repositories\TaskRepositoryInterface;
+use Src\Application\Repositories\TaskRepositoryInterface;
 
 final readonly class FindTaskQueryHandler
 {

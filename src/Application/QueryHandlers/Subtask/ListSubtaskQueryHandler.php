@@ -4,7 +4,7 @@ namespace Src\Application\QueryHandlers\Subtask;
 
 use Src\Application\Queries\Subtask\ListSubtaskQuery;
 use Doctrine\Common\Collections\Collection;
-use Src\Application\Contracts\Repositories\TaskRepositoryInterface;
+use Src\Application\Repositories\TaskRepositoryInterface;
 
 final readonly class ListSubtaskQueryHandler
 {

@@ -5,7 +5,7 @@ namespace Src\Application\CommandHandlers\Task;
 use DateTimeImmutable;
 use Src\Application\Commands\Task\ChangeDeadlineTaskCommand;
 use Src\Domain\Task\TaskDeadline;
-use Src\Application\Contracts\Repositories\TaskRepositoryInterface;
+use Src\Application\Repositories\TaskRepositoryInterface;
 
 final readonly class ChangeDeadlineTaskCommandHandler
 {

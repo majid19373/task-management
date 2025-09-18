@@ -3,9 +3,9 @@
 namespace Src\Application\QueryHandlers\Task;
 
 use Src\Application\Queries\Task\PaginateTaskQuery;
-use Src\Application\Contracts\Repositories\PaginatedResult;
+use Src\Application\Repositories\PaginatedResult;
 use Src\Domain\Task\{TaskPriority, TaskStatus};
-use Src\Application\Contracts\Repositories\TaskRepositoryInterface;
+use Src\Application\Repositories\TaskRepositoryInterface;
 
 final readonly class PaginateTaskQueryHandler
 {
