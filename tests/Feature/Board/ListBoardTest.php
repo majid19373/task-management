@@ -14,7 +14,7 @@ final class ListBoardTest extends TestCase
     {
         //Arrange
         entity(Board::class, 10)->create();
-        $route = self::BASE_ROUTE . '/paginate';
+        $route = self::BASE_ROUTE . '/paginate?user_id=1';
 
         //Act
         $response = $this->get($route, parent::BASE_HEADERS);
@@ -30,7 +30,7 @@ final class ListBoardTest extends TestCase
     {
         //Arrange
         entity(Board::class, 10)->create();
-        $route = self::BASE_ROUTE;
+        $route = self::BASE_ROUTE . '?user_id=1';
 
         //Act
         $response = $this->get($route, parent::BASE_HEADERS);

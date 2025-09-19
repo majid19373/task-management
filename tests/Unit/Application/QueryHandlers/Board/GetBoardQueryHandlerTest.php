@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Application\QueryHandlers;
+namespace Tests\Unit\Application\QueryHandlers\Board;
 
 use Exception;
 use PHPUnit\Framework\Attributes\Test;
@@ -12,7 +12,7 @@ use Src\Domain\Board\Board;
 use Src\Domain\Board\BoardName;
 use Tests\Doubles\Repositories\FakeBoardRepository;
 
-final class GetBoardQueryTest extends TestCase
+final class GetBoardQueryHandlerTest extends TestCase
 {
     private Board $board;
     private BoardRepositoryInterface $repository;
@@ -36,10 +36,10 @@ final class GetBoardQueryTest extends TestCase
         $sut = new GetBoardQueryHandler($this->repository);
 
         // Act
-        $actual = $sut->handle($query);
+        $result = $sut->handle($query);
 
         // Assert
-        $this->assertEquals($this->board, $actual);
+        $this->assertEquals($this->board, $result);
     }
 
     #[Test]

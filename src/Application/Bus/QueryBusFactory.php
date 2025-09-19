@@ -19,14 +19,18 @@ final class QueryBusFactory
         $map = [];
         foreach ($handlers as $handler) {
             $queryClass = $this->resolveQueryClass($handler);
-            $map[$queryClass] = $handler;
+            $map[$queryClass] = get_class($handler);
         }
         Cache::put($this->cacheKey, $map);
     }
 
-    public function getHandlers()
+    public function getHandlers(): array
     {
-        return Cache::get($this->cacheKey, []);
+        $cachedMap = Cache::get($this->cacheKey, []);
+
+        return array_map(function ($handlerClass) {
+            return app($handlerClass);
+        }, $cachedMap);
     }
 
     /**

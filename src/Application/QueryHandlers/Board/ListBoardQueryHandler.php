@@ -14,6 +14,6 @@ final readonly class ListBoardQueryHandler
 
     public function handle(ListBoardQuery $query): array
     {
-        return $this->boardRepository->getAll();
+        return $this->boardRepository->getAll($query->userId);
     }
 }

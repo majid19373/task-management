@@ -15,6 +15,7 @@ final class PaginateBoardFilterRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'user_id' => ['required', 'integer'],
             'page' => ['nullable', 'integer', 'min:1'],
             'per_page' => ['nullable', 'integer', 'min:1'],
         ];
@@ -23,6 +24,7 @@ final class PaginateBoardFilterRequest extends FormRequest
     public function makeDTO(): PaginateBoardQuery
     {
         return new PaginateBoardQuery(
+            userId: $this->user_id,
             page: $this->page ?? 1,
             perPage: $this->per_page ?? 10,
         );

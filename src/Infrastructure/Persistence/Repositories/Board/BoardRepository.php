@@ -18,17 +18,24 @@ final readonly class BoardRepository implements BoardRepositoryInterface
         private EntityManagerInterface $em
     ){}
 
-    public function getAll(): array
+    public function getAll(int $userId): array
     {
-        return $this->em->getRepository(Board::class)->findAll();
+        return $this->em->createQueryBuilder()
+            ->select('b')
+            ->from(Board::class, 'b')
+            ->where('b.userId = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getResult();
     }
 
-    public function getWithPaginate(int $page = 1, int $perPage = 15): PaginatedResult
+    public function getWithPaginate(int $userId, int $page = 1, int $perPage = 15): PaginatedResult
     {
         $qb = $this->em->createQueryBuilder()
             ->select('b')
             ->from(Board::class, 'b')
-            ->orderBy('b.id');
+            ->where('b.userId = :userId')
+            ->setParameter('userId', $userId);
 
         $query = $qb->getQuery()
             ->setFirstResult(($page - 1) * $perPage)

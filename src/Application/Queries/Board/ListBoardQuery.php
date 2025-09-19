@@ -4,6 +4,8 @@ namespace Src\Application\Queries\Board;
 
 final readonly class ListBoardQuery
 {
-    public function __construct()
+    public function __construct(
+        public int $userId,
+    )
     {}
 }

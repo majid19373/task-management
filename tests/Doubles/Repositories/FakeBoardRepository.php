@@ -16,16 +16,25 @@ class FakeBoardRepository implements BoardRepositoryInterface
      * */
     private array $boards = [];
 
-    public function getAll(): array
+    public function getAll(int $userId): array
     {
-        return $this->boards;
+        return array_filter($this->boards, function (Board $board) use ($userId) {
+            return $board->getUserId() === $userId;
+        });
     }
 
-    public function getWithPaginate(int $page, int $perPage): PaginatedResult
+    public function getWithPaginate(int $userId, int $page, int $perPage): PaginatedResult
     {
+        $total = count($this->boards);
+        $offset = ($page - 1) * $perPage;
+        $items = array_slice($this->boards, $offset, $perPage);
         return new PaginatedResult(
-            $this->boards,
-            []
+            $items,
+            [
+                'total' => $total,
+                'current_page' => $page,
+                'limit' => $perPage
+            ]
         );
     }
 

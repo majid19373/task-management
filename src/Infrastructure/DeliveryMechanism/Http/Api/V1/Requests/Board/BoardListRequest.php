@@ -14,11 +14,13 @@ final class BoardListRequest extends FormRequest
 
     public function rules(): array
     {
-        return [];
+        return [
+            'user_id' => ['required', 'integer'],
+        ];
     }
 
     public function makeDTO(): ListBoardQuery
     {
-        return new ListBoardQuery();
+        return new ListBoardQuery($this->user_id);
     }
 }

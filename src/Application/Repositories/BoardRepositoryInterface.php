@@ -8,9 +8,9 @@ use Src\Domain\Board\BoardName;
 
 interface BoardRepositoryInterface
 {
-    public function getAll(): array;
+    public function getAll(int $userId): array;
 
-    public function getWithPaginate(int $page, int $perPage): PaginatedResult;
+    public function getWithPaginate(int $userId, int $page, int $perPage): PaginatedResult;
 
     public function getById(string $id): Board;
 

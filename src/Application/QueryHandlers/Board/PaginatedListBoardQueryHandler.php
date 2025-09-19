@@ -15,6 +15,6 @@ final readonly class PaginatedListBoardQueryHandler
 
     public function handle(PaginateBoardQuery $query): PaginatedResult
     {
-        return $this->boardRepository->getWithPaginate($query->page, $query->perPage);
+        return $this->boardRepository->getWithPaginate($query->userId, $query->page, $query->perPage);
     }
 }

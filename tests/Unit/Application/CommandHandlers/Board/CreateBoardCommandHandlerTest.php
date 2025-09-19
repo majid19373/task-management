@@ -29,7 +29,7 @@ final class CreateBoardCommandHandlerTest extends TestCase
         $sut->handle($command);
 
         // Arrange
-        $boards = $repository->getAll();
+        $boards = $repository->getAll(1);
         $this->assertCount(1, $boards);
         $this->assertEquals(new BoardName($command->name), $boards[0]->getName());
     }
@@ -49,7 +49,7 @@ final class CreateBoardCommandHandlerTest extends TestCase
         $sut->handle($command);
 
         // Arrange
-        $boards = $repository->getAll();
+        $boards = $repository->getAll(1);
         $this->assertCount(1, $boards);
     }
 
@@ -89,7 +89,7 @@ final class CreateBoardCommandHandlerTest extends TestCase
         $sut->handle($command);
 
         // Assert
-        $boards = $repository->getAll();
+        $boards = $repository->getAll(1);
         $this->assertCount(1, $boards);
     }
 
@@ -109,7 +109,7 @@ final class CreateBoardCommandHandlerTest extends TestCase
         $sut->handle($command);
 
         // Assert
-        $boards = $repository->getAll();
+        $boards = $repository->getAll(1);
         $this->assertCount(1, $boards);
     }
 
@@ -167,7 +167,7 @@ final class CreateBoardCommandHandlerTest extends TestCase
         $sut->handle($command);
 
         // Assert
-        $boards = $repository->getAll();
+        $boards = $repository->getAll(1);
         $this->assertCount(1, $boards);
     }
 
