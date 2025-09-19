@@ -2,6 +2,7 @@
 
 namespace Tests\Doubles\Repositories;
 
+use Exception;
 use Illuminate\Support\Str;
 use Src\Application\Repositories\BoardRepositoryInterface;
 use Src\Application\Repositories\PaginatedResult;
@@ -28,9 +29,16 @@ class FakeBoardRepository implements BoardRepositoryInterface
         );
     }
 
+    /**
+     * @throws Exception
+     */
     public function getById(string $id): Board
     {
-        return collect($this->boards)->where('id', $id)->first();
+        $board = array_find($this->boards, fn($board) => $board->getId() === $id);
+        if (!$board) {
+            throw new Exception('The board not found.');
+        }
+        return $board;
     }
 
     public function store(Board $board): void

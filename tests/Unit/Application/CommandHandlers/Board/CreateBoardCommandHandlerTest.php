@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Application\CommandHandlers;
+namespace Tests\Unit\Application\CommandHandlers\Board;
 
 use DomainException;
 use Illuminate\Support\Str;
@@ -11,10 +11,10 @@ use Src\Application\Commands\Board\CreateBoardCommand;
 use Src\Domain\Board\BoardName;
 use Tests\Doubles\Repositories\FakeBoardRepository;
 
-class CreateBoardCommandHandlerTest extends TestCase
+final class CreateBoardCommandHandlerTest extends TestCase
 {
     #[Test]
-    public function create_a_board()
+    public function create_a_board(): void
     {
         // Assert
         $repository = new FakeBoardRepository();
@@ -35,7 +35,7 @@ class CreateBoardCommandHandlerTest extends TestCase
     }
 
     #[Test]
-    public function create_a_board_with_optional_description()
+    public function create_a_board_with_optional_description(): void
     {
         // Assert
         $repository = new FakeBoardRepository();
@@ -54,7 +54,7 @@ class CreateBoardCommandHandlerTest extends TestCase
     }
 
     #[Test]
-    public function creating_a_board_when_user_already_has_a_board_with_the_same_name()
+    public function creating_a_board_when_user_already_has_a_board_with_the_same_name(): void
     {
         // Assert
         $repository = new FakeBoardRepository();
@@ -74,7 +74,7 @@ class CreateBoardCommandHandlerTest extends TestCase
     }
 
     #[Test]
-    public function creating_a_board_with_maximum_name_length()
+    public function creating_a_board_with_maximum_name_length(): void
     {
         // Assert
         $repository = new FakeBoardRepository();
@@ -94,7 +94,7 @@ class CreateBoardCommandHandlerTest extends TestCase
     }
 
     #[Test]
-    public function creating_a_board_with_minimum_name_length()
+    public function creating_a_board_with_minimum_name_length(): void
     {
         // Assert
         $repository = new FakeBoardRepository();
@@ -114,7 +114,7 @@ class CreateBoardCommandHandlerTest extends TestCase
     }
 
     #[Test]
-    public function creating_a_board_when_name_length_be_too_short()
+    public function creating_a_board_when_name_length_be_too_short(): void
     {
         // Assert
         $repository = new FakeBoardRepository();
@@ -133,7 +133,7 @@ class CreateBoardCommandHandlerTest extends TestCase
     }
 
     #[Test]
-    public function creating_a_board_when_name_length_be_too_long()
+    public function creating_a_board_when_name_length_be_too_long(): void
     {
         // Assert
         $repository = new FakeBoardRepository();
@@ -152,7 +152,7 @@ class CreateBoardCommandHandlerTest extends TestCase
     }
 
     #[Test]
-    public function creating_a_board_with_maximum_description_length()
+    public function creating_a_board_with_maximum_description_length(): void
     {
         // Assert
         $repository = new FakeBoardRepository();
@@ -172,7 +172,7 @@ class CreateBoardCommandHandlerTest extends TestCase
     }
 
     #[Test]
-    public function creating_a_board_when_description_length_be_too_long()
+    public function creating_a_board_when_description_length_be_too_long(): void
     {
         // Assert
         $repository = new FakeBoardRepository();
