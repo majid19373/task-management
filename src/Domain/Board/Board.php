@@ -22,7 +22,10 @@ final class Board
     #[Column(name: "name", type: "board_name"), Embedded(class: BoardName::class, columnPrefix: false)]
     protected BoardName $name;
 
-    #[Column(name: 'description', type: "board_description", nullable: true), Embedded(class: BoardDescription::class, columnPrefix: false)]
+    #[
+        Column(name: 'description', type: "board_description", nullable: true),
+        Embedded(class: BoardDescription::class, columnPrefix: false)
+    ]
     protected ?BoardDescription $description;
 
     /**
@@ -46,6 +49,7 @@ final class Board
     }
 
     public function getId(): string { return $this->id; }
+    public function getUserId(): int { return $this->userId; }
     public function getName(): BoardName { return $this->name; }
     public function getDescription(): ?BoardDescription { return $this->description; }
 
