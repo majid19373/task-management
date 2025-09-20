@@ -55,7 +55,7 @@ class FakeTaskRepository implements TaskRepositoryInterface
      */
     public function getById(string $id): Task
     {
-        $task = array_find($this->tasks, fn($board) => $board->getId() === $id);
+        $task = array_find($this->tasks, fn($task) => $task->getId() === $id);
         if (!$task) {
             throw new Exception('The task not found.');
         }
