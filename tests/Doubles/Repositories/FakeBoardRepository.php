@@ -26,9 +26,7 @@ class FakeBoardRepository implements BoardRepositoryInterface
     public function getWithPaginate(int $userId, int $page, int $perPage): PaginatedResult
     {
         $offset = ($page - 1) * $perPage;
-        $boards = array_filter($this->boards, function (Board $board) use ($userId) {
-            return $board->getUserId() === $userId;
-        });
+        $boards = $this->getAll($userId);
         $total = count($boards);
         $items = array_slice($boards, $offset, $perPage);
         return new PaginatedResult(
