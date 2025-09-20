@@ -6,15 +6,18 @@ use DomainException;
 use Exception;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Src\Application\CommandHandlers\Task\PrioritizeTaskCommandHandler;
 use Src\Application\CommandHandlers\Task\StartTaskCommandHandler;
+use Src\Application\Commands\Task\PrioritizeTaskCommand;
 use Src\Application\Commands\Task\StartTaskCommand;
 use Src\Application\Repositories\TaskRepositoryInterface;
 use Src\Domain\Task\Task;
+use Src\Domain\Task\TaskPriority;
 use Src\Domain\Task\TaskStatus;
 use Src\Domain\Task\TaskTitle;
 use Tests\Doubles\Repositories\FakeTaskRepository;
 
-final class StartTaskCommandHandlerTest extends TestCase
+final class PrioritizeTaskCommandHandlerTest extends TestCase
 {
     private Task $task;
     private TaskRepositoryInterface $repository;
@@ -33,30 +36,29 @@ final class StartTaskCommandHandlerTest extends TestCase
      * @throws Exception
      */
     #[Test]
-    public function start_a_task()
+    public function prioritize_a_task()
     {
         // Arrange
-        $sut = new StartTaskCommandHandler($this->repository);
-        $command = new StartTaskCommand($this->task->getId());
+        $sut = new PrioritizeTaskCommandHandler($this->repository);
+        $command = new PrioritizeTaskCommand($this->task->getId(), TaskPriority::MEDIUM->value);
 
         // Act
         $sut->handle($command);
 
         // Assert
         $task = $this->repository->getById($this->task->getId());
-        $this->assertEquals(TaskStatus::IN_PROGRESS, $task->getStatus());
+        $this->assertEquals(TaskPriority::MEDIUM, $task->getPriority());
     }
 
     /**
      * @throws Exception
      */
     #[Test]
-    public function starting_task_fails_when_not_in_not_started_status()
+    public function prioritize_a_task_when_priority_is_wrong()
     {
         // Arrange
-        $sut = new StartTaskCommandHandler($this->repository);
-        $command = new StartTaskCommand($this->task->getId());
-        $sut->handle($command);
+        $sut = new PrioritizeTaskCommandHandler($this->repository);
+        $command = new PrioritizeTaskCommand($this->task->getId(), 'wrong_priority');
 
         // Expect
         $this->expectException(DomainException::class);

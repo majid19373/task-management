@@ -13,11 +13,13 @@ use Src\Application\Queries\Task\ListTaskQuery;
 use Src\Application\Repositories\BoardRepositoryInterface;
 use Src\Domain\Board\Board;
 use Src\Domain\Board\BoardName;
+use Src\Domain\Task\TaskPriority;
+use Src\Domain\Task\TaskStatus;
 use Src\Domain\Task\TaskTitle;
 use Tests\Doubles\Repositories\FakeBoardRepository;
 use Tests\Doubles\Repositories\FakeTaskRepository;
 
-class AddTaskCommandHandlerTest extends TestCase
+final class AddTaskCommandHandlerTest extends TestCase
 {
     private Board $board;
     private BoardRepositoryInterface $boardRepository;
@@ -52,6 +54,8 @@ class AddTaskCommandHandlerTest extends TestCase
         $tasks = $repository->list(new ListTaskQuery($this->board->getId()));
         $this->assertCount(1, $tasks);
         $this->assertEquals(new TaskTitle($command->title), $tasks[0]->getTitle());
+        $this->assertEquals(TaskStatus::NOT_STARTED, $tasks[0]->getStatus());
+        $this->assertEquals(TaskPriority::MEDIUM, $tasks[0]->getPriority());
     }
 
     #[Test]

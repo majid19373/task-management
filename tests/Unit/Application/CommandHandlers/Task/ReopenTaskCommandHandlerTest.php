@@ -6,7 +6,11 @@ use DomainException;
 use Exception;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Src\Application\CommandHandlers\Task\CompleteTaskCommandHandler;
+use Src\Application\CommandHandlers\Task\ReopenTaskCommandHandler;
 use Src\Application\CommandHandlers\Task\StartTaskCommandHandler;
+use Src\Application\Commands\Task\CompleteTaskCommand;
+use Src\Application\Commands\Task\ReopenTaskCommand;
 use Src\Application\Commands\Task\StartTaskCommand;
 use Src\Application\Repositories\TaskRepositoryInterface;
 use Src\Domain\Task\Task;
@@ -14,7 +18,7 @@ use Src\Domain\Task\TaskStatus;
 use Src\Domain\Task\TaskTitle;
 use Tests\Doubles\Repositories\FakeTaskRepository;
 
-final class StartTaskCommandHandlerTest extends TestCase
+final class ReopenTaskCommandHandlerTest extends TestCase
 {
     private Task $task;
     private TaskRepositoryInterface $repository;
@@ -33,30 +37,34 @@ final class StartTaskCommandHandlerTest extends TestCase
      * @throws Exception
      */
     #[Test]
-    public function start_a_task()
+    public function reopen_a_in_progress_task()
     {
         // Arrange
-        $sut = new StartTaskCommandHandler($this->repository);
+        $handler = new StartTaskCommandHandler($this->repository);
         $command = new StartTaskCommand($this->task->getId());
+        $handler->handle($command);
+
+        $handler = new CompleteTaskCommandHandler($this->repository);
+        $command = new CompleteTaskCommand($this->task->getId());
+        $handler->handle($command);
+
+        $sut = new ReopenTaskCommandHandler($this->repository);
+        $command = new ReopenTaskCommand($this->task->getId());
 
         // Act
         $sut->handle($command);
 
         // Assert
         $task = $this->repository->getById($this->task->getId());
-        $this->assertEquals(TaskStatus::IN_PROGRESS, $task->getStatus());
+        $this->assertEquals(TaskStatus::NOT_STARTED, $task->getStatus());
     }
 
-    /**
-     * @throws Exception
-     */
     #[Test]
-    public function starting_task_fails_when_not_in_not_started_status()
+    public function task_completion_fails_if_status_is_not_in_progress()
     {
         // Arrange
-        $sut = new StartTaskCommandHandler($this->repository);
-        $command = new StartTaskCommand($this->task->getId());
-        $sut->handle($command);
+        $sut = new CompleteTaskCommandHandler($this->repository);
+        $command = new CompleteTaskCommand($this->task->getId());
 
         // Expect
         $this->expectException(DomainException::class);
