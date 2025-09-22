@@ -3,7 +3,7 @@
 namespace Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Controllers;
 
 use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Requests\Task\{DeadlineTaskRequest, ListTaskRequest};
-use Src\Application\Bus\{CommandBus, QueryBus};
+use Src\Application\Bus\{Command\CommandBus, Query\QueryBus};
 use Src\Application\Commands\Task\{CompleteTaskCommand, ReopenTaskCommand, StartTaskCommand};
 use Src\Application\Queries\Task\{FindTaskQuery};
 use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Common\Controller;

@@ -2,7 +2,7 @@
 
 namespace Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Controllers;
 
-use Src\Application\Bus\{CommandBus, QueryBus};
+use Src\Application\Bus\{Command\CommandBus, Query\QueryBus};
 use Src\Application\Queries\Board\GetBoardQuery;
 use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Common\Controller;
 use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Requests\Board\{BoardListRequest,

@@ -3,13 +3,13 @@
 namespace Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Controllers;
 
 use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Requests\Subtask\{AddSubtaskRequest};
-use Src\Application\Bus\CommandBus;
+use Src\Application\Bus\Command\CommandBus;
 use Src\Application\Commands\Subtask\{CompleteSubtaskCommand,
     RemoveSubtaskCommand,
     ReopenSubtaskCommand,
     StartSubtaskCommand};
 use Src\Application\Queries\Subtask\{ListSubtaskQuery};
-use Src\Application\Bus\QueryBus;
+use Src\Application\Bus\Query\QueryBus;
 use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Common\Controller;
 use Src\Infrastructure\DeliveryMechanism\Http\Api\V1\Resources\Subtask\SubtaskResource;
 use Exception;

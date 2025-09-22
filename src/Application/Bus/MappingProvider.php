@@ -2,31 +2,23 @@
 
 namespace Src\Application\Bus;
 
-use Illuminate\Support\Facades\Cache;
 use ReflectionClass;
 use ReflectionException;
 use RuntimeException;
 
-final class QueryBusFactory
+abstract readonly class MappingProvider implements MappingProviderInterface
 {
-    private string $cacheKey = 'query_bus';
-
     /**
      * @throws ReflectionException
      */
-    public function make(iterable $handlers): void
+    public function mapping($handlers): array
     {
         $map = [];
         foreach ($handlers as $handler) {
             $queryClass = $this->resolveQueryClass($handler);
             $map[$queryClass] = get_class($handler);
         }
-        Cache::put($this->cacheKey, $map);
-    }
-
-    public function getHandlers(): array
-    {
-        return Cache::get($this->cacheKey, []);
+        return $map;
     }
 
     /**
