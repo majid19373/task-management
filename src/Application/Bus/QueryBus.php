@@ -30,6 +30,6 @@ final class QueryBus
             throw new RuntimeException("No handler found for query {$queryClass}");
         }
 
-        return $this->map[$queryClass]->handle($query);
+        return app($this->map[$queryClass])->handle($query);
     }
 }

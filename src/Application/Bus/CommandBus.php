@@ -33,6 +33,6 @@ final class CommandBus
             throw new RuntimeException("No handler found for query {$commandClass}");
         }
 
-        $this->map[$commandClass]->handle($command);
+        app($this->map[$commandClass])->handle($command);
     }
 }

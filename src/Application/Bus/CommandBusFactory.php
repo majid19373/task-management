@@ -26,11 +26,7 @@ final class CommandBusFactory
 
     public function getHandlers(): array
     {
-        $cachedMap = Cache::get($this->cacheKey, []);
-
-        return array_map(function ($handlerClass) {
-            return app($handlerClass);
-        }, $cachedMap);
+        return Cache::get($this->cacheKey, []);
     }
 
     /**
