@@ -1,31 +1,31 @@
 <?php
 
-namespace Tests\Unit\Domain\Task;
+namespace Tests\Unit\Domain\Subtask;
 
 use DomainException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Src\Domain\Task\TaskStatus;
+use Src\Domain\Subtask\SubtaskStatus;
 
-final class TaskStatusTest extends TestCase
+final class SubtaskStatusTest extends TestCase
 {
-    private const string EXCEPTION_MESSAGE = 'Task status is not valid.';
+    private const string EXCEPTION_MESSAGE = 'Subtask status is not valid.';
 
     #[Test]
-    public function validate_task_status()
+    public function validate_subtask_status()
     {
         // Arrange
-        $value = TaskStatus::NOT_STARTED->value;
+        $value = SubtaskStatus::NOT_STARTED->value;
 
         // Act
-        TaskStatus::validate($value);
+        SubtaskStatus::validate($value);
 
         // Assert
         $this->assertTrue(true);
     }
 
     #[Test]
-    public function validate_task_status_with_wrong_value()
+    public function validate_subtask_status_with_wrong_value()
     {
         // Arrange
         $value = 'not_valid';
@@ -35,6 +35,6 @@ final class TaskStatusTest extends TestCase
         $this->expectExceptionMessage(self::EXCEPTION_MESSAGE);
 
         // Act
-        TaskStatus::validate($value);
+        SubtaskStatus::validate($value);
     }
 }

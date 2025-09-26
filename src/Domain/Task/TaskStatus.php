@@ -19,7 +19,7 @@ enum TaskStatus: string
     public static function validate(?string $input): void
     {
         if (!TaskStatus::tryFrom($input)) {
-            throw new DomainException('Status task is not valid.');
+            throw new DomainException('Task status is not valid.');
         }
     }
 }
