@@ -4,6 +4,7 @@ namespace Src\Domain\Task;
 
 use Doctrine\ORM\Mapping\{Column, Embedded, Entity, GeneratedValue, Id, OneToMany, Table};
 use Doctrine\Common\Collections\ArrayCollection;
+use Illuminate\Support\Str;
 use Src\Domain\Subtask\Subtask;
 use Src\Domain\Subtask\SubtaskStatus;
 use Src\Domain\Subtask\SubtaskTitle;
@@ -113,7 +114,6 @@ final class Task
     }
 
     public function addSubtask(
-        string $subtaskId,
         SubtaskTitle $title,
         ?SubtaskDescription $description,
     ): void
@@ -122,7 +122,7 @@ final class Task
             throw new DomainException("Can not add a subtask to a completed task.");
         }
         $this->subtasks[] = new Subtask(
-            id: $subtaskId,
+            id: Str::ulid(),
             task: $this,
             title: $title,
             description: $description,

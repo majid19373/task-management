@@ -18,7 +18,6 @@ final readonly class AddSubtaskCommandHandler
     {
         $task = $this->taskRepository->getById($command->taskId);
         $task->addSubtask(
-            subtaskId: $this->taskRepository->getNextIdentity(),
             title: new SubtaskTitle($command->title),
             description: $command->description ? new SubtaskDescription($command->description) : null,
         );
