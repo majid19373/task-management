@@ -13,6 +13,8 @@ use Tests\Doubles\Repositories\FakeBoardRepository;
 
 final class CreateBoardCommandHandlerTest extends TestCase
 {
+    private const string BOARD_NAME = 'Test Board Name';
+    private const string BOARD_DESCRIPTION = 'Test Board Description';
     #[Test]
     public function create_a_board(): void
     {
@@ -21,8 +23,8 @@ final class CreateBoardCommandHandlerTest extends TestCase
         $sut = new CreateBoardCommandHandler($repository);
         $command = new CreateBoardCommand(
             userId: 1,
-            name: 'Test Board',
-            description: 'Test Description'
+            name: self::BOARD_NAME,
+            description: self::BOARD_DESCRIPTION
         );
 
         // Act
@@ -42,7 +44,7 @@ final class CreateBoardCommandHandlerTest extends TestCase
         $sut = new CreateBoardCommandHandler($repository);
         $command = new CreateBoardCommand(
             userId: 1,
-            name: 'Test Board'
+            name: self::BOARD_NAME
         );
 
         // Act
@@ -61,8 +63,8 @@ final class CreateBoardCommandHandlerTest extends TestCase
         $sut = new CreateBoardCommandHandler($repository);
         $command = new CreateBoardCommand(
             userId: 1,
-            name: 'Test Board',
-            description: 'Test Description'
+            name: self::BOARD_NAME,
+            description: self::BOARD_DESCRIPTION
         );
         $sut->handle($command);
 
@@ -82,7 +84,7 @@ final class CreateBoardCommandHandlerTest extends TestCase
         $command = new CreateBoardCommand(
             userId: 1,
             name: Str::random(50),
-            description: 'Test Description'
+            description: self::BOARD_DESCRIPTION
         );
 
         // Act
@@ -102,7 +104,7 @@ final class CreateBoardCommandHandlerTest extends TestCase
         $command = new CreateBoardCommand(
             userId: 1,
             name: Str::random(3),
-            description: 'Test Description'
+            description: self::BOARD_DESCRIPTION
         );
 
         // Act
@@ -122,7 +124,7 @@ final class CreateBoardCommandHandlerTest extends TestCase
         $command = new CreateBoardCommand(
             userId: 1,
             name: '',
-            description: 'Test Description'
+            description: self::BOARD_DESCRIPTION
         );
 
         // Expect
@@ -141,7 +143,7 @@ final class CreateBoardCommandHandlerTest extends TestCase
         $command = new CreateBoardCommand(
             userId: 1,
             name: Str::random(51),
-            description: 'Test Description'
+            description: self::BOARD_DESCRIPTION
         );
 
         // Expect
@@ -159,7 +161,7 @@ final class CreateBoardCommandHandlerTest extends TestCase
         $sut = new CreateBoardCommandHandler($repository);
         $command = new CreateBoardCommand(
             userId: 1,
-            name: 'Test Board',
+            name: self::BOARD_NAME,
             description: Str::random(200)
         );
 
@@ -179,7 +181,7 @@ final class CreateBoardCommandHandlerTest extends TestCase
         $sut = new CreateBoardCommandHandler($repository);
         $command = new CreateBoardCommand(
             userId: 1,
-            name: 'Test Board',
+            name: self::BOARD_NAME,
             description: Str::random(201)
         );
 
