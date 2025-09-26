@@ -20,7 +20,7 @@ enum TaskPriority: string
     {
         $priority = TaskPriority::tryFrom($input);
         if (!$priority) {
-            throw new DomainException('Status task is not valid.');
+            throw new DomainException('Priority task is not valid.');
         }
         return $priority;
     }

@@ -10,6 +10,8 @@ use Src\Domain\Board\BoardDescription;
 
 final class BoardDescriptionTest extends TestCase
 {
+    private const string EXCEPTION_MESSAGE = 'Board description must be less than 200 characters.';
+
     #[Test]
     public function creating_a_board_description_with_maximum_length(): void
     {
@@ -32,6 +34,7 @@ final class BoardDescriptionTest extends TestCase
 
         // Expect
         $this->expectException(DomainException::class);
+        $this->expectExceptionMessage(self::EXCEPTION_MESSAGE);
 
         // Act
         new BoardDescription($value);

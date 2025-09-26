@@ -21,6 +21,9 @@ use Tests\Doubles\Repositories\FakeTaskRepository;
 
 final class AddTaskCommandHandlerTest extends TestCase
 {
+    private const string BOARD_NAME = 'Test BOARD NAME';
+    private const string TASK_TITLE = 'Test Task Title';
+    private const string TASK_DESCRIPTION = 'Test Task Description';
     private Board $board;
     private BoardRepositoryInterface $boardRepository;
     public function setUp(): void
@@ -29,7 +32,7 @@ final class AddTaskCommandHandlerTest extends TestCase
         $this->board = new Board(
             id: $this->boardRepository->getNextIdentity(),
             existsByUserIdAndName: false,
-            name: new BoardName('Test Board'),
+            name: new BoardName(self::BOARD_NAME),
             userId: 1,
         );
         $this->boardRepository->store($this->board);
@@ -43,8 +46,8 @@ final class AddTaskCommandHandlerTest extends TestCase
         $sut = new AddTaskCommandHandler($repository, $this->boardRepository);
         $command = new AddTaskCommand(
             boardId: $this->board->getId(),
-            title: 'Test Board',
-            description: 'Test Description'
+            title: self::TASK_TITLE,
+            description: self::TASK_DESCRIPTION
         );
 
         // Act
@@ -66,7 +69,7 @@ final class AddTaskCommandHandlerTest extends TestCase
         $sut = new AddTaskCommandHandler($repository, $this->boardRepository);
         $command = new AddTaskCommand(
             boardId: $this->board->getId(),
-            title: 'Test Board',
+            title: self::TASK_TITLE,
         );
 
         // Act
@@ -85,7 +88,7 @@ final class AddTaskCommandHandlerTest extends TestCase
         $sut = new AddTaskCommandHandler($repository, $this->boardRepository);
         $command = new AddTaskCommand(
             boardId: $this->board->getId(),
-            title: 'Test Board',
+            title: self::TASK_TITLE,
             deadline: '2020-01-01',
         );
 
@@ -104,8 +107,7 @@ final class AddTaskCommandHandlerTest extends TestCase
         $sut = new AddTaskCommandHandler($repository, $this->boardRepository);
         $command = new AddTaskCommand(
             boardId: 'not_exist',
-            title: 'Test Board',
-            deadline: '2020-01-01',
+            title: self::TASK_TITLE,
         );
 
         // Expect
@@ -197,7 +199,7 @@ final class AddTaskCommandHandlerTest extends TestCase
         $sut = new AddTaskCommandHandler($repository, $this->boardRepository);
         $command = new AddTaskCommand(
             boardId: $this->board->getId(),
-            title: 'Test Board',
+            title: self::TASK_TITLE,
             description: Str::random(500)
         );
 
@@ -217,7 +219,7 @@ final class AddTaskCommandHandlerTest extends TestCase
         $sut = new AddTaskCommandHandler($repository, $this->boardRepository);
         $command = new AddTaskCommand(
             boardId: $this->board->getId(),
-            title: 'Test Board',
+            title: self::TASK_TITLE,
             description: Str::random(501)
         );
 

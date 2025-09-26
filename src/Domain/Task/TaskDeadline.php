@@ -14,12 +14,12 @@ final class TaskDeadline
 
     public function __construct(string $value, DateTimeImmutable $currentDate)
     {
-        if(!$value){
-            throw new DomainException('The deadline field must be a valid date');
-        }
         $value = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $value);
+        if(!$value){
+            throw new DomainException('The deadline field must be a valid date.');
+        }
         if($currentDate > $value){
-            throw new DomainException('The deadline field must be a valid date');
+            throw new DomainException('The deadline date must be greater than the current date.');
         }
         $this->value = $value;
     }

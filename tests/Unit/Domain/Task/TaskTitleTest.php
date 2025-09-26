@@ -1,25 +1,25 @@
 <?php
 
-namespace Tests\Unit\Domain\Board;
+namespace Tests\Unit\Domain\Task;
 
 use DomainException;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Src\Domain\Board\BoardName;
+use Src\Domain\Task\TaskTitle;
 
-final class BoardNameTest extends TestCase
+final class TaskTitleTest extends TestCase
 {
-    private const string EXCEPTION_MESSAGE = 'Board name must be between 3 and 50 characters.';
+    private const string EXCEPTION_MESSAGE = 'Task title must be between 5 and 100 characters.';
 
     #[Test]
-    public function creating_a_board_name_with_maximum_length(): void
+    public function create_a_task_name_with_maximum_length()
     {
         // Arrange
-        $value = Str::random(50);
+        $value = Str::random(100);
 
         // Act
-        $result = new BoardName($value);
+        $result = new TaskTitle($value);
 
         // Assert
         $this->assertEquals($value, $result->value());
@@ -27,13 +27,13 @@ final class BoardNameTest extends TestCase
     }
 
     #[Test]
-    public function creating_a_board_name_with_minimum_length(): void
+    public function create_a_task_name_with_minimum_length()
     {
         // Arrange
-        $value = Str::random(3);
+        $value = Str::random(5);
 
         // Act
-        $result = new BoardName($value);
+        $result = new TaskTitle($value);
 
         // Assert
         $this->assertEquals($value, $result->value());
@@ -41,7 +41,7 @@ final class BoardNameTest extends TestCase
     }
 
     #[Test]
-    public function creating_a_board_name_when_value_length_be_too_short(): void
+    public function creating_a_task_name_when_value_length_be_too_short(): void
     {
         // Arrange
         $value = '';
@@ -51,20 +51,20 @@ final class BoardNameTest extends TestCase
         $this->expectExceptionMessage(self::EXCEPTION_MESSAGE);
 
         // Act
-        new BoardName($value);
+        new TaskTitle($value);
     }
 
     #[Test]
-    public function creating_a_board_name_when_value_length_be_too_long(): void
+    public function creating_a_task_name_when_value_length_be_too_long(): void
     {
         // Arrange
-        $value = Str::random(51);
+        $value = Str::random(101);
 
         // Expect
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage(self::EXCEPTION_MESSAGE);
 
         // Act
-        new BoardName($value);
+        new TaskTitle($value);
     }
 }
