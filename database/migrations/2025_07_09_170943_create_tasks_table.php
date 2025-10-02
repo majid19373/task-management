@@ -18,8 +18,10 @@ return new class extends Migration
             $table->foreignUlid('board_id')->constrained('boards')->onDelete('cascade');
             $table->string('title', 100);
             $table->string('description', 500)->nullable();
-            $table->enum('status', TaskStatus::toArray())->default(TaskStatus::NOT_STARTED->value);
-            $table->enum('priority', TaskPriority::toArray())->default(TaskPriority::MEDIUM->value);
+            $table->enum('status', ['not_started', 'in_progress', 'completed', 'blocked'])
+                ->default('not_started');
+            $table->enum('priority', ['low', 'medium', 'high', 'critical'])
+                ->default('medium');
             $table->timestamp('deadline')->nullable();
             $table->timestamps();
         });

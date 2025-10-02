@@ -16,6 +16,12 @@ class FakeTaskRepository implements TaskRepositoryInterface
      * @var array<task>
      * */
     private array $tasks = [];
+    private ?string $nextIdentity = null;
+
+    public function getAll(): array
+    {
+        return $this->tasks;
+    }
 
     public function list(ListTaskQuery $filters): array
     {
@@ -74,6 +80,14 @@ class FakeTaskRepository implements TaskRepositoryInterface
 
     public function getNextIdentity(): string
     {
+        if($this->nextIdentity) {
+            return $this->nextIdentity;
+        }
         return Str::ulid();
+    }
+
+    public function giveAsNextIdentity(string $id): void
+    {
+        $this->nextIdentity = $id;
     }
 }

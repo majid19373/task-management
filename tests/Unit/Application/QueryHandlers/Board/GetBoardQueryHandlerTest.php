@@ -14,6 +14,8 @@ use Tests\Doubles\Repositories\FakeBoardRepository;
 
 final class GetBoardQueryHandlerTest extends TestCase
 {
+    private const int USER_ID = 1;
+    private const string BOARD_NAME = 'Test Board Name';
     private Board $board;
     private BoardRepositoryInterface $repository;
     public function setUp(): void
@@ -22,8 +24,8 @@ final class GetBoardQueryHandlerTest extends TestCase
         $this->board = new Board(
             id: $this->repository->getNextIdentity(),
             existsByUserIdAndName: false,
-            name: new BoardName('Test Board'),
-            userId: 1,
+            name: new BoardName(self::BOARD_NAME),
+            userId: self::USER_ID,
         );
         $this->repository->store($this->board);
     }

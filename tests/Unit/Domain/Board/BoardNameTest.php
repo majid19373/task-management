@@ -4,19 +4,34 @@ namespace Tests\Unit\Domain\Board;
 
 use DomainException;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Src\Domain\Board\BoardName;
 
 final class BoardNameTest extends TestCase
 {
-    private const string EXCEPTION_MESSAGE = 'Board name must be between 3 and 50 characters.';
+    public static function provideValidNameLengths(): array
+    {
+        return [
+            'MAX' => [50],
+            'MIN' => [3],
+        ];
+    }
+    public static function provideInvalidNameLengths(): array
+    {
+        return [
+            'TOO_SHORT' => [0],
+            'TOO_LONG' => [51],
+        ];
+    }
 
     #[Test]
-    public function creating_a_board_name_with_maximum_length(): void
+    #[DataProvider('provideValidNameLengths')]
+    public function creating_a_board_name(int $length): void
     {
         // Arrange
-        $value = Str::random(50);
+        $value = Str::random($length);
 
         // Act
         $result = new BoardName($value);
@@ -27,42 +42,15 @@ final class BoardNameTest extends TestCase
     }
 
     #[Test]
-    public function creating_a_board_name_with_minimum_length(): void
+    #[DataProvider('provideInvalidNameLengths')]
+    public function creating_a_board_name_when_value_length_be_wrong(int $length): void
     {
         // Arrange
-        $value = Str::random(3);
-
-        // Act
-        $result = new BoardName($value);
-
-        // Assert
-        $this->assertEquals($value, $result->value());
-        $this->assertEquals($value, (string)$result);
-    }
-
-    #[Test]
-    public function creating_a_board_name_when_value_length_be_too_short(): void
-    {
-        // Arrange
-        $value = '';
+        $value = Str::random($length);
 
         // Expect
         $this->expectException(DomainException::class);
-        $this->expectExceptionMessage(self::EXCEPTION_MESSAGE);
-
-        // Act
-        new BoardName($value);
-    }
-
-    #[Test]
-    public function creating_a_board_name_when_value_length_be_too_long(): void
-    {
-        // Arrange
-        $value = Str::random(51);
-
-        // Expect
-        $this->expectException(DomainException::class);
-        $this->expectExceptionMessage(self::EXCEPTION_MESSAGE);
+        $this->expectExceptionMessage('Board name must be between 3 and 50 characters.');
 
         // Act
         new BoardName($value);

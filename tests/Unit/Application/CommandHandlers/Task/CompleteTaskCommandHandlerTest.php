@@ -18,6 +18,8 @@ use Tests\Doubles\Repositories\FakeTaskRepository;
 
 final class CompleteTaskCommandHandlerTest extends TestCase
 {
+    private const string TASK_TITLE = 'Test Task Name';
+    private const string BOARD_ID = 'board_id';
     private Task $task;
     private TaskRepositoryInterface $repository;
     public function setUp(): void
@@ -25,8 +27,8 @@ final class CompleteTaskCommandHandlerTest extends TestCase
         $this->repository = new FakeTaskRepository();
         $this->task = new Task(
             id: $this->repository->getNextIdentity(),
-            boardId: 'board_id',
-            title: new TaskTitle('Test Board'),
+            boardId: self::BOARD_ID,
+            title: new TaskTitle(self::TASK_TITLE),
         );
         $this->repository->store($this->task);
     }
@@ -35,7 +37,7 @@ final class CompleteTaskCommandHandlerTest extends TestCase
      * @throws Exception
      */
     #[Test]
-    public function complete_a_in_progress_task()
+    public function complete_in_progress_task()
     {
         // Arrange
         $handler = new StartTaskCommandHandler($this->repository);

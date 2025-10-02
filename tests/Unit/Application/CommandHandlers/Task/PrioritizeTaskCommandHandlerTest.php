@@ -2,23 +2,22 @@
 
 namespace Tests\Unit\Application\CommandHandlers\Task;
 
-use DomainException;
+use ValueError;
 use Exception;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Src\Application\CommandHandlers\Task\PrioritizeTaskCommandHandler;
-use Src\Application\CommandHandlers\Task\StartTaskCommandHandler;
 use Src\Application\Commands\Task\PrioritizeTaskCommand;
-use Src\Application\Commands\Task\StartTaskCommand;
 use Src\Application\Repositories\TaskRepositoryInterface;
 use Src\Domain\Task\Task;
 use Src\Domain\Task\TaskPriority;
-use Src\Domain\Task\TaskStatus;
 use Src\Domain\Task\TaskTitle;
 use Tests\Doubles\Repositories\FakeTaskRepository;
 
 final class PrioritizeTaskCommandHandlerTest extends TestCase
 {
+    private const string TASK_TITLE = 'Test Task Name';
+    private const string BOARD_ID = 'board_id';
     private Task $task;
     private TaskRepositoryInterface $repository;
     public function setUp(): void
@@ -26,8 +25,8 @@ final class PrioritizeTaskCommandHandlerTest extends TestCase
         $this->repository = new FakeTaskRepository();
         $this->task = new Task(
             id: $this->repository->getNextIdentity(),
-            boardId: 'board_id',
-            title: new TaskTitle('Test Board'),
+            boardId: self::BOARD_ID,
+            title: new TaskTitle(self::TASK_TITLE),
         );
         $this->repository->store($this->task);
     }
@@ -61,7 +60,7 @@ final class PrioritizeTaskCommandHandlerTest extends TestCase
         $command = new PrioritizeTaskCommand($this->task->getId(), 'wrong_priority');
 
         // Expect
-        $this->expectException(DomainException::class);
+        $this->expectException(ValueError::class);
 
         // Act
         $sut->handle($command);

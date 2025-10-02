@@ -17,7 +17,8 @@ return new class extends Migration
             $table->foreignUlid('task_id')->constrained('tasks')->onDelete('cascade');
             $table->string('title', 100);
             $table->string('description', 500)->nullable();
-            $table->enum('status', SubtaskStatus::toArray())->default(SubtaskStatus::NOT_STARTED->value);
+            $table->enum('status', ['not_started', 'in_progress', 'completed', 'blocked'])
+                ->default('not_started');
             $table->timestamps();
         });
     }

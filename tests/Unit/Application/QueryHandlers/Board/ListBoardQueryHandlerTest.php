@@ -15,15 +15,16 @@ use Tests\Doubles\Repositories\FakeBoardRepository;
 final class ListBoardQueryHandlerTest extends TestCase
 {
     private BoardRepositoryInterface $repository;
-    private int $fakeUserId = 1;
+    private const int USER_ID = 1;
+    private const int OTHER_USER_ID = 2;
     public function setUp(): void
     {
         $this->repository = new FakeBoardRepository();
         for ($i = 0; $i < 10; $i++) {
-            $this->createFakeBoard($this->fakeUserId);
+            $this->createFakeBoard(self::USER_ID);
         }
         for ($i = 0; $i < 5; $i++) {
-            $this->createFakeBoard(2);
+            $this->createFakeBoard(self::OTHER_USER_ID);
         }
     }
     private function createFakeBoard(int $userId): void
@@ -41,7 +42,7 @@ final class ListBoardQueryHandlerTest extends TestCase
     public function list_board()
     {
         // Arrange
-        $query = new ListBoardQuery($this->fakeUserId);
+        $query = new ListBoardQuery(self::USER_ID);
         $sut = new ListBoardQueryHandler($this->repository);
 
         // Act

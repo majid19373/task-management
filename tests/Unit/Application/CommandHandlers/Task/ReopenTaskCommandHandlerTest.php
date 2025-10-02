@@ -20,6 +20,8 @@ use Tests\Doubles\Repositories\FakeTaskRepository;
 
 final class ReopenTaskCommandHandlerTest extends TestCase
 {
+    private const string TASK_TITLE = 'Test Task Name';
+    private const string BOARD_ID = 'board_id';
     private Task $task;
     private TaskRepositoryInterface $repository;
     public function setUp(): void
@@ -27,8 +29,8 @@ final class ReopenTaskCommandHandlerTest extends TestCase
         $this->repository = new FakeTaskRepository();
         $this->task = new Task(
             id: $this->repository->getNextIdentity(),
-            boardId: 'board_id',
-            title: new TaskTitle('Test Board'),
+            boardId: self::BOARD_ID,
+            title: new TaskTitle(self::TASK_TITLE),
         );
         $this->repository->store($this->task);
     }

@@ -10,13 +10,11 @@ use Src\Domain\Subtask\SubtaskDescription;
 
 final class SubtaskDescriptionTest extends TestCase
 {
-    private const string EXCEPTION_MESSAGE = 'Subtask description must be less than 500 characters.';
-
     #[Test]
     public function create_a_subtask_description_with_maximum_length()
     {
         // Arrange
-        $value = Str::random(500);
+        $value = $this->maximumDescriptionLength();
 
         // Act
         $result = new SubtaskDescription($value);
@@ -26,17 +24,27 @@ final class SubtaskDescriptionTest extends TestCase
         $this->assertEquals($value, (string)$result);
     }
 
+    private function maximumDescriptionLength(): string
+    {
+        return Str::random(500);
+    }
+
     #[Test]
     public function creating_a_subtask_description_when_value_length_be_too_long(): void
     {
         // Arrange
-        $value = Str::random(501);
+        $value = $this->tooLongDescriptionLength();
 
         // Expect
         $this->expectException(DomainException::class);
-        $this->expectExceptionMessage(self::EXCEPTION_MESSAGE);
+        $this->expectExceptionMessage('Subtask description must be less than 500 characters.');
 
         // Act
         new SubtaskDescription($value);
+    }
+
+    private function tooLongDescriptionLength(): string
+    {
+        return Str::random(501);
     }
 }

@@ -12,14 +12,11 @@ final class TaskDeadline
     #[Column(name: "deadline", type: 'string', nullable: true)]
     private DateTimeImmutable $value;
 
-    public function __construct(string $value, DateTimeImmutable $currentDate)
+    public function __construct(string $value)
     {
         $value = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $value);
         if(!$value){
             throw new DomainException('The deadline field must be a valid date.');
-        }
-        if($currentDate > $value){
-            throw new DomainException('The deadline date must be greater than the current date.');
         }
         $this->value = $value;
     }
@@ -32,5 +29,10 @@ final class TaskDeadline
     public function __toString(): string
     {
         return $this->value->format('Y-m-d H:i:s');
+    }
+
+    public function isFuture(DateTimeImmutable $currentDate): bool
+    {
+        return $this->value > $currentDate;
     }
 }

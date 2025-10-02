@@ -16,7 +16,7 @@ final readonly class PrioritizeTaskCommandHandler
     public function handle(PrioritizeTaskCommand $command): void
     {
         $task = $this->taskRepository->getById($command->id);
-        $task->prioritize(TaskPriority::validate($command->priority));
+        $task->prioritize(TaskPriority::from($command->priority));
         $this->taskRepository->store($task);
     }
 }

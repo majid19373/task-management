@@ -2,7 +2,6 @@
 
 namespace Src\Application\CommandHandlers\Task;
 
-use DateTimeImmutable;
 use Src\Application\Commands\Task\AddTaskCommand;
 use Src\Domain\Task\{TaskDeadline, TaskDescription, TaskTitle};
 use Src\Application\Repositories\BoardRepositoryInterface;
@@ -23,7 +22,7 @@ final readonly class AddTaskCommandHandler
             taskId: $this->taskRepository->getNextIdentity(),
             title: new TaskTitle($command->title),
             description: $command->description ? new TaskDescription($command->description) : null,
-            deadline: $command->deadline ? new TaskDeadline($command->deadline, new DateTimeImmutable()) : null,
+            deadline: $command->deadline ? new TaskDeadline($command->deadline) : null,
         );
         $this->taskRepository->store($task);
     }

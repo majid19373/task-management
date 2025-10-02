@@ -4,7 +4,6 @@ namespace Src\Application\QueryHandlers\Task;
 
 use Src\Application\Queries\Task\PaginateTaskQuery;
 use Src\Application\Repositories\PaginatedResult;
-use Src\Domain\Task\{TaskPriority, TaskStatus};
 use Src\Application\Repositories\TaskRepositoryInterface;
 
 final readonly class PaginateTaskQueryHandler
@@ -16,12 +15,6 @@ final readonly class PaginateTaskQueryHandler
 
     public function handle(PaginateTaskQuery $query): PaginatedResult
     {
-        if($query->status){
-            TaskStatus::validate($query->status);
-        }
-        if($query->priority){
-            TaskPriority::validate($query->priority);
-        }
         return $this->taskRepository->listWithPaginate($query);
     }
 }

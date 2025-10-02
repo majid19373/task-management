@@ -15,6 +15,7 @@ class FakeBoardRepository implements BoardRepositoryInterface
      * @var array<Board>
      * */
     private array $boards = [];
+    private ?string $nextIdentity = null;
 
     public function getAll(int $userId): array
     {
@@ -63,6 +64,14 @@ class FakeBoardRepository implements BoardRepositoryInterface
 
     public function getNextIdentity(): string
     {
+        if($this->nextIdentity) {
+            return $this->nextIdentity;
+        }
         return Str::ulid();
+    }
+
+    public function giveAsNextIdentity(string $id): void
+    {
+        $this->nextIdentity = $id;
     }
 }

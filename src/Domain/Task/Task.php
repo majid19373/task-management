@@ -3,6 +3,7 @@
 namespace Src\Domain\Task;
 
 use Doctrine\ORM\Mapping\{Column, Embedded, Entity, GeneratedValue, Id, OneToMany, Table};
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Illuminate\Support\Str;
 use Src\Domain\Subtask\Subtask;
@@ -53,6 +54,9 @@ final class Task
         $this->status = TaskStatus::NOT_STARTED;
         $this->priority = TaskPriority::MEDIUM;
         $this->description = $description;
+        if ($deadline instanceof TaskDeadline && !$deadline->isFuture(new DateTimeImmutable())) {
+            throw new DomainException('The deadline date must be greater than the current date.');
+        }
         $this->deadline = $deadline;
         $this->subtasks = new ArrayCollection();
     }
