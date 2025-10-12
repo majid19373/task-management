@@ -31,8 +31,10 @@ final class TaskDeadline
         return $this->value->format('Y-m-d H:i:s');
     }
 
-    public function isFuture(DateTimeImmutable $currentDate): bool
+    public function deadlineMustBeFuture(DateTimeImmutable $currentDate): void
     {
-        return $this->value > $currentDate;
+        if ($this->value < $currentDate){
+            throw new DomainException('The deadline date must be greater than the current date.');
+        }
     }
 }

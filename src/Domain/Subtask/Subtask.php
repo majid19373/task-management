@@ -62,11 +62,6 @@ final class Subtask
         $this->status = SubtaskStatus::NOT_STARTED;
     }
 
-    public function remove(): void
-    {
-        $this->task = null;
-    }
-
     public function getId(): string { return $this->id; }
     public function getTitle(): SubtaskTitle { return $this->title; }
     public function getDescription(): ?SubtaskDescription { return $this->description; }

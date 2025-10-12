@@ -31,7 +31,6 @@ final class TaskDeadlineTest extends TestCase
         // Assert
         $this->assertInstanceOf(DateTimeImmutable::class, $result->value());
         $this->assertEquals($value, (string)$result);
-        $this->assertTrue($result->isFuture(new DateTimeImmutable()));
     }
 
     #[Test]
@@ -56,10 +55,11 @@ final class TaskDeadlineTest extends TestCase
         $value = now()->addMinutes(-1)->format('Y-m-d H:i:s');
         $sut = new TaskDeadline($value);
 
-        // Act
-        $sut->isFuture(new DateTimeImmutable());
+        // Expect
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('The deadline date must be greater than the current date.');
 
-        // Assert
-        $this->assertFalse($sut->isFuture(new DateTimeImmutable()));
+        // Act
+        $sut->deadlineMustBeFuture(new DateTimeImmutable());
     }
 }

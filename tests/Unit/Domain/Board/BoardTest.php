@@ -129,7 +129,6 @@ final class BoardTest extends TestCase
         // Arrange
         $board = $this->prepareBoardForTask();
         $title = new TaskTitle(self::TASK_TITLE);
-        $description = new TaskDescription(self::TASK_DESCRIPTION);
         $deadline = new TaskDeadline($this->createTaskDeadline());
 
         // Act

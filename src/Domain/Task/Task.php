@@ -54,8 +54,8 @@ final class Task
         $this->status = TaskStatus::NOT_STARTED;
         $this->priority = TaskPriority::MEDIUM;
         $this->description = $description;
-        if ($deadline instanceof TaskDeadline && !$deadline->isFuture(new DateTimeImmutable())) {
-            throw new DomainException('The deadline date must be greater than the current date.');
+        if ($deadline instanceof TaskDeadline ) {
+            $deadline->deadlineMustBeFuture(new DateTimeImmutable());
         }
         $this->deadline = $deadline;
         $this->subtasks = new ArrayCollection();
@@ -98,6 +98,7 @@ final class Task
 
     public function changeDeadline(TaskDeadline $deadline): void
     {
+        $deadline->deadlineMustBeFuture(new DateTimeImmutable());
         if($this->status === TaskStatus::COMPLETED){
             throw new DomainException('The task cannot change the deadline.');
         }
@@ -123,7 +124,7 @@ final class Task
     ): void
     {
         if($this->status === TaskStatus::COMPLETED){
-            throw new DomainException("Can not add a subtask to a completed task.");
+            throw new DomainException('Can not add a subtask to a completed task.');
         }
         $this->subtasks[] = new Subtask(
             id: Str::ulid(),
@@ -180,7 +181,6 @@ final class Task
     {
         $subtask = $this->getSubtask($subtaskId);
         $this->subtasks->removeElement($subtask);
-        $subtask->remove();
 
         if(!count($this->subtasks)){
             $this->status = TaskStatus::NOT_STARTED;
